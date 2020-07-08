@@ -1,0 +1,80 @@
+---
+title: ブログを始めた
+published: 2020-07-04 20:00:41
+---
+
+いろいろ思うところがあり、ブログを運用することにしました。
+
+
+
+* はじめに
+
+もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、
+なんとなく愛着がわかないなー、と思っていた。
+
+そんな中で、Github Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、
+Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。
+
+以下あたりを使ってみる。
+- Org-mode
+- Hakyll
+- GitHub Pages
+
+* Hakyllのセットアップ
+  
+  今回は、単にhaskell製の静的サイトジェネレータを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。
+  Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。
+  （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）
+
+  セットアップに当たっては以下を参考にした。（myuon氏のが特に参考になった。結構まねてる。）
+
+  - [[https://myuon.github.io/posts/hakyll-blog/][HakyllでBlogを作る]]
+  - [[https://hackage.haskell.org/package/hakyll][hakyll: A static website compiler library]]
+  - [[https://jaspervdj.be/hakyll/tutorials.html][TUTORIALS ABOUT HAKYLL]]
+
+  インストール〜プロジェクト作成は、雑に
+
+  #+BEGIN_SRC shell
+  $ stack install hakyll
+  $ stack exec hakyll-init my_site
+  #+END_SRC
+
+  とするだけ（stackを使う場合は、 ~stack.yaml~ も作っておく）。
+
+  プロジェクトを作成したばかりでも、 ~stack build && stack exec site build && stack exec site watch~ でサンプルサイトが立ち上がる。
+  出来上がった ~site.hs~ やhackageを見つつ、どんな処理してるのかを確認する。
+
+  ~stack exec site build~ すると、デフォルトでは、 ~_site~ 配下にビルドされた静的コンテンツが、 ~_cache~ 配下に何らかのキャッシュが作成される。
+  これらは ~.gitignore~ で管理対象外にしておく（ついでに ~.stack-work~ も）。
+
+
+* しくみ
+  上記の通り、生成された静的コンテンツは、デフォルトでは ~_site~ 配下に置かれるが、
+  masterブランチ直下をドキュメントルートとする場合には具合が悪い。
+
+  ところで、GitHub Pagesでは、masterブランチ直下をドキュメントルートとする代わりに、masterブランチの ~docs~ ディレクトリ配下をドキュメントルートとすることもできる。
+  ということは、ビルドした静的コンテンツが ~_site/~ ではなく ~docs/~ に配置されれば、それをそのままmasterブランチに ~git push~ すれば何も考えずに公開できる。
+  （それがいいことかどうかは置いといて・・・）
+
+  ではどうすればいいかというと、 ~defaultConfiguration~ を変更してあげればよい。
+
+  #+BEGIN_SRC haskell
+  destChangeConfiguration :: Configuration
+  destChangeConfiguration = defaultConfiguration {destinationDirectory = "docs" }
+
+  main :: IO ()
+  main = hakyllWith destChangeConfiguration $ do ...
+  #+END_SRC
+
+  これで、 ~docs/~ 配下に静的コンテンツが生成される。
+
+
+
+
+* そのうち直したいなー、など
+まあ、ほんとにそのうち。
+
+- スタイルが、デフォルトだと汚い。コードブロックとかきれいに表示したいし、フォントもイケてない。行もつまりすぎ。
+- タグ機能をつける。チュートリアルページから飛べる[[https://javran.github.io/posts/2014-03-01-add-tags-to-your-hakyll-blog.html][ここ]]などが参考になるかも。
+- ページネーションつけたいなー。いろいろやってる人がいるので参考にする（だいたいslackで名前がでるつよつよの人）
+
