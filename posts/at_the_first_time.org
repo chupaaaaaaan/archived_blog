@@ -1,80 +1,82 @@
 ---
 title: ブログを始めた
-published: 2020-07-04 20:00:41
+published: 2020-07-09 09:06:16
 ---
 
 いろいろ思うところがあり、ブログを運用することにしました。
-
-
 
 * はじめに
 
 もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、
 なんとなく愛着がわかないなー、と思っていた。
 
-そんな中で、Github Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、
+そんな中で、GitHub Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、
 Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。
-
-以下あたりを使ってみる。
-- Org-mode
-- Hakyll
-- GitHub Pages
 
 * Hakyllのセットアップ
   
-  今回は、単にhaskell製の静的サイトジェネレータを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。
+  今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。
   Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。
   （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）
 
-  セットアップに当たっては以下を参考にした。（myuon氏のが特に参考になった。結構まねてる。）
+  セットアップに当たっては以下を参考にした。（matsubaraさんのが特に参考になった。結構まねてる。）
 
+  - [[https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html][GitHub Paghes はじめました]]
   - [[https://myuon.github.io/posts/hakyll-blog/][HakyllでBlogを作る]]
   - [[https://hackage.haskell.org/package/hakyll][hakyll: A static website compiler library]]
   - [[https://jaspervdj.be/hakyll/tutorials.html][TUTORIALS ABOUT HAKYLL]]
 
-  インストール〜プロジェクト作成は、雑に
+  インストール〜プロジェクト作成は、
 
   #+BEGIN_SRC shell
   $ stack install hakyll
   $ stack exec hakyll-init my_site
   #+END_SRC
 
-  とするだけ（stackを使う場合は、 ~stack.yaml~ も作っておく）。
+  とするだけ。プロジェクトを作成したら、 ~stack.yaml~ を作っておく。
 
-  プロジェクトを作成したばかりでも、 ~stack build && stack exec site build && stack exec site watch~ でサンプルサイトが立ち上がる。
+  #+BEGIN_SRC yaml
+  resolver: lts-16.3
+  packages:
+  - .
+  #+END_SRC
+
+  プロジェクトを作成したばかりでも、 ~stack build && stack exec site build && stack exec site watch~ でサンプルサイトが立ち上がる
+  （http://localhost:8000 から見ることができる）。
   出来上がった ~site.hs~ やhackageを見つつ、どんな処理してるのかを確認する。
 
   ~stack exec site build~ すると、デフォルトでは、 ~_site~ 配下にビルドされた静的コンテンツが、 ~_cache~ 配下に何らかのキャッシュが作成される。
   これらは ~.gitignore~ で管理対象外にしておく（ついでに ~.stack-work~ も）。
+  
+* GitHub Pagesへのデプロイ
+  ほとんどこれ。
 
+  - [[https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html][TUTORIAL: USING HAKYLL WITH GITHUB PAGES]]
 
-* しくみ
-  上記の通り、生成された静的コンテンツは、デフォルトでは ~_site~ 配下に置かれるが、
-  masterブランチ直下をドキュメントルートとする場合には具合が悪い。
+  ~source~ ブランチで記事を書き、ビルドしたコンテンツを ~master~ ブランチに反映させる。
+  ポイントは、 ~source~ ブランチはもとの記事やビルド用資材のみ、 ~master~ ブランチはコンテンツのみ持っているということだ。
+  ~_site~ をGit管理対象外にしておくことで、このディレクトリを通じて、 ~master~ ブランチがコンテンツのみ持っている、という状況を作り出せる。
+  （こういう使い方をするのは初めて見たが、参考になる。）
 
-  ところで、GitHub Pagesでは、masterブランチ直下をドキュメントルートとする代わりに、masterブランチの ~docs~ ディレクトリ配下をドキュメントルートとすることもできる。
-  ということは、ビルドした静的コンテンツが ~_site/~ ではなく ~docs/~ に配置されれば、それをそのままmasterブランチに ~git push~ すれば何も考えずに公開できる。
-  （それがいいことかどうかは置いといて・・・）
+  ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。
 
-  ではどうすればいいかというと、 ~defaultConfiguration~ を変更してあげればよい。
+** ちなみに
+   最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。
 
-  #+BEGIN_SRC haskell
-  destChangeConfiguration :: Configuration
-  destChangeConfiguration = defaultConfiguration {destinationDirectory = "docs" }
+   - ユーザー/Organizationページ :: <user/organization name>.github.io/
+   - プロジェクトページ :: <username>.github.io/<repository>/
 
-  main :: IO ()
-  main = hakyllWith destChangeConfiguration $ do ...
-  #+END_SRC
+   （参考：[[https://docs.github.com/ja/github/working-with-github-pages/about-github-pages][GitHub Pages について]]）
 
-  これで、 ~docs/~ 配下に静的コンテンツが生成される。
-
-
-
+   当初はプロジェクトページとして作成していた。
+   この場合は、公開対象が ~master~ ブランチ直下以外に、 ~master~ ブランチ直下の ~docs/~ ディレクトリも選択することができる。
+   こうすると、わざわざ ~source~ ブランチと ~master~ ブランチを分けなくて楽だなー、と思っていたが、
+   パスの先頭に ~<repository>~ をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。
+   （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）
 
 * そのうち直したいなー、など
-まあ、ほんとにそのうち。
+  スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。
+  他にやっておきたいことは以下かなー。
 
-- スタイルが、デフォルトだと汚い。コードブロックとかきれいに表示したいし、フォントもイケてない。行もつまりすぎ。
-- タグ機能をつける。チュートリアルページから飛べる[[https://javran.github.io/posts/2014-03-01-add-tags-to-your-hakyll-blog.html][ここ]]などが参考になるかも。
-- ページネーションつけたいなー。いろいろやってる人がいるので参考にする（だいたいslackで名前がでるつよつよの人）
-
+  - タグ機能 :: まだ記事が少ないからいいけど、記事が多くなったら分類できるようにしたい。
+  - ページネーション :: これはまあ、特になくてもいいかも。あると便利、くらい。
