@@ -78,6 +78,8 @@ $ stack exec hakyll-init my_site
 <dd>これはまあ、特になくてもいいかも。あると便利、くらい。
 </dd>
 </dl>
+<h1 id="追記-2020-07-09">追記 (2020-07-09)</h1>
+<p>hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。 メタ情報として <code>published: yyyy-mm-dd</code> とかくと、記事にタイムスタンプをつけることができる。 タイムスタンプは、 <code>recentFirst</code> で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。 （<a href="https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html">https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html</a> の <code>dateField</code> あたりに書いてある）</p>
     </section>
 </article>
 
