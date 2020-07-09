@@ -22,52 +22,62 @@
             <h1>ブログを始めた</h1>
             <article>
     <section class="header">
-        Posted on 2020-07-04 (Sat)
+        Posted on 2020-07-09 (Thu)
         
     </section>
     <section>
         <p>いろいろ思うところがあり、ブログを運用することにしました。</p>
 <h1 id="はじめに">はじめに</h1>
 <p>もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、 なんとなく愛着がわかないなー、と思っていた。</p>
-<p>そんな中で、Github Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、 Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。</p>
-<p>以下あたりを使ってみる。</p>
-<ul>
-<li>Org-mode</li>
-<li>Hakyll</li>
-<li>GitHub Pages</li>
-</ul>
+<p>そんな中で、GitHub Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、 Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。</p>
 <h1 id="hakyllのセットアップ">Hakyllのセットアップ</h1>
-<p>今回は、単にhaskell製の静的サイトジェネレータを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。 Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。 （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）</p>
-<p>セットアップに当たっては以下を参考にした。（myuon氏のが特に参考になった。結構まねてる。）</p>
+<p>今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。 Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。 （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）</p>
+<p>セットアップに当たっては以下を参考にした。（matsubaraさんのが特に参考になった。結構まねてる。）</p>
 <ul>
+<li><a href="https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html">GitHub Paghes はじめました</a></li>
 <li><a href="https://myuon.github.io/posts/hakyll-blog/">HakyllでBlogを作る</a></li>
 <li><a href="https://hackage.haskell.org/package/hakyll">hakyll: A static website compiler library</a></li>
 <li><a href="https://jaspervdj.be/hakyll/tutorials.html">TUTORIALS ABOUT HAKYLL</a></li>
 </ul>
-<p>インストール〜プロジェクト作成は、雑に</p>
+<p>インストール〜プロジェクト作成は、</p>
 <pre class="shell"><code>$ stack install hakyll
 $ stack exec hakyll-init my_site
 </code></pre>
-<p>とするだけ（stackを使う場合は、 <code>stack.yaml</code> も作っておく）。</p>
-<p>プロジェクトを作成したばかりでも、 <code>stack build &amp;&amp; stack exec site build &amp;&amp; stack exec site watch</code> でサンプルサイトが立ち上がる。 出来上がった <code>site.hs</code> やhackageを見つつ、どんな処理してるのかを確認する。</p>
+<p>とするだけ。プロジェクトを作成したら、 <code>stack.yaml</code> を作っておく。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">resolver</span><span class="kw">:</span><span class="at"> lts-16.3</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="fu">packages</span><span class="kw">:</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">-</span><span class="at"> .</span></span></code></pre></div>
+<p>プロジェクトを作成したばかりでも、 <code>stack build &amp;&amp; stack exec site build &amp;&amp; stack exec site watch</code> でサンプルサイトが立ち上がる （http://localhost:8000 から見ることができる）。 出来上がった <code>site.hs</code> やhackageを見つつ、どんな処理してるのかを確認する。</p>
 <p><code>stack exec site build</code> すると、デフォルトでは、 <code>_site</code> 配下にビルドされた静的コンテンツが、 <code>_cache</code> 配下に何らかのキャッシュが作成される。 これらは <code>.gitignore</code> で管理対象外にしておく（ついでに <code>.stack-work</code> も）。</p>
-<h1 id="しくみ">しくみ</h1>
-<p>上記の通り、生成された静的コンテンツは、デフォルトでは <code>_site</code> 配下に置かれるが、 masterブランチ直下をドキュメントルートとする場合には具合が悪い。</p>
-<p>ところで、GitHub Pagesでは、masterブランチ直下をドキュメントルートとする代わりに、masterブランチの <code>docs</code> ディレクトリ配下をドキュメントルートとすることもできる。 ということは、ビルドした静的コンテンツが <code>_site/</code> ではなく <code>docs/</code> に配置されれば、それをそのままmasterブランチに <code>git push</code> すれば何も考えずに公開できる。 （それがいいことかどうかは置いといて・・・）</p>
-<p>ではどうすればいいかというと、 <code>defaultConfiguration</code> を変更してあげればよい。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">destChangeConfiguration ::</span> <span class="dt">Configuration</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>destChangeConfiguration <span class="ot">=</span> defaultConfiguration {destinationDirectory <span class="ot">=</span> <span class="st">&quot;docs&quot;</span> }</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>main <span class="ot">=</span> hakyllWith destChangeConfiguration <span class="op">$</span> <span class="kw">do</span> <span class="op">...</span></span></code></pre></div>
-<p>これで、 <code>docs/</code> 配下に静的コンテンツが生成される。</p>
-<h1 id="そのうち直したいなーなど">そのうち直したいなー、など</h1>
-<p>まあ、ほんとにそのうち。</p>
+<h1 id="github-pagesへのデプロイ">GitHub Pagesへのデプロイ</h1>
+<p>ほとんどこれ。</p>
 <ul>
-<li>スタイルが、デフォルトだと汚い。コードブロックとかきれいに表示したいし、フォントもイケてない。行もつまりすぎ。</li>
-<li>タグ機能をつける。チュートリアルページから飛べる<a href="https://javran.github.io/posts/2014-03-01-add-tags-to-your-hakyll-blog.html">ここ</a>などが参考になるかも。</li>
-<li>ページネーションつけたいなー。いろいろやってる人がいるので参考にする（だいたいslackで名前がでるつよつよの人）</li>
+<li><a href="https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html">TUTORIAL: USING HAKYLL WITH GITHUB PAGES</a></li>
 </ul>
+<p><code>source</code> ブランチで記事を書き、ビルドしたコンテンツを <code>master</code> ブランチに反映させる。 ポイントは、 <code>source</code> ブランチはもとの記事やビルド用資材のみ、 <code>master</code> ブランチはコンテンツのみ持っているということだ。 <code>_site</code> をGit管理対象外にしておくことで、このディレクトリを通じて、 <code>master</code> ブランチがコンテンツのみ持っている、という状況を作り出せる。 （こういう使い方をするのは初めて見たが、参考になる。）</p>
+<p>ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。</p>
+<h2 id="ちなみに">ちなみに</h2>
+<p>最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。</p>
+<dl>
+<dt>ユーザー/Organizationページ</dt>
+<dd>&lt;user/organization name&gt;.github.io/
+</dd>
+<dt>プロジェクトページ</dt>
+<dd>&lt;username&gt;.github.io/&lt;repository&gt;/
+</dd>
+</dl>
+<p>（参考：<a href="https://docs.github.com/ja/github/working-with-github-pages/about-github-pages">GitHub Pages について</a>）</p>
+<p>当初はプロジェクトページとして作成していた。 この場合は、公開対象が <code>master</code> ブランチ直下以外に、 <code>master</code> ブランチ直下の <code>docs/</code> ディレクトリも選択することができる。 こうすると、わざわざ <code>source</code> ブランチと <code>master</code> ブランチを分けなくて楽だなー、と思っていたが、 パスの先頭に <code>&lt;repository&gt;</code> をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。 （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）</p>
+<h1 id="そのうち直したいなーなど">そのうち直したいなー、など</h1>
+<p>スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。 他にやっておきたいことは以下かなー。</p>
+<dl>
+<dt>タグ機能</dt>
+<dd>まだ記事が少ないからいいけど、記事が多くなったら分類できるようにしたい。
+</dd>
+<dt>ページネーション</dt>
+<dd>これはまあ、特になくてもいいかも。あると便利、くらい。
+</dd>
+</dl>
     </section>
 </article>
 
