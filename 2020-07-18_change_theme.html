@@ -81,19 +81,18 @@
 
         </div>
         <div class="col-md-9">
-            
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-07-18_change_theme.html">2020-07-18 (Sat) - ブログのテーマを変更した</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
+          <div class="article">
+            <div class="well">
+                <h1><a href="./2020-07-18_change_theme.html">2020-07-18 (Sat) - ブログのテーマを変更した</a></h1>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if site.comments and page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            <div class="post-content">
             <h1 id="はじめに">はじめに</h1>
 <p>hakyllのデフォルトのブログテーマではちょっと味気なかったので、別のブログテーマに変更した。</p>
 <p>参考にしたのはこちら。</p>
@@ -207,99 +206,49 @@
 <p>テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに<a href="https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html">スナップショットを利用する方法</a>もある。 こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、 スナップショット方式は採用していない。</p>
 <h1 id="終わりに">終わりに</h1>
 <p>とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。</p>
+            </div>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!-- <div id="disqus_thread"> -->
+            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+            <!-- </div> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <section id="isso-thread"></section> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            </div>
+          </div>
+          <div class="pagination">
+              <!-- ページネーションは別途追加する -->
+              <!-- {% if page.next %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+              <!-- {% endif %} -->
+              <!-- {% if page.previous %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+              <!-- {% endif %} -->
+          </div>
         </div>
     </div>
 </div>
 
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-07-09_first_post.html">2020-07-09 (Thu) - ブログを始めた</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
-            <p>いろいろ思うところがあり、ブログを運用することにしました。</p>
-<h1 id="はじめに">はじめに</h1>
-<p>もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、 なんとなく愛着がわかないなー、と思っていた。</p>
-<p>そんな中で、GitHub Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、 Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。</p>
-<h1 id="hakyllのセットアップ">Hakyllのセットアップ</h1>
-<p>今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。 Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。 （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）</p>
-<p>セットアップに当たっては以下を参考にした。（matsubaraさんのが特に参考になった。結構まねてる。）</p>
-<ul>
-<li><a href="https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html">GitHub Paghes はじめました</a></li>
-<li><a href="https://myuon.github.io/posts/hakyll-blog/">HakyllでBlogを作る</a></li>
-<li><a href="https://hackage.haskell.org/package/hakyll">hakyll: A static website compiler library</a></li>
-<li><a href="https://jaspervdj.be/hakyll/tutorials.html">TUTORIALS ABOUT HAKYLL</a></li>
-</ul>
-<p>インストール〜プロジェクト作成は、</p>
-<pre class="shell"><code>$ stack install hakyll
-$ stack exec hakyll-init my_site
-</code></pre>
-<p>とするだけ。プロジェクトを作成したら、 <code>stack.yaml</code> を作っておく。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">resolver</span><span class="kw">:</span><span class="at"> lts-16.3</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="fu">packages</span><span class="kw">:</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">-</span><span class="at"> .</span></span></code></pre></div>
-<p>プロジェクトを作成したばかりでも、 <code>stack build &amp;&amp; stack exec site build &amp;&amp; stack exec site watch</code> でサンプルサイトが立ち上がる （http://localhost:8000 から見ることができる）。 出来上がった <code>site.hs</code> やhackageを見つつ、どんな処理してるのかを確認する。</p>
-<p><code>stack exec site build</code> すると、デフォルトでは、 <code>_site</code> 配下にビルドされた静的コンテンツが、 <code>_cache</code> 配下に何らかのキャッシュが作成される。 これらは <code>.gitignore</code> で管理対象外にしておく（ついでに <code>.stack-work</code> も）。</p>
-<h1 id="github-pagesへのデプロイ">GitHub Pagesへのデプロイ</h1>
-<p>ほとんどこれ。</p>
-<ul>
-<li><a href="https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html">TUTORIAL: USING HAKYLL WITH GITHUB PAGES</a></li>
-</ul>
-<p><code>source</code> ブランチで記事を書き、ビルドしたコンテンツを <code>master</code> ブランチに反映させる。 ポイントは、 <code>source</code> ブランチはもとの記事やビルド用資材のみ、 <code>master</code> ブランチはコンテンツのみ持っているということだ。 <code>_site</code> をGit管理対象外にしておくことで、このディレクトリを通じて、 <code>master</code> ブランチがコンテンツのみ持っている、という状況を作り出せる。 （こういう使い方をするのは初めて見たが、参考になる。）</p>
-<p>ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。</p>
-<h2 id="ちなみに">ちなみに</h2>
-<p>最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。</p>
-<dl>
-<dt>ユーザー/Organizationページ</dt>
-<dd>&lt;user/organization name&gt;.github.io/
-</dd>
-<dt>プロジェクトページ</dt>
-<dd>&lt;username&gt;.github.io/&lt;repository&gt;/
-</dd>
-</dl>
-<p>（参考：<a href="https://docs.github.com/ja/github/working-with-github-pages/about-github-pages">GitHub Pages について</a>）</p>
-<p>当初はプロジェクトページとして作成していた。 この場合は、公開対象が <code>master</code> ブランチ直下以外に、 <code>master</code> ブランチ直下の <code>docs/</code> ディレクトリも選択することができる。 こうすると、わざわざ <code>source</code> ブランチと <code>master</code> ブランチを分けなくて楽だなー、と思っていたが、 パスの先頭に <code>&lt;repository&gt;</code> をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。 （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）</p>
-<h1 id="そのうち直したいなーなど">そのうち直したいなー、など</h1>
-<p>スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。 他にやっておきたいことは以下かなー。</p>
-<dl>
-<dt>タグ機能</dt>
-<dd>まだ記事が少ないからいいけど、記事が多くなったら分類できるようにしたい。
-</dd>
-<dt>ページネーション</dt>
-<dd>これはまあ、特になくてもいいかも。あると便利、くらい。
-</dd>
-</dl>
-<h1 id="追記-2020-07-09">追記 (2020-07-09)</h1>
-<p>hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。 メタ情報として <code>published: yyyy-mm-dd</code> とかくと、記事にタイムスタンプをつけることができる。 タイムスタンプは、 <code>recentFirst</code> で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。 （<a href="https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html">https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html</a> の <code>dateField</code> あたりに書いてある）</p>
-        </div>
-    </div>
-</div>
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
 
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
 
-<!-- ページネーションは別途追加する -->
-<!-- <div class="pagination"> -->
-<!--   {% if paginator.previous_page %} -->
-<!--       {% if paginator.previous_page == 1 %} -->
-<!--         <a class="btn btn-default" href="{{ site.baseurl}}/index.html" class="previous">Newer</a> -->
-<!--       {% else %} -->
-<!--         <a class="btn btn-default" href="{{ site.baseurl}}/page{{ paginator.previous_page }}" class="previous">Newer</a> -->
-<!--       {% endif %} -->
-<!--   {% endif %} -->
-<!--   <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span> -->
-<!--   {% if paginator.next_page %} -->
-<!--     <a class="btn btn-default" href="{{ site.baseurl}}/page{{ paginator.next_page }}" class="next">Older</a> -->
-<!--   {% endif %} -->
-<!-- </div> -->
-
-        </div>
-    </div>
-</div>
+<!--    (function() { -->
+<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--     })(); -->
+<!--   </script> -->
+<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">
