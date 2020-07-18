@@ -1,0 +1,16 @@
+<div class="sidebar well">
+$site_description$
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        $for(recent_posts)$
+          <li><a href="$url$">$title$</a></li>
+        $endfor$
+    </ul>
+</div>
+
+<div class="sidebar well">
+$partial("includes/links-list.html")$
+</div>
