@@ -79,19 +79,18 @@
 
         </div>
         <div class="col-md-9">
-            
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-07-09_first_post.html">2020-07-09 (Thu) - ブログを始めた</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
+          <div class="article">
+            <div class="well">
+                <h1><a href="./2020-07-09_first_post.html">2020-07-09 (Thu) - ブログを始めた</a></h1>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if site.comments and page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            <div class="post-content">
             <p>いろいろ思うところがあり、ブログを運用することにしました。</p>
 <h1 id="はじめに">はじめに</h1>
 <p>もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、 なんとなく愛着がわかないなー、と思っていた。</p>
@@ -146,29 +145,49 @@ $ stack exec hakyll-init my_site
 </dl>
 <h1 id="追記-2020-07-09">追記 (2020-07-09)</h1>
 <p>hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。 メタ情報として <code>published: yyyy-mm-dd</code> とかくと、記事にタイムスタンプをつけることができる。 タイムスタンプは、 <code>recentFirst</code> で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。 （<a href="https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html">https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html</a> の <code>dateField</code> あたりに書いてある）</p>
+            </div>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!-- <div id="disqus_thread"> -->
+            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+            <!-- </div> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <section id="isso-thread"></section> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            </div>
+          </div>
+          <div class="pagination">
+              <!-- ページネーションは別途追加する -->
+              <!-- {% if page.next %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+              <!-- {% endif %} -->
+              <!-- {% if page.previous %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+              <!-- {% endif %} -->
+          </div>
         </div>
     </div>
 </div>
 
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
 
-<!-- ページネーションは別途追加する -->
-<!-- <div class="pagination"> -->
-<!--   {% if paginator.previous_page %} -->
-<!--       {% if paginator.previous_page == 1 %} -->
-<!--         <a class="btn btn-default" href="{{ site.baseurl}}/index.html" class="previous">Newer</a> -->
-<!--       {% else %} -->
-<!--         <a class="btn btn-default" href="{{ site.baseurl}}/page{{ paginator.previous_page }}" class="previous">Newer</a> -->
-<!--       {% endif %} -->
-<!--   {% endif %} -->
-<!--   <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span> -->
-<!--   {% if paginator.next_page %} -->
-<!--     <a class="btn btn-default" href="{{ site.baseurl}}/page{{ paginator.next_page }}" class="next">Older</a> -->
-<!--   {% endif %} -->
-<!-- </div> -->
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
 
-        </div>
-    </div>
-</div>
+<!--    (function() { -->
+<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--     })(); -->
+<!--   </script> -->
+<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">
