@@ -1,6 +1,6 @@
 ---
 title: ブログのテーマを変更した
-published: 2020-07-18 19:15:02
+published: 2020-07-18 23:16:04
 tags: haskell, hakyll
 ---
 
@@ -14,89 +14,166 @@ tags: haskell, hakyll
 
   同じく、[[http://katychuang.com/hakyll-cssgarden/gallery/][ここ]]や[[https://jaspervdj.be/hakyll/examples.html][このあたり]]を見てみたが、あまりしっくり来なかったので[[http://jekyllthemes.org/][jekyll]]のテーマから探すことにした。
   自分が選択したテーマは[[http://jekyllthemes.org/themes/jekyll-clean/][jekyll-clean]]で、こちらをhakyllで使えるように修正した。
+
+  基本的にはmatsubaraさんの記事をなぞれば変換できる・・・のだが、今回私が選んだテーマではひと工夫が必要だった。
+  割と嵌ってしまったので、どう解決したか書く。
+
+  なお、今回は「シンタックスハイライト」及び「configファイル」の対応はやってない。
+  また、元のテーマにはdisqus及びissoによるコメント機能、google analytics、ページネーションなども実装されていたが、
+  これらも今回は対応していない（コメントアウトした）。
+  ゆくゆくは対応したい。
+
+  今回対応したテーマは[[https://github.com/chupaaaaaaan/chupaaaaaaan.github.io][こちら]]に置いてある。
+
+* サイドバーの対応
+  画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。
   
+  単純には、以下のように実装すれば良さそうである。
+  （ ~gsubRoute~ を使って、ルーティングを変更している。）
+
+  #+BEGIN_SRC haskell
+    match "posts/*" $ do
+        route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+        compile $ do
+            recentPosts <- recentFirst =<< loadAll "posts/*"
+            let postsCtx =
+                    listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
+                    postCtx `mappend` siteCtx
+          
+            pandocCompiler
+              >>= loadAndApplyTemplate "layouts/post.html" postsCtx
+              >>= relativizeUrls
+  #+END_SRC
+
+  ~compile~ でやっていることを説明すると、
+
+  1. ~posts/*~ パターンにマッチするコンテンツを作成日時の降順で ~recentPosts~ として取得し、
+  2. （サイドバーで参照する） ~recent_posts~ をキーとして、 ~recentPosts~ をコンテキストに入れて、
+  3. ~posts/*~ にマッチするコンテンツを ~pandocCompiler~ でコンパイルし、
+  4. 出来上がったものを ~layouts/post.html~ に突っ込む（テンプレート内で ~$body$~ と記載されている箇所に代入される）
+    
+    
+  となる。ところが、これをコンパイルすると、以下のようなエラーが出てしまう。
   #+BEGIN_SRC 
-
-
-
-  
-  $partial("")$
-  
+  [ERROR] Hakyll.Core.Runtime.chase: Dependency cycle detected: posts/2020-07-09_first_post.org depends on posts/2020-07-09_first_post.org
   #+END_SRC
-
-
-* 
-
-* Hakyllのセットアップ
   
-  今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。
-  Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。
-  （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）
+  どうやら、循環参照が発生しているというメッセージのようだ。実際、 ~posts/*~ をコンパイルする前に ~recentPosts~ として取得しようとしている。
+  取得のためにコンパイルし、その中でさらに取得し・・・とループしてしまう。
 
-  セットアップに当たっては以下を参考にした。（matsubaraさんのが特に参考になった。結構まねてる。）
+  この問題は、stackoverflowの記事（[[https://stackoverflow.com/questions/35645525/hakyll-says-dependency-cycle-detected][ここ]]とか[[https://stackoverflow.com/questions/47067851/how-do-i-avoid-a-dependency-cycle-when-generating-a-list-of-recent-posts-on-post][ここ]]とか）が参考になる。
+  ざっくり言えば、別バージョンのコンテンツを作成し、 ~recentPosts~ として取得するコンテンツはこちらのバージョンを使用する。
 
-  - [[https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html][GitHub Paghes はじめました]]
-  - [[https://myuon.github.io/posts/hakyll-blog/][HakyllでBlogを作る]]
-  - [[https://hackage.haskell.org/package/hakyll][hakyll: A static website compiler library]]
-  - [[https://jaspervdj.be/hakyll/tutorials.html][TUTORIALS ABOUT HAKYLL]]
+  #+BEGIN_SRC haskell
+    match "posts/*" $ version "postContents" $ do
+      route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+      compile $ pandocCompiler >>= relativizeUrls
 
-  インストール〜プロジェクト作成は、
-
-  #+BEGIN_SRC shell
-  $ stack install hakyll
-  $ stack exec hakyll-init my_site
+    match "posts/*" $ do
+        route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+        compile $ do
+            recentPosts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
+            let postsCtx =
+                    listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
+                    postCtx `mappend` siteCtx
+          
+            pandocCompiler
+              >>= loadAndApplyTemplate "layouts/post.html" postsCtx
+              >>= relativizeUrls
   #+END_SRC
-
-  とするだけ。プロジェクトを作成したら、 ~stack.yaml~ を作っておく。
-
-  #+BEGIN_SRC yaml
-  resolver: lts-16.3
-  packages:
-  - .
-  #+END_SRC
-
-  プロジェクトを作成したばかりでも、 ~stack build && stack exec site build && stack exec site watch~ でサンプルサイトが立ち上がる
-  （http://localhost:8000 から見ることができる）。
-  出来上がった ~site.hs~ やhackageを見つつ、どんな処理してるのかを確認する。
-
-  ~stack exec site build~ すると、デフォルトでは、 ~_site~ 配下にビルドされた静的コンテンツが、 ~_cache~ 配下に何らかのキャッシュが作成される。
-  これらは ~.gitignore~ で管理対象外にしておく（ついでに ~.stack-work~ も）。
   
-* GitHub Pagesへのデプロイ
-  ほとんどこれ。
-
-  - [[https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html][TUTORIAL: USING HAKYLL WITH GITHUB PAGES]]
-
-  ~source~ ブランチで記事を書き、ビルドしたコンテンツを ~master~ ブランチに反映させる。
-  ポイントは、 ~source~ ブランチはもとの記事やビルド用資材のみ、 ~master~ ブランチはコンテンツのみ持っているということだ。
-  ~_site~ をGit管理対象外にしておくことで、このディレクトリを通じて、 ~master~ ブランチがコンテンツのみ持っている、という状況を作り出せる。
-  （こういう使い方をするのは初めて見たが、参考になる。）
-
-  ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。
+  注意すべきポイントとしては、別バージョンのコンテンツを作成する際に ~route~ も正しく設定する必要がある。
+  ~route~ を省略してもコンパイルエラーにはならないが、 ~recent_posts~ として参照したコンテンツへのリンクが作成されない
+  （ ~defaultContext~ に格納される ~$url$~ が空になるっぽい）。
 
 ** ちなみに
-   最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。
+   循環参照を解決する手段としては、複数のバージョンのコンテンツを用意する方法の他に、[[https://groups.google.com/g/hakyll/c/F2j7iztwKEc/m/axLNmksqCAAJ?pli=1][作者から提案された方法]]もある。
+   どうやら、「必要なのはメタデータだけなんだから、それだけ取得すればよくね？」ということみたいなのだが、
+   どうやればよいのかよくわからなかったので、今回は不採用。
 
-   - ユーザー/Organizationページ :: <user/organization name>.github.io/
-   - プロジェクトページ :: <username>.github.io/<repository>/
+   hakyllに出てくる ~Context a~ 、 ~Item a~ 、 ~Compiler a~ などは重要な概念っぽいのだが、まだよくわかってない・・・。
 
-   （参考：[[https://docs.github.com/ja/github/working-with-github-pages/about-github-pages][GitHub Pages について]]）
 
-   当初はプロジェクトページとして作成していた。
-   この場合は、公開対象が ~master~ ブランチ直下以外に、 ~master~ ブランチ直下の ~docs/~ ディレクトリも選択することができる。
-   こうすると、わざわざ ~source~ ブランチと ~master~ ブランチを分けなくて楽だなー、と思っていたが、
-   パスの先頭に ~<repository>~ をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。
-   （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）
+* コンテンツの表示
+  上記で循環参照のエラーはなくなるが、まだ問題はある。
 
-* そのうち直したいなー、など
-  スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。
-  他にやっておきたいことは以下かなー。
+  ドキュメントルート（ ~index.html~ ）では、以下のコンテンツが表示される。
 
-  - タグ機能 :: まだ記事が少ないからいいけど、記事が多くなったら分類できるようにしたい。
-  - ページネーション :: これはまあ、特になくてもいいかも。あると便利、くらい。
+  - サイドバー
+    - Description
+    - Recent Posts
+    - Links
 
-* 追記 (2020-07-09)
-  hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。
-  メタ情報として ~published: yyyy-mm-dd~ とかくと、記事にタイムスタンプをつけることができる。
-  タイムスタンプは、 ~recentFirst~ で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。
-  （[[https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html]] の ~dateField~ あたりに書いてある）
+  - メインコンテンツ
+    - 最新のコンテンツから順に表示
+
+
+  最初、以下のように実装していた。
+
+  #+BEGIN_SRC haskell
+    match (fromList ["archive.html", "about.html", "index.html", "links.html"]) $ do
+        route idRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll "posts/*"
+            let postsCtx =
+                    listField "recent_posts" postCtx (return $ take 5 posts) `mappend`
+                    listField "posts" postCtx (return posts) `mappend`
+                    siteCtx
+
+            getResourceBody
+                >>= applyAsTemplate postsCtx
+                >>= loadAndApplyTemplate "layouts/default.html" postsCtx
+                >>= relativizeUrls
+  #+END_SRC
+      
+  今回は循環参照にはならないので、 ~posts <- recentFirst =<< loadAll "posts/*"~ のように書いてもコンパイルエラーにはならない。
+
+  が、このように書いてしまうと、2つの問題が発生する。
+
+  1. Recent Postsに、同じコンテンツへのリンクが2つ表示される
+  2. コンテンツが表示される領域に、（サイドバーを含めて）コンテンツがネストされて表示される（ちょっと説明が難しい・・・）
+
+
+  ひとつめの問題は、 ~posts <- recentFirst =<< loadAll "posts/*"~ のように書いた時に、
+  ~posts/*~ にマッチする全てのコンテンツが取得されてしまうことが原因である。
+  つまり、バージョン指定なしでコンパイルしたコンテンツと、バージョンを明示したコンテンツのどちらにもマッチしてしまう。
+  これを防ぐためには、バージョン指定するか、明示的にバージョンが存在しないコンテンツにマッチするように書く必要がある。
+
+  こんな感じ。
+  
+  #+BEGIN_SRC haskell
+  posts <- recentFirst =<< loadAll ("posts/*" .&&. hasNoVersion)
+  #+END_SRC
+  
+  ふたつめの問題は、 ~posts/*~ （のバージョンなし版）にマッチするコンテンツは、既にサイドバーも含めてコンパイル済みであることから来ている
+  （そのようなコンテンツをテンプレートに埋め込もうとするため、コンテンツがネストされてしまう）。
+  そのため、テンプレートを適用する前で止めたバージョンのコンテンツ（サイドバーやヘッダーがくっついていない）を取得し、
+  それを使用してコンパイル・テンプレート埋め込みを実施すればよい。
+
+  今回で言えば、 ~postContents~ のバージョンがテンプレートを適用していないコンテンツであるため、そちらを取得すればよい。
+
+  最終的には、こんな感じ（ ~hasNoVersion~ は使用しない）。
+
+  #+BEGIN_SRC haskell
+    match (fromList ["index.html"]) $ do
+        route idRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
+            let postsCtx =
+                    listField "recent_posts" postCtx (return $ take 5 posts) `mappend`
+                    listField "posts" postCtx (return posts) `mappend`
+                    siteCtx
+
+            getResourceBody
+                >>= applyAsTemplate postsCtx
+                >>= loadAndApplyTemplate "layouts/default.html" postsCtx
+                >>= relativizeUrls
+  #+END_SRC
+  
+** ちなみにその2
+   テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに[[https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html][スナップショットを利用する方法]]もある。
+   こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、
+   スナップショット方式は採用していない。
+
+* 終わりに
+  とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。
