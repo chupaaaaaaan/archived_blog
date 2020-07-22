@@ -58,4 +58,4 @@ tags: encoding
   - [[https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904][Windowsで使えるターミナルとシェルのまとめ]]
 
     
-  結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）のどっちかしか使ってないけど、ちょっと他のも使ってみようかな。
+  結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）しか使ってないけど、ちょっと他のも使ってみようかな。
