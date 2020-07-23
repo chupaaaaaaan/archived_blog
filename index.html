@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./2020-07-23_kyopro_abc162d_full_search.html">Haskellで精進記録 - ABC162d</a></li>
+        
           <li><a href="./2020-07-19_encoding_mismatch_between_server_and_client.html">GitBash（MSYS2）でsshしたときの文字化けを解消する</a></li>
         
           <li><a href="./2020-07-18_change_theme.html">ブログのテーマを変更した</a></li>
@@ -84,6 +86,103 @@
         </div>
         <div class="col-md-9">
             
+<div class="article">
+  <div class="well">
+        <h1><a href="./2020-07-23_kyopro_abc162d_full_search.html">2020-07-23 (Thu) - Haskellで精進記録 - ABC162d</a></h1>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and post.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="content">
+            <p>解いた問題の学びを書いていく。</p>
+<p>今回の問題は<a href="https://atcoder.jp/contests/abc162/tasks/abc162_d">これ</a>。テーマは全探索。</p>
+<h1 id="最初に振り返り">最初に振り返り</h1>
+<ul>
+<li>全探索するときは、制約にもよるが、3重ループになってたらちょっとくさい、と思えると良いのかな？
+<ul>
+<li>今回だとちょっと考えれば3重ループを2重ループに直せた・・・悔しい。</li>
+</ul></li>
+<li>手軽さからリストを使いがちだけど、添字での参照が <span class="math inline"><em>O</em>(<em>n</em>)</span> になるのは厳しい・・・やはり <code>Vector</code> を使うのになれたほうがいいな。
+<ul>
+<li><code>Vector</code> で入力を読み込むところなどは、mod_poppo氏のHaskellで競プロ本を参考にしました。</li>
+<li>超いい本なので、みんなも買って読もう！</li>
+</ul></li>
+</ul>
+<h1 id="素朴な全探索">素朴な全探索</h1>
+<p>今回の問題は、添字が3つあって、 <code>i&lt;j&lt;k</code> 以外は条件は対称っぽい。 多重のforループをぐるぐる回す全探索かな？とあたりをつける。</p>
+<p>そういうループっぽい探索をHaskellで書くときは、リスト内包表記を使うとそれっぽくかける。</p>
+<p>提出したほぼ最初の版がこちら。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>  _ <span class="ot">&lt;-</span> <span class="fu">getLine</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>  s <span class="ot">&lt;-</span> <span class="fu">getLine</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>  <span class="fu">print</span> <span class="op">$</span> <span class="fu">length</span> [(i,j,k) <span class="op">|</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>                  (i,x) <span class="ot">&lt;-</span> <span class="fu">zip</span> [<span class="dv">1</span><span class="op">..</span>] s,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>                  (j,y) <span class="ot">&lt;-</span> <span class="fu">zip</span> [(i<span class="op">+</span><span class="dv">1</span>)<span class="op">..</span>] <span class="op">$</span> <span class="fu">drop</span> i s,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>                  (k,z) <span class="ot">&lt;-</span> <span class="fu">zip</span> [(j<span class="op">+</span><span class="dv">1</span>)<span class="op">..</span>] <span class="op">$</span> <span class="fu">drop</span> j s,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>                  j<span class="op">-</span>i <span class="op">/=</span> k<span class="op">-</span>j,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>                  x<span class="op">/=</span>y,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>                  y<span class="op">/=</span>z,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a>                  z<span class="op">/=</span>x]</span></code></pre></div>
+<p>ただ、これだとTLEしてしまう。</p>
+<h1 id="内側のループを外す">内側のループを外す</h1>
+<p>ごちゃごちゃいじってみたが改善できなかったので解説を確認し、再度提出した版がこちら。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>  n <span class="ot">&lt;-</span> <span class="fu">read</span> <span class="op">&lt;$&gt;</span><span class="ot"> getLine ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>  s <span class="ot">&lt;-</span> <span class="fu">getLine</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>  <span class="kw">let</span> r <span class="ot">=</span> <span class="fu">length</span> <span class="op">$</span> <span class="fu">filter</span> (<span class="op">==</span><span class="ch">'R'</span>) s</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>      g <span class="ot">=</span> <span class="fu">length</span> <span class="op">$</span> <span class="fu">filter</span> (<span class="op">==</span><span class="ch">'G'</span>) s</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>      b <span class="ot">=</span> <span class="fu">length</span> <span class="op">$</span> <span class="fu">filter</span> (<span class="op">==</span><span class="ch">'B'</span>) s</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>      l <span class="ot">=</span> <span class="fu">length</span> [(i,j) <span class="op">|</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>                  (i,x) <span class="ot">&lt;-</span> <span class="fu">zip</span> [<span class="dv">1</span><span class="op">..</span>] s,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>                  (j,y) <span class="ot">&lt;-</span> <span class="fu">filter</span> (\p <span class="ot">-&gt;</span> <span class="fu">snd</span> p <span class="op">/=</span> x) <span class="op">$</span> <span class="fu">zip</span> [(i<span class="op">+</span><span class="dv">1</span>)<span class="op">..</span>] <span class="op">$</span> <span class="fu">drop</span> i s,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>                  x<span class="op">/=</span>y,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>                  n <span class="op">&gt;</span> <span class="dv">2</span><span class="op">*</span>j<span class="op">-</span>i<span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>                  x<span class="op">/=</span>(s<span class="op">!!</span>(<span class="dv">2</span><span class="op">*</span>j<span class="op">-</span>i<span class="op">-</span><span class="dv">1</span>)),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>                  y<span class="op">/=</span>(s<span class="op">!!</span>(<span class="dv">2</span><span class="op">*</span>j<span class="op">-</span>i<span class="op">-</span><span class="dv">1</span>))]</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a>  <span class="fu">print</span> <span class="op">$</span> r <span class="op">*</span> g <span class="op">*</span> b <span class="op">-</span> l</span></code></pre></div>
+<p>最初に、1番目の条件だけを満たすパターンの数を計算しておいて、そこから <code>j-i = k-j</code> となるパターンの総数を引けば良い。 こうすると、最初の版では3重ループになっていたのが2重ループになり、計算量は小さくなるはず・・・</p>
+<p>なのだが、またしてもTLE。 原因は、guard節で <code>!!</code> を使ってリストの要素を参照しているためで、リストの長さに応じた時間がかかってしまう。</p>
+<h1 id="vector-化"><code>Vector</code> 化</h1>
+<p>今度は、文字列をリストではなく、 <code>Data.Vector.Unboxed.Vector</code> で持つようにする。 そうした最終版がこちら。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  n <span class="ot">&lt;-</span> <span class="fu">read</span> <span class="op">&lt;$&gt;</span><span class="ot"> getLine ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>  s <span class="ot">&lt;-</span> readLnAsVecNWith n unconsChar</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>  <span class="kw">let</span> r <span class="ot">=</span> VU.length <span class="op">$</span> VU.filter (<span class="op">==</span><span class="ch">'R'</span>) s</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>      g <span class="ot">=</span> VU.length <span class="op">$</span> VU.filter (<span class="op">==</span><span class="ch">'G'</span>) s</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>      b <span class="ot">=</span> VU.length <span class="op">$</span> VU.filter (<span class="op">==</span><span class="ch">'B'</span>) s</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>      l <span class="ot">=</span> <span class="fu">length</span> [(i,j) <span class="op">|</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>                  (i,x) <span class="ot">&lt;-</span> VU.toList <span class="op">$</span> VU.zip (VU.enumFromN (<span class="dv">1</span><span class="ot">::</span><span class="dt">Int</span>) n) s,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>                  (j,y) <span class="ot">&lt;-</span> VU.toList <span class="op">$</span> VU.filter (\p <span class="ot">-&gt;</span> <span class="fu">snd</span> p <span class="op">/=</span> x) <span class="op">$</span> VU.zip (VU.enumFromN (i<span class="op">+</span><span class="dv">1</span>) n) <span class="op">$</span> VU.drop i s,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>                  x<span class="op">/=</span>y,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>                  n <span class="op">&gt;</span> <span class="dv">2</span><span class="op">*</span>j<span class="op">-</span>i<span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>                  <span class="dv">0</span> <span class="op">&lt;=</span> <span class="dv">2</span><span class="op">*</span>j<span class="op">-</span>i<span class="op">-</span><span class="dv">1</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>                  x<span class="op">/=</span>(s <span class="op">VU.!</span> (<span class="dv">2</span><span class="op">*</span>j<span class="op">-</span>i<span class="op">-</span><span class="dv">1</span>)),</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>                  y<span class="op">/=</span>(s <span class="op">VU.!</span> (<span class="dv">2</span><span class="op">*</span>j<span class="op">-</span>i<span class="op">-</span><span class="dv">1</span>))]</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a>  <span class="fu">print</span> <span class="op">$</span> r <span class="op">*</span> g <span class="op">*</span> b <span class="op">-</span> l  </span></code></pre></div>
+<p><code>VU.toList</code> でリストに変換するところが <span class="math inline"><em>O</em>(<em>n</em>)</span> かかってしまうが、それでもリストを生で扱うよりは全然早い。</p>
+<h2 id="ちなみに">ちなみに</h2>
+<p><code>Vector</code> で読み込むところはこんな感じで書いている。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ot">unconsChar ::</span> <span class="dt">StateT</span> <span class="dt">BS.ByteString</span> <span class="dt">Maybe</span> <span class="dt">Char</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>unconsChar <span class="ot">=</span> <span class="dt">StateT</span> BS.uncons</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="ot">readLnAsVecNWith ::</span> <span class="dt">VU.Unbox</span> a <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">StateT</span> <span class="dt">BS.ByteString</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Vector</span> a)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>readLnAsVecNWith n st <span class="ot">=</span> VU.unfoldrN n (runStateT st) <span class="op">&lt;$&gt;</span> BS.getLine</span></code></pre></div>
+<p>これもmod_poppo氏の本を参考に実装したもの。 第2引数の <code>StateT BS.ByteString Maybe</code> モナドを取り替えることで、文字列ではなく整数の <code>Vector</code> なども作ることができる。 （変換処理が <code>s -&gt; Maybe (a, s)</code> であることを利用して、生の関数ではなく <code>StateT</code> モナドトランスフォーマーでラップしてる。なるほど・・・）</p>
+        </div>
+    </div>
+</div>
+
 <div class="article">
   <div class="well">
         <h1><a href="./2020-07-19_encoding_mismatch_between_server_and_client.html">2020-07-19 (Sun) - GitBash（MSYS2）でsshしたときの文字化けを解消する</a></h1>
@@ -122,7 +221,7 @@
 <ul>
 <li><a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904">Windowsで使えるターミナルとシェルのまとめ</a></li>
 </ul>
-<p>結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）のどっちかしか使ってないけど、ちょっと他のも使ってみようかな。</p>
+<p>結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）しか使ってないけど、ちょっと他のも使ってみようかな。</p>
         </div>
     </div>
 </div>

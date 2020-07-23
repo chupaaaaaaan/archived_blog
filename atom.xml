@@ -8,8 +8,16 @@
         <name>Takayuki Uchida</name>
         <email></email>
     </author>
-    <updated>2020-07-19T05:06:58Z</updated>
+    <updated>2020-07-23T18:06:00Z</updated>
     <entry>
+    <title>Haskellで精進記録 - ABC162d</title>
+    <link href="https://chupaaaaaaan.github.io/2020-07-23_kyopro_abc162d_full_search.html" />
+    <id>https://chupaaaaaaan.github.io/2020-07-23_kyopro_abc162d_full_search.html</id>
+    <published>2020-07-23 18:06:00</published>
+    <updated>2020-07-23T18:06:00Z</updated>
+    <summary type="html"><![CDATA[feed description]]></summary>
+</entry>
+<entry>
     <title>GitBash（MSYS2）でsshしたときの文字化けを解消する</title>
     <link href="https://chupaaaaaaan.github.io/2020-07-19_encoding_mismatch_between_server_and_client.html" />
     <id>https://chupaaaaaaan.github.io/2020-07-19_encoding_mismatch_between_server_and_client.html</id>
