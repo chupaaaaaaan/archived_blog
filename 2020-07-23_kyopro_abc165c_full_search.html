@@ -89,7 +89,7 @@
         <div class="col-md-9">
           <div class="article">
             <div class="well">
-                <h1><a href="./2020-07-09_first_post.html">2020-07-09 (Thu) - ブログを始めた</a></h1>
+                <h1><a href="./2020-07-23_kyopro_abc165c_full_search.html">2020-07-24 (Fri) - Haskellで精進記録 - ABC165d</a></h1>
             <!-- コメント機能は別途追加する -->
             <!-- {% if site.comments and page.comments %} -->
             <!--     {% if site.disqus != '' %} -->
@@ -99,60 +99,47 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <p>いろいろ思うところがあり、ブログを運用することにしました。</p>
-<h1 id="はじめに">はじめに</h1>
-<p>もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、 なんとなく愛着がわかないなー、と思っていた。</p>
-<p>そんな中で、GitHub Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、 Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。</p>
-<h1 id="hakyllのセットアップ">Hakyllのセットアップ</h1>
-<p>今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。 Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。 （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）</p>
-<p>セットアップに当たっては以下を参考にした。（matsubaraさんのが特に参考になった。結構まねてる。）</p>
+            <p>解いた問題の学びを書いていく（復習も兼ねて）。</p>
+<p>今回の問題は<a href="https://atcoder.jp/contests/abc165/tasks/abc165_c">これ</a>。テーマはまたしても全探索だが、どっちかというと再帰をちゃんと使おう、のほうが近いかも。</p>
+<h1 id="最初に振り返り">最初に振り返り</h1>
 <ul>
-<li><a href="https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html">GitHub Paghes はじめました</a></li>
-<li><a href="https://myuon.github.io/posts/hakyll-blog/">HakyllでBlogを作る</a></li>
-<li><a href="https://hackage.haskell.org/package/hakyll">hakyll: A static website compiler library</a></li>
-<li><a href="https://jaspervdj.be/hakyll/tutorials.html">TUTORIALS ABOUT HAKYLL</a></li>
-</ul>
-<p>インストール〜プロジェクト作成は、</p>
-<pre class="shell"><code>$ stack install hakyll
-$ stack exec hakyll-init my_site
-</code></pre>
-<p>とするだけ。プロジェクトを作成したら、 <code>stack.yaml</code> を作っておく。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">resolver</span><span class="kw">:</span><span class="at"> lts-16.3</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="fu">packages</span><span class="kw">:</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">-</span><span class="at"> .</span></span></code></pre></div>
-<p>プロジェクトを作成したばかりでも、 <code>stack build &amp;&amp; stack exec site build &amp;&amp; stack exec site watch</code> でサンプルサイトが立ち上がる （http://localhost:8000 から見ることができる）。 出来上がった <code>site.hs</code> やhackageを見つつ、どんな処理してるのかを確認する。</p>
-<p><code>stack exec site build</code> すると、デフォルトでは、 <code>_site</code> 配下にビルドされた静的コンテンツが、 <code>_cache</code> 配下に何らかのキャッシュが作成される。 これらは <code>.gitignore</code> で管理対象外にしておく（ついでに <code>.stack-work</code> も）。</p>
-<h1 id="github-pagesへのデプロイ">GitHub Pagesへのデプロイ</h1>
-<p>ほとんどこれ。</p>
+<li><p>今回は方針が全く立たなかった。制約を見つつ、値が小さいときは何らかの全列挙（全探索）が使えないか見てみるのが良さそう。</p></li>
+<li><p>何かを全列挙する、としたときに、再帰的に構成することを頭に思い浮かべられるとよい。</p>
 <ul>
-<li><a href="https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html">TUTORIAL: USING HAKYLL WITH GITHUB PAGES</a></li>
+<li>問題を小さく分割する癖をつけると、自然と再帰的な構成が浮かぶ？</li>
+<li>全探索というと、どうしてもまだループ的な発想が出てしまうなぁ・・・</li>
+</ul></li>
 </ul>
-<p><code>source</code> ブランチで記事を書き、ビルドしたコンテンツを <code>master</code> ブランチに反映させる。 ポイントは、 <code>source</code> ブランチはもとの記事やビルド用資材のみ、 <code>master</code> ブランチはコンテンツのみ持っているということだ。 <code>_site</code> をGit管理対象外にしておくことで、このディレクトリを通じて、 <code>master</code> ブランチがコンテンツのみ持っている、という状況を作り出せる。 （こういう使い方をするのは初めて見たが、参考になる。）</p>
-<p>ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。</p>
-<h2 id="ちなみに">ちなみに</h2>
-<p>最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。</p>
-<dl>
-<dt>ユーザー/Organizationページ</dt>
-<dd>&lt;user/organization name&gt;.github.io/
-</dd>
-<dt>プロジェクトページ</dt>
-<dd>&lt;username&gt;.github.io/&lt;repository&gt;/
-</dd>
-</dl>
-<p>（参考：<a href="https://docs.github.com/ja/github/working-with-github-pages/about-github-pages">GitHub Pages について</a>）</p>
-<p>当初はプロジェクトページとして作成していた。 この場合は、公開対象が <code>master</code> ブランチ直下以外に、 <code>master</code> ブランチ直下の <code>docs/</code> ディレクトリも選択することができる。 こうすると、わざわざ <code>source</code> ブランチと <code>master</code> ブランチを分けなくて楽だなー、と思っていたが、 パスの先頭に <code>&lt;repository&gt;</code> をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。 （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）</p>
-<h1 id="そのうち直したいなーなど">そのうち直したいなー、など</h1>
-<p>スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。 他にやっておきたいことは以下かなー。</p>
-<dl>
-<dt>タグ機能</dt>
-<dd>まだ記事が少ないからいいけど、記事が多くなったら分類できるようにしたい。
-</dd>
-<dt>ページネーション</dt>
-<dd>これはまあ、特になくてもいいかも。あると便利、くらい。
-</dd>
-</dl>
-<h1 id="追記-2020-07-09">追記 (2020-07-09)</h1>
-<p>hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。 メタ情報として <code>published: yyyy-mm-dd</code> とかくと、記事にタイムスタンプをつけることができる。 タイムスタンプは、 <code>recentFirst</code> で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。 （<a href="https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html">https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html</a> の <code>dateField</code> あたりに書いてある）</p>
+<h1 id="解いてみる">解いてみる</h1>
+<p>最初制約見ずにうんうん唸っていたが、かなり値が小さいのに気づく。 とはいえ、何をすればよいかちょっと方針が立たなかったので、解説を見る。</p>
+<p>（最初、与えられた <span class="math inline"><em>Q</em></span> 個の4つ組から適当な数列 <span class="math inline"><em>A</em></span> が構成できるんかなーと思って、 その方針でやろうとしたが、全く進展せず・・・）</p>
+<p>この問題では数列 <span class="math inline"><em>A</em></span> 自体は与えられておらず、与えられた条件の下で任意に数列を構成できる。 そのため、あり得る数列を全部列挙し、そのそれぞれについて得点を計算してやれば良い。</p>
+<p>得点については簡単で、以下のように計算できる。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ot">score ::</span> [(<span class="dt">Int</span>,<span class="dt">Int</span>,<span class="dt">Int</span>,<span class="dt">Int</span>)] <span class="ot">-&gt;</span> <span class="dt">UArray</span> <span class="dt">Int</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>score abcds seqA <span class="ot">=</span> <span class="fu">foldr</span> (\(a,b,c,d) x <span class="ot">-&gt;</span> <span class="kw">if</span> seqA<span class="op">!</span>b <span class="op">-</span> seqA<span class="op">!</span>a <span class="op">==</span> c</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                                          <span class="kw">then</span> x <span class="op">+</span> d</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>                                          <span class="kw">else</span> x) <span class="dv">0</span> abcds</span></code></pre></div>
+<p><code>abcds</code> は <span class="math inline"><em>Q</em></span> 個の4つ組、 <code>seqA</code> は適当な数列 <span class="math inline"><em>A</em></span> 。 問題文のとおりに、すべての4つ組について得点の合計を計算する。（今思えば <code>map</code> して <code>sum</code> でも良かったな・・・）</p>
+<p>残りは数列 <span class="math inline"><em>A</em></span> の全列挙だが、こちらがなかなかうまく行かなかった・・・</p>
+<h1 id="数列の全探索">数列の全探索</h1>
+<p>結論から言えば、<a href="https://atcoder.jp/contests/abc165/submissions/12627062">この提出</a>を参考にさせていただいた。</p>
+<p>キモは、数列を再帰的に構成してあげることだ（この考え方がなかなか身につかない・・・）。</p>
+<p>実装は以下の通り。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">genSeqAs ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [[<span class="dt">Int</span>]]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>genSeqAs n m <span class="ot">=</span> go n <span class="dv">1</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>  <span class="kw">where</span> go <span class="dv">0</span> _   <span class="ot">=</span> [[]]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>        go len p <span class="ot">=</span> [a<span class="op">:</span>as <span class="op">|</span> a <span class="ot">&lt;-</span> [p<span class="op">..</span>m], as <span class="ot">&lt;-</span> go (len<span class="op">-</span><span class="dv">1</span>) a]</span></code></pre></div>
+<p>再帰自体は<a href="https://kazu-yamamoto.hatenablog.jp/entry/20171212/1513050147">goな関数</a>として定義している。 数列をCARとCDRに分けたとき、CDRのリストがすでに <code>go</code> によって構成されていると考え、そこから残りの数列を取り出している。 この「すでに構成されている」と見ることは、<a href="https://github.com/kazu-yamamoto/recursion-drill/blob/master/drill/6.md">再帰のこころ</a>そのものだ。</p>
+<blockquote>
+<p>再帰のこころとは</p>
+<ul>
+<li>一歩手前ができているとすると次はどうする？</li>
+</ul>
+<p>だ。</p>
+</blockquote>
+<p>今回で言えば、CDRは長さが1短い数列で、その要素の最小値はCAR未満になることがない、という事実から実装を導くことができる。</p>
+<h1 id="最後に">最後に</h1>
+<p>この記事を見ている人はいないと思うが、もし見ている人がいたら<a href="https://github.com/kazu-yamamoto/recursion-drill/blob/master/README.md">再帰ドリル</a>を是非やってみてください。 再帰のこころを身につけるために、とても良いコンテンツです。</p>
             </div>
             <!-- コメント機能は別途追加する -->
             <!-- {% if page.comments %} -->
