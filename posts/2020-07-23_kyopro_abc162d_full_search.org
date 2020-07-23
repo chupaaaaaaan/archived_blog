@@ -1,0 +1,120 @@
+---
+title: Haskellで精進記録 - ABC162d
+published: 2020-07-23 18:06:00
+tags: haskell, 競プロ
+---
+#+OPTIONS: ^:{}
+
+解いた問題の学びを書いていく。
+
+今回の問題は[[https://atcoder.jp/contests/abc162/tasks/abc162_d][これ]]。テーマは全探索。
+
+* 最初に振り返り
+
+  - 全探索するときは、制約にもよるが、3重ループになってたらちょっとくさい、と思えると良いのかな？
+    - 今回だとちょっと考えれば3重ループを2重ループに直せた・・・悔しい。
+
+  - 手軽さからリストを使いがちだけど、添字での参照が $O(n)$ になるのは厳しい・・・やはり ~Vector~ を使うのになれたほうがいいな。
+    - ~Vector~ で入力を読み込むところなどは、mod_poppo氏のHaskellで競プロ本を参考にしました。
+    - 超いい本なので、みんなも買って読もう！
+
+
+* 素朴な全探索
+
+  今回の問題は、添字が3つあって、 ~i<j<k~ 以外は条件は対称っぽい。
+  多重のforループをぐるぐる回す全探索かな？とあたりをつける。
+
+  そういうループっぽい探索をHaskellで書くときは、リスト内包表記を使うとそれっぽくかける。
+
+  提出したほぼ最初の版がこちら。
+
+  #+BEGIN_SRC haskell
+  main :: IO ()
+  main = do
+    _ <- getLine
+    s <- getLine
+    print $ length [(i,j,k) |
+                    (i,x) <- zip [1..] s,
+                    (j,y) <- zip [(i+1)..] $ drop i s,
+                    (k,z) <- zip [(j+1)..] $ drop j s,
+                    j-i /= k-j,
+                    x/=y,
+                    y/=z,
+                    z/=x]
+  #+END_SRC
+
+  ただ、これだとTLEしてしまう。
+
+* 内側のループを外す
+
+  ごちゃごちゃいじってみたが改善できなかったので解説を確認し、再度提出した版がこちら。
+
+  #+BEGIN_SRC haskell
+  main :: IO ()
+  main = do
+    n <- read <$> getLine :: IO Int
+    s <- getLine
+   
+    let r = length $ filter (=='R') s
+        g = length $ filter (=='G') s
+        b = length $ filter (=='B') s
+        l = length [(i,j) |
+                    (i,x) <- zip [1..] s,
+                    (j,y) <- filter (\p -> snd p /= x) $ zip [(i+1)..] $ drop i s,
+                    x/=y,
+                    n > 2*j-i-1,
+                    x/=(s!!(2*j-i-1)),
+                    y/=(s!!(2*j-i-1))]
+   
+    print $ r * g * b - l
+  #+END_SRC
+
+  最初に、1番目の条件だけを満たすパターンの数を計算しておいて、そこから ~j-i = k-j~ となるパターンの総数を引けば良い。
+  こうすると、最初の版では3重ループになっていたのが2重ループになり、計算量は小さくなるはず・・・
+
+  なのだが、またしてもTLE。
+  原因は、guard節で ~!!~ を使ってリストの要素を参照しているためで、リストの長さに応じた時間がかかってしまう。
+  
+
+* ~Vector~ 化
+
+  今度は、文字列をリストではなく、 ~Data.Vector.Unboxed.Vector~ で持つようにする。
+  そうした最終版がこちら。
+
+  #+BEGIN_SRC haskell
+  main :: IO ()
+  main = do
+    n <- read <$> getLine :: IO Int
+    s <- readLnAsVecNWith n unconsChar
+   
+    let r = VU.length $ VU.filter (=='R') s
+        g = VU.length $ VU.filter (=='G') s
+        b = VU.length $ VU.filter (=='B') s
+        l = length [(i,j) |
+                    (i,x) <- VU.toList $ VU.zip (VU.enumFromN (1::Int) n) s,
+                    (j,y) <- VU.toList $ VU.filter (\p -> snd p /= x) $ VU.zip (VU.enumFromN (i+1) n) $ VU.drop i s,
+                    x/=y,
+                    n > 2*j-i-1,
+                    0 <= 2*j-i-1,
+                    x/=(s VU.! (2*j-i-1)),
+                    y/=(s VU.! (2*j-i-1))]
+   
+    print $ r * g * b - l  
+  #+END_SRC
+
+  ~VU.toList~ でリストに変換するところが $O(n)$ かかってしまうが、それでもリストを生で扱うよりは全然早い。
+
+** ちなみに
+   ~Vector~ で読み込むところはこんな感じで書いている。
+
+   #+BEGIN_SRC haskell
+   unconsChar :: StateT BS.ByteString Maybe Char
+   unconsChar = StateT BS.uncons
+   
+   readLnAsVecNWith :: VU.Unbox a => Int -> StateT BS.ByteString Maybe a -> IO (Vector a)
+   readLnAsVecNWith n st = VU.unfoldrN n (runStateT st) <$> BS.getLine
+   #+END_SRC
+
+   これもmod_poppo氏の本を参考に実装したもの。
+   第2引数の ~StateT BS.ByteString Maybe~ モナドを取り替えることで、文字列ではなく整数の ~Vector~ なども作ることができる。
+   （変換処理が ~s -> Maybe (a, s)~ であることを利用して、生の関数ではなく ~StateT~ モナドトランスフォーマーでラップしてる。なるほど・・・）
