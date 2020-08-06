@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
+        
           <li><a href="./2020-08-06_org_iterating_tasks.html">Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></li>
         
           <li><a href="./2020-07-23_kyopro_abc165c_full_search.html">Haskellで精進記録 - ABC165d</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-07-23_kyopro_abc162d_full_search.html">Haskellで精進記録 - ABC162d</a></li>
         
           <li><a href="./2020-07-19_encoding_mismatch_between_server_and_client.html">GitBash（MSYS2）でsshしたときの文字化けを解消する</a></li>
-        
-          <li><a href="./2020-07-18_change_theme.html">ブログのテーマを変更した</a></li>
         
     </ul>
 </div>
@@ -88,6 +88,121 @@
         </div>
         <div class="col-md-9">
             
+<div class="article">
+  <div class="well">
+        <h1><a href="./2020-08-06_construct_k8s_with_minikube.html">2020-08-06 (Thu) - Minikubeを使って、kubernetesを構築する。</a></h1>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and post.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="content">
+            <h1 id="はじめに">はじめに</h1>
+<p><strong>この記事は、はてなブログで公開していた記事を持ってきたものです（一部リンク等を修正しています）</strong></p>
+<h1 id="追記">追記</h1>
+<p><code>libvirt</code> グループに所属させないと、minikubeでkvm仮想マシンを作成する時エラーになるので、手順を追記しました。</p>
+<h1 id="目的">目的</h1>
+<p>kubernetesを全く触ったことがなく、どんなものか知りたかったので、ちょっと触ってみます。 もともとはEKSで試そうとしましたが、0.20$/hと試してみるには高かったので、ローカル環境でMinikubeを使って構築してみます。</p>
+<p>試した環境はこちら。</p>
+<pre><code>$ cat /etc/centos-release
+CentOS Linux release 7.7.1908 (Core)</code></pre>
+<p>インストール自体は、<a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">公式サイト</a>を参考に実施していきます。</p>
+<p>まず、公式サイトを参考にして、仮想化がサポートされているか確認しておきます。</p>
+<pre><code>$ grep -E --color 'vmx|svm' /proc/cpuinfo 
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d</code></pre>
+<h1 id="kvmのインストール">KVMのインストール</h1>
+<p>Minikubeはローカル環境の仮想マシン上に、Kubernetesをインストールします。そのため、ハイパーバイザをインストールする必要があります。 LinuxだとVirtualboxとKVMが使用できますが、今回はKVMを使ってみることにします。</p>
+<p><a href="https://minikube.sigs.k8s.io/docs/reference/drivers/kvm2/">この辺り</a>を参考にして、KVMをインストールします。</p>
+<pre><code>$ sudo yum install qemu-kvm libvirt libvirt-python libguestfs-tools virt-install
+$ sudo systemctl start libvirtd.service
+$ sudo systemctl enable libvirtd.service
+$ sudo usermod -aG libvirt $(whoami)</code></pre>
+<p>ちゃんとインストールできたか、確認します。</p>
+<pre><code>$ virt-host-validate 
+  QEMU: 確認中 for hardware virtualization                                 : 成功
+  QEMU: 確認中 if device /dev/kvm exists                                   : 成功
+  QEMU: 確認中 if device /dev/kvm is accessible                            : 成功
+  QEMU: 確認中 if device /dev/vhost-net exists                             : 成功
+  QEMU: 確認中 if device /dev/net/tun exists                               : 成功
+  QEMU: 確認中 for cgroup 'memory' controller support                      : 成功
+  QEMU: 確認中 for cgroup 'memory' controller mount-point                  : 成功
+  QEMU: 確認中 for cgroup 'cpu' controller support                         : 成功
+  QEMU: 確認中 for cgroup 'cpu' controller mount-point                     : 成功
+  QEMU: 確認中 for cgroup 'cpuacct' controller support                     : 成功
+  QEMU: 確認中 for cgroup 'cpuacct' controller mount-point                 : 成功
+  QEMU: 確認中 for cgroup 'cpuset' controller support                      : 成功
+  QEMU: 確認中 for cgroup 'cpuset' controller mount-point                  : 成功
+  QEMU: 確認中 for cgroup 'devices' controller support                     : 成功
+  QEMU: 確認中 for cgroup 'devices' controller mount-point                 : 成功
+  QEMU: 確認中 for cgroup 'blkio' controller support                       : 成功
+  QEMU: 確認中 for cgroup 'blkio' controller mount-point                   : 成功
+  QEMU: 確認中 for device assignment IOMMU support                         : 警告 (No ACPI DMAR table found, IOMMU either disabled in BIOS or not supported by this hardware platform)
+   LXC: 確認中 Linux &gt;= 2.6.26 向けです                                : 成功
+   LXC: 確認中 for namespace ipc                                           : 成功
+   LXC: 確認中 for namespace mnt                                           : 成功
+   LXC: 確認中 for namespace pid                                           : 成功
+   LXC: 確認中 for namespace uts                                           : 成功
+   LXC: 確認中 for namespace net                                           : 成功
+   LXC: 確認中 for namespace user                                          : 成功
+   LXC: 確認中 for cgroup 'memory' controller support                      : 成功
+   LXC: 確認中 for cgroup 'memory' controller mount-point                  : 成功
+   LXC: 確認中 for cgroup 'cpu' controller support                         : 成功
+   LXC: 確認中 for cgroup 'cpu' controller mount-point                     : 成功
+   LXC: 確認中 for cgroup 'cpuacct' controller support                     : 成功
+   LXC: 確認中 for cgroup 'cpuacct' controller mount-point                 : 成功
+   LXC: 確認中 for cgroup 'cpuset' controller support                      : 成功
+   LXC: 確認中 for cgroup 'cpuset' controller mount-point                  : 成功
+   LXC: 確認中 for cgroup 'devices' controller support                     : 成功
+   LXC: 確認中 for cgroup 'devices' controller mount-point                 : 成功
+   LXC: 確認中 for cgroup 'blkio' controller support                       : 成功
+   LXC: 確認中 for cgroup 'blkio' controller mount-point                   : 成功
+   LXC: 確認中 if device /sys/fs/fuse/connections exists                   : 失敗 (Load the 'fuse' module to enable /proc/ overrides)</code></pre>
+<pre><code>$ id
+（結果は省略）</code></pre>
+<p><code>/sys/fs/fuse/connections</code>がないよ、って怒られています。 書いてある通り、<code>fuse</code>モジュールをロードします。ついでに、起動時に自動でロードするように設定しておきます。</p>
+<pre><code>$ sudo modprobe fuse
+$ sudo sh -c &quot;echo fuse &gt; /etc/modules-load.d/fuse.conf&quot;</code></pre>
+<h1 id="kubectlおよびminikubeのインストール">kubectlおよびMinikubeのインストール</h1>
+<p>こちらも公式サイト通りに。</p>
+<pre><code>$ curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+$ chmod +x ./kubectl
+$ sudo mv ./kubectl /usr/local/bin/kubectl</code></pre>
+<pre><code>$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-1.6.2.rpm &amp;&amp; sudo rpm -ivh minikube-1.6.2.rpm</code></pre>
+<p>早速クラスタを作ってみます。</p>
+<pre><code>$ minikube start --vm-driver=kvm2
+😄  minikube v1.6.2 on Centos 7.7.1908
+✨  Selecting 'kvm2' driver from user configuration (alternates: [none])
+💾  Downloading driver docker-machine-driver-kvm2:
+    &gt; docker-machine-driver-kvm2.sha256: 65 B / 65 B [-------] 100.00% ? p/s 0s
+    &gt; docker-machine-driver-kvm2: 13.86 MiB / 13.86 MiB  100.00% 2.95 MiB p/s 5
+🔥  Creating kvm2 VM (CPUs=2, Memory=2000MB, Disk=20000MB) ...
+🐳  Preparing Kubernetes v1.17.0 on Docker '19.03.5' ...
+🚜  Pulling images ...
+🚀  Launching Kubernetes ... 
+⌛  Waiting for cluster to come online ...
+🏄  Done! kubectl is now configured to use &quot;minikube&quot;</code></pre>
+<p>ちゃんと作れたか確認してみましょう。</p>
+<pre><code>$ minikube status
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured</code></pre>
+<p>大丈夫そうですね。</p>
+<p>すぐには不要なので、一旦停止しておきます。</p>
+<pre><code>$ minikube stop
+✋  Stopping &quot;minikube&quot; in kvm2 ...
+🛑  &quot;minikube&quot; stopped.</code></pre>
+<p>これで、kubernetesを試す準備ができました。</p>
+        </div>
+    </div>
+</div>
+
 <div class="article">
   <div class="well">
         <h1><a href="./2020-08-06_org_iterating_tasks.html">2020-08-06 (Thu) - Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></h1>
@@ -372,135 +487,6 @@
 <li><a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904">Windowsで使えるターミナルとシェルのまとめ</a></li>
 </ul>
 <p>結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）しか使ってないけど、ちょっと他のも使ってみようかな。</p>
-        </div>
-    </div>
-</div>
-
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-07-18_change_theme.html">2020-07-18 (Sat) - ブログのテーマを変更した</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
-            <h1 id="はじめに">はじめに</h1>
-<p>hakyllのデフォルトのブログテーマではちょっと味気なかったので、別のブログテーマに変更した。</p>
-<p>参考にしたのはこちら。</p>
-<ul>
-<li><a href="https://matsubara0507.github.io/posts/2016-10-24-changed-design.html">Hakyll で作った GitHub Pages のデザインを変更してみた</a></li>
-</ul>
-<p>同じく、<a href="http://katychuang.com/hakyll-cssgarden/gallery/">ここ</a>や<a href="https://jaspervdj.be/hakyll/examples.html">このあたり</a>を見てみたが、あまりしっくり来なかったので<a href="http://jekyllthemes.org/">jekyll</a>のテーマから探すことにした。 自分が選択したテーマは<a href="http://jekyllthemes.org/themes/jekyll-clean/">jekyll-clean</a>で、こちらをhakyllで使えるように修正した。</p>
-<p>基本的にはmatsubaraさんの記事をなぞれば変換できる・・・のだが、今回私が選んだテーマではひと工夫が必要だった。 割と嵌ってしまったので、どう解決したか書く。</p>
-<p>なお、今回は「シンタックスハイライト」及び「configファイル」の対応はやってない。 また、元のテーマにはdisqus及びissoによるコメント機能、google analytics、ページネーションなども実装されていたが、 これらも今回は対応していない（コメントアウトした）。 ゆくゆくは対応したい。</p>
-<p>今回対応したテーマは<a href="https://github.com/chupaaaaaaan/chupaaaaaaan.github.io">こちら</a>に置いてある。</p>
-<h1 id="サイドバーの対応">サイドバーの対応</h1>
-<p>画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。</p>
-<p>単純には、以下のように実装すれば良さそうである。 （ <code>gsubRoute</code> を使って、ルーティングを変更している。）</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>    route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>        recentPosts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll <span class="st">&quot;posts/*&quot;</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> recentPosts) <span class="ot">`mappend`</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>                postCtx <span class="ot">`mappend`</span> siteCtx</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>        pandocCompiler</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/post.html&quot;</span> postsCtx</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
-<p><code>compile</code> でやっていることを説明すると、</p>
-<ol>
-<li><code>posts/*</code> パターンにマッチするコンテンツを作成日時の降順で <code>recentPosts</code> として取得し、</li>
-<li>（サイドバーで参照する） <code>recent_posts</code> をキーとして、 <code>recentPosts</code> をコンテキストに入れて、</li>
-<li><code>posts/*</code> にマッチするコンテンツを <code>pandocCompiler</code> でコンパイルし、</li>
-<li>出来上がったものを <code>layouts/post.html</code> に突っ込む（テンプレート内で <code>$body$</code> と記載されている箇所に代入される）</li>
-</ol>
-<p>となる。ところが、これをコンパイルすると、以下のようなエラーが出てしまう。</p>
-<pre><code>[ERROR] Hakyll.Core.Runtime.chase: Dependency cycle detected: posts/2020-07-09_first_post.org depends on posts/2020-07-09_first_post.org
-</code></pre>
-<p>どうやら、循環参照が発生しているというメッセージのようだ。実際、 <code>posts/*</code> をコンパイルする前に <code>recentPosts</code> として取得しようとしている。 取得のためにコンパイルし、その中でさらに取得し・・・とループしてしまう。</p>
-<p>この問題は、stackoverflowの記事（<a href="https://stackoverflow.com/questions/35645525/hakyll-says-dependency-cycle-detected">ここ</a>とか<a href="https://stackoverflow.com/questions/47067851/how-do-i-avoid-a-dependency-cycle-when-generating-a-list-of-recent-posts-on-post">ここ</a>とか）が参考になる。 ざっくり言えば、別バージョンのコンテンツを作成し、 <code>recentPosts</code> として取得するコンテンツはこちらのバージョンを使用する。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> version <span class="st">&quot;postContents&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  compile <span class="op">$</span> pandocCompiler <span class="op">&gt;&gt;=</span> relativizeUrls</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>    route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>        recentPosts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> recentPosts) <span class="ot">`mappend`</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>                postCtx <span class="ot">`mappend`</span> siteCtx</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>        pandocCompiler</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/post.html&quot;</span> postsCtx</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
-<p>注意すべきポイントとしては、別バージョンのコンテンツを作成する際に <code>route</code> も正しく設定する必要がある。 <code>route</code> を省略してもコンパイルエラーにはならないが、 <code>recent_posts</code> として参照したコンテンツへのリンクが作成されない （ <code>defaultContext</code> に格納される <code>$url$</code> が空になるっぽい）。</p>
-<h2 id="ちなみに">ちなみに</h2>
-<p>循環参照を解決する手段としては、複数のバージョンのコンテンツを用意する方法の他に、<a href="https://groups.google.com/g/hakyll/c/F2j7iztwKEc/m/axLNmksqCAAJ?pli=1">作者から提案された方法</a>もある。 どうやら、「必要なのはメタデータだけなんだから、それだけ取得すればよくね？」ということみたいなのだが、 どうやればよいのかよくわからなかったので、今回は不採用。</p>
-<p>hakyllに出てくる <code>Context a</code> 、 <code>Item a</code> 、 <code>Compiler a</code> などは重要な概念っぽいのだが、まだよくわかってない・・・。</p>
-<h1 id="コンテンツの表示">コンテンツの表示</h1>
-<p>上記で循環参照のエラーはなくなるが、まだ問題はある。</p>
-<p>ドキュメントルート（ <code>index.html</code> ）では、以下のコンテンツが表示される。</p>
-<ul>
-<li>サイドバー
-<ul>
-<li>Description</li>
-<li>Recent Posts</li>
-<li>Links</li>
-</ul></li>
-<li>メインコンテンツ
-<ul>
-<li>最新のコンテンツから順に表示</li>
-</ul></li>
-</ul>
-<p>最初、以下のように実装していた。</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>match (fromList [<span class="st">&quot;archive.html&quot;</span>, <span class="st">&quot;about.html&quot;</span>, <span class="st">&quot;index.html&quot;</span>, <span class="st">&quot;links.html&quot;</span>]) <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>    route idRoute</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll <span class="st">&quot;posts/*&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="ot">`mappend`</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>                listField <span class="st">&quot;posts&quot;</span> postCtx (<span class="fu">return</span> posts) <span class="ot">`mappend`</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>                siteCtx</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>        getResourceBody</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
-<p>今回は循環参照にはならないので、 <code>posts &lt;- recentFirst =&lt;&lt; loadAll "posts/*"</code> のように書いてもコンパイルエラーにはならない。</p>
-<p>が、このように書いてしまうと、2つの問題が発生する。</p>
-<ol>
-<li>Recent Postsに、同じコンテンツへのリンクが2つ表示される</li>
-<li>コンテンツが表示される領域に、（サイドバーを含めて）コンテンツがネストされて表示される（ちょっと説明が難しい・・・）</li>
-</ol>
-<p>ひとつめの問題は、 <code>posts &lt;- recentFirst =&lt;&lt; loadAll "posts/*"</code> のように書いた時に、 <code>posts/*</code> にマッチする全てのコンテンツが取得されてしまうことが原因である。 つまり、バージョン指定なしでコンパイルしたコンテンツと、バージョンを明示したコンテンツのどちらにもマッチしてしまう。 これを防ぐためには、バージョン指定するか、明示的にバージョンが存在しないコンテンツにマッチするように書く必要がある。</p>
-<p>こんな感じ。</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasNoVersion)</span></code></pre></div>
-<p>ふたつめの問題は、 <code>posts/*</code> （のバージョンなし版）にマッチするコンテンツは、既にサイドバーも含めてコンパイル済みであることから来ている （そのようなコンテンツをテンプレートに埋め込もうとするため、コンテンツがネストされてしまう）。 そのため、テンプレートを適用する前で止めたバージョンのコンテンツ（サイドバーやヘッダーがくっついていない）を取得し、 それを使用してコンパイル・テンプレート埋め込みを実施すればよい。</p>
-<p>今回で言えば、 <code>postContents</code> のバージョンがテンプレートを適用していないコンテンツであるため、そちらを取得すればよい。</p>
-<p>最終的には、こんな感じ（ <code>hasNoVersion</code> は使用しない）。</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>match (fromList [<span class="st">&quot;index.html&quot;</span>]) <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>    route idRoute</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="ot">`mappend`</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>                listField <span class="st">&quot;posts&quot;</span> postCtx (<span class="fu">return</span> posts) <span class="ot">`mappend`</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>                siteCtx</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>        getResourceBody</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
-<h2 id="ちなみにその2">ちなみにその2</h2>
-<p>テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに<a href="https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html">スナップショットを利用する方法</a>もある。 こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、 スナップショット方式は採用していない。</p>
-<h1 id="終わりに">終わりに</h1>
-<p>とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。</p>
         </div>
     </div>
 </div>

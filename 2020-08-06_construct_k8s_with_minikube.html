@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>コーヒーと線香と万年筆</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/theme.css" rel="stylesheet" type="text/css">
+    <link href="./css/syntax.css" rel="stylesheet" type="text/css">
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and site.isso != '' %} -->
+<!-- <script data-isso="{{ site.isso }}" src="/js/embed.min.js"></script> -->
+<!-- {% endif %} -->
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./">コーヒーと線香と万年筆</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="./">Home</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
+                    <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./atom.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
+                    
+                    
+                      <li class="active"><a href="https://qiita.com/chupaaaaaaan">Qiita</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+勉強したことおきば
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
+        
+          <li><a href="./2020-08-06_org_iterating_tasks.html">Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></li>
+        
+          <li><a href="./2020-07-23_kyopro_abc165c_full_search.html">Haskellで精進記録 - ABC165d</a></li>
+        
+          <li><a href="./2020-07-23_kyopro_abc162d_full_search.html">Haskellで精進記録 - ABC162d</a></li>
+        
+          <li><a href="./2020-07-19_encoding_mismatch_between_server_and_client.html">GitBash（MSYS2）でsshしたときの文字化けを解消する</a></li>
+        
+    </ul>
+</div>
+
+<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a target="_blank" href="https://hoogle.haskell.org/">Hoogle</a></li>
+  <li><a target="_blank" href="https://www.stackage.org/">Stackage Server</a></li>
+  <li><a target="_blank" href="https://scrapbox.io/haskell-shoen/">Haskell荘園</a></li>
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="./2020-08-06_construct_k8s_with_minikube.html">2020-08-06 (Thu) - Minikubeを使って、kubernetesを構築する。</a></h1>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if site.comments and page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            <div class="post-content">
+            <h1 id="はじめに">はじめに</h1>
+<p><strong>この記事は、はてなブログで公開していた記事を持ってきたものです（一部リンク等を修正しています）</strong></p>
+<h1 id="追記">追記</h1>
+<p><code>libvirt</code> グループに所属させないと、minikubeでkvm仮想マシンを作成する時エラーになるので、手順を追記しました。</p>
+<h1 id="目的">目的</h1>
+<p>kubernetesを全く触ったことがなく、どんなものか知りたかったので、ちょっと触ってみます。 もともとはEKSで試そうとしましたが、0.20$/hと試してみるには高かったので、ローカル環境でMinikubeを使って構築してみます。</p>
+<p>試した環境はこちら。</p>
+<pre><code>$ cat /etc/centos-release
+CentOS Linux release 7.7.1908 (Core)</code></pre>
+<p>インストール自体は、<a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">公式サイト</a>を参考に実施していきます。</p>
+<p>まず、公式サイトを参考にして、仮想化がサポートされているか確認しておきます。</p>
+<pre><code>$ grep -E --color 'vmx|svm' /proc/cpuinfo 
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d</code></pre>
+<h1 id="kvmのインストール">KVMのインストール</h1>
+<p>Minikubeはローカル環境の仮想マシン上に、Kubernetesをインストールします。そのため、ハイパーバイザをインストールする必要があります。 LinuxだとVirtualboxとKVMが使用できますが、今回はKVMを使ってみることにします。</p>
+<p><a href="https://minikube.sigs.k8s.io/docs/reference/drivers/kvm2/">この辺り</a>を参考にして、KVMをインストールします。</p>
+<pre><code>$ sudo yum install qemu-kvm libvirt libvirt-python libguestfs-tools virt-install
+$ sudo systemctl start libvirtd.service
+$ sudo systemctl enable libvirtd.service
+$ sudo usermod -aG libvirt $(whoami)</code></pre>
+<p>ちゃんとインストールできたか、確認します。</p>
+<pre><code>$ virt-host-validate 
+  QEMU: 確認中 for hardware virtualization                                 : 成功
+  QEMU: 確認中 if device /dev/kvm exists                                   : 成功
+  QEMU: 確認中 if device /dev/kvm is accessible                            : 成功
+  QEMU: 確認中 if device /dev/vhost-net exists                             : 成功
+  QEMU: 確認中 if device /dev/net/tun exists                               : 成功
+  QEMU: 確認中 for cgroup 'memory' controller support                      : 成功
+  QEMU: 確認中 for cgroup 'memory' controller mount-point                  : 成功
+  QEMU: 確認中 for cgroup 'cpu' controller support                         : 成功
+  QEMU: 確認中 for cgroup 'cpu' controller mount-point                     : 成功
+  QEMU: 確認中 for cgroup 'cpuacct' controller support                     : 成功
+  QEMU: 確認中 for cgroup 'cpuacct' controller mount-point                 : 成功
+  QEMU: 確認中 for cgroup 'cpuset' controller support                      : 成功
+  QEMU: 確認中 for cgroup 'cpuset' controller mount-point                  : 成功
+  QEMU: 確認中 for cgroup 'devices' controller support                     : 成功
+  QEMU: 確認中 for cgroup 'devices' controller mount-point                 : 成功
+  QEMU: 確認中 for cgroup 'blkio' controller support                       : 成功
+  QEMU: 確認中 for cgroup 'blkio' controller mount-point                   : 成功
+  QEMU: 確認中 for device assignment IOMMU support                         : 警告 (No ACPI DMAR table found, IOMMU either disabled in BIOS or not supported by this hardware platform)
+   LXC: 確認中 Linux &gt;= 2.6.26 向けです                                : 成功
+   LXC: 確認中 for namespace ipc                                           : 成功
+   LXC: 確認中 for namespace mnt                                           : 成功
+   LXC: 確認中 for namespace pid                                           : 成功
+   LXC: 確認中 for namespace uts                                           : 成功
+   LXC: 確認中 for namespace net                                           : 成功
+   LXC: 確認中 for namespace user                                          : 成功
+   LXC: 確認中 for cgroup 'memory' controller support                      : 成功
+   LXC: 確認中 for cgroup 'memory' controller mount-point                  : 成功
+   LXC: 確認中 for cgroup 'cpu' controller support                         : 成功
+   LXC: 確認中 for cgroup 'cpu' controller mount-point                     : 成功
+   LXC: 確認中 for cgroup 'cpuacct' controller support                     : 成功
+   LXC: 確認中 for cgroup 'cpuacct' controller mount-point                 : 成功
+   LXC: 確認中 for cgroup 'cpuset' controller support                      : 成功
+   LXC: 確認中 for cgroup 'cpuset' controller mount-point                  : 成功
+   LXC: 確認中 for cgroup 'devices' controller support                     : 成功
+   LXC: 確認中 for cgroup 'devices' controller mount-point                 : 成功
+   LXC: 確認中 for cgroup 'blkio' controller support                       : 成功
+   LXC: 確認中 for cgroup 'blkio' controller mount-point                   : 成功
+   LXC: 確認中 if device /sys/fs/fuse/connections exists                   : 失敗 (Load the 'fuse' module to enable /proc/ overrides)</code></pre>
+<pre><code>$ id
+（結果は省略）</code></pre>
+<p><code>/sys/fs/fuse/connections</code>がないよ、って怒られています。 書いてある通り、<code>fuse</code>モジュールをロードします。ついでに、起動時に自動でロードするように設定しておきます。</p>
+<pre><code>$ sudo modprobe fuse
+$ sudo sh -c &quot;echo fuse &gt; /etc/modules-load.d/fuse.conf&quot;</code></pre>
+<h1 id="kubectlおよびminikubeのインストール">kubectlおよびMinikubeのインストール</h1>
+<p>こちらも公式サイト通りに。</p>
+<pre><code>$ curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+$ chmod +x ./kubectl
+$ sudo mv ./kubectl /usr/local/bin/kubectl</code></pre>
+<pre><code>$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-1.6.2.rpm &amp;&amp; sudo rpm -ivh minikube-1.6.2.rpm</code></pre>
+<p>早速クラスタを作ってみます。</p>
+<pre><code>$ minikube start --vm-driver=kvm2
+😄  minikube v1.6.2 on Centos 7.7.1908
+✨  Selecting 'kvm2' driver from user configuration (alternates: [none])
+💾  Downloading driver docker-machine-driver-kvm2:
+    &gt; docker-machine-driver-kvm2.sha256: 65 B / 65 B [-------] 100.00% ? p/s 0s
+    &gt; docker-machine-driver-kvm2: 13.86 MiB / 13.86 MiB  100.00% 2.95 MiB p/s 5
+🔥  Creating kvm2 VM (CPUs=2, Memory=2000MB, Disk=20000MB) ...
+🐳  Preparing Kubernetes v1.17.0 on Docker '19.03.5' ...
+🚜  Pulling images ...
+🚀  Launching Kubernetes ... 
+⌛  Waiting for cluster to come online ...
+🏄  Done! kubectl is now configured to use &quot;minikube&quot;</code></pre>
+<p>ちゃんと作れたか確認してみましょう。</p>
+<pre><code>$ minikube status
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured</code></pre>
+<p>大丈夫そうですね。</p>
+<p>すぐには不要なので、一旦停止しておきます。</p>
+<pre><code>$ minikube stop
+✋  Stopping &quot;minikube&quot; in kvm2 ...
+🛑  &quot;minikube&quot; stopped.</code></pre>
+<p>これで、kubernetesを試す準備ができました。</p>
+            </div>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!-- <div id="disqus_thread"> -->
+            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+            <!-- </div> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <section id="isso-thread"></section> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            </div>
+          </div>
+          <div class="pagination">
+              <!-- ページネーションは別途追加する -->
+              <!-- {% if page.next %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+              <!-- {% endif %} -->
+              <!-- {% if page.previous %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+              <!-- {% endif %} -->
+          </div>
+        </div>
+    </div>
+</div>
+
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
+
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
+
+<!--    (function() { -->
+<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--     })(); -->
+<!--   </script> -->
+<!-- {% endif %} -->
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2020 コーヒーと線香と万年筆. Powered by <a href="https://jaspervdj.be/hakyll/">Hakyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a>, theme adjusted to Hakyll by Takayuki Uchida</p>
+        </div>
+    </div>
+</div>
+
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
+
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
+
+<!--    (function () { -->
+<!--      var s = document.createElement('script'); s.async = true; -->
+<!--      s.type = 'text/javascript'; -->
+<!--      s.src = '//' + disqus_shortname + '.disqus.com/count.js'; -->
+<!--      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s); -->
+<!--    }()); -->
+<!--  </script> -->
+<!-- {% endif %} -->
+
+
+
+
+</body>
+</html>
+
