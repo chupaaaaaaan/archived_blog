@@ -89,7 +89,7 @@
         <div class="col-md-9">
           <div class="article">
             <div class="well">
-                <h1><a href="./2020-07-23_kyopro_abc165c_full_search.html">2020-07-24 (Fri) - Haskellで精進記録 - ABC165d</a></h1>
+                <h1><a href="./2020-08-06-org-iterating-tasks.html">2020-07-24 (Fri) - Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></h1>
             <!-- コメント機能は別途追加する -->
             <!-- {% if site.comments and page.comments %} -->
             <!--     {% if site.disqus != '' %} -->
@@ -99,47 +99,81 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <p>解いた問題の学びを書いていく（復習も兼ねて）。</p>
-<p>今回の問題は<a href="https://atcoder.jp/contests/abc165/tasks/abc165_c">これ</a>。テーマはまたしても全探索だが、どっちかというと再帰をちゃんと使おう、のほうが近いかも。</p>
-<h1 id="最初に振り返り">最初に振り返り</h1>
-<ul>
-<li><p>今回は方針が全く立たなかった。制約を見つつ、値が小さいときは何らかの全列挙（全探索）が使えないか見てみるのが良さそう。</p></li>
-<li><p>何かを全列挙する、としたときに、再帰的に構成することを頭に思い浮かべられるとよい。</p>
-<ul>
-<li>問題を小さく分割する癖をつけると、自然と再帰的な構成が浮かぶ？</li>
-<li>全探索というと、どうしてもまだループ的な発想が出てしまうなぁ・・・</li>
-</ul></li>
-</ul>
-<h1 id="解いてみる">解いてみる</h1>
-<p>最初制約見ずにうんうん唸っていたが、かなり値が小さいのに気づく。 とはいえ、何をすればよいかちょっと方針が立たなかったので、解説を見る。</p>
-<p>（最初、与えられた <span class="math inline"><em>Q</em></span> 個の4つ組から適当な数列 <span class="math inline"><em>A</em></span> が構成できるんかなーと思って、 その方針でやろうとしたが、全く進展せず・・・）</p>
-<p>この問題では数列 <span class="math inline"><em>A</em></span> 自体は与えられておらず、与えられた条件の下で任意に数列を構成できる。 そのため、あり得る数列を全部列挙し、そのそれぞれについて得点を計算してやれば良い。</p>
-<p>得点については簡単で、以下のように計算できる。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ot">score ::</span> [(<span class="dt">Int</span>,<span class="dt">Int</span>,<span class="dt">Int</span>,<span class="dt">Int</span>)] <span class="ot">-&gt;</span> <span class="dt">UArray</span> <span class="dt">Int</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>score abcds seqA <span class="ot">=</span> <span class="fu">foldr</span> (\(a,b,c,d) x <span class="ot">-&gt;</span> <span class="kw">if</span> seqA<span class="op">!</span>b <span class="op">-</span> seqA<span class="op">!</span>a <span class="op">==</span> c</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                                          <span class="kw">then</span> x <span class="op">+</span> d</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>                                          <span class="kw">else</span> x) <span class="dv">0</span> abcds</span></code></pre></div>
-<p><code>abcds</code> は <span class="math inline"><em>Q</em></span> 個の4つ組、 <code>seqA</code> は適当な数列 <span class="math inline"><em>A</em></span> 。 問題文のとおりに、すべての4つ組について得点の合計を計算する。（今思えば <code>map</code> して <code>sum</code> でも良かったな・・・）</p>
-<p>残りは数列 <span class="math inline"><em>A</em></span> の全列挙だが、こちらがなかなかうまく行かなかった・・・</p>
-<h1 id="数列の全探索">数列の全探索</h1>
-<p>結論から言えば、<a href="https://atcoder.jp/contests/abc165/submissions/12627062">この提出</a>を参考にさせていただいた。</p>
-<p>キモは、数列を再帰的に構成してあげることだ（この考え方がなかなか身につかない・・・）。</p>
-<p>実装は以下の通り。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">genSeqAs ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [[<span class="dt">Int</span>]]</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>genSeqAs n m <span class="ot">=</span> go n <span class="dv">1</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>  <span class="kw">where</span> go <span class="dv">0</span> _   <span class="ot">=</span> [[]]</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>        go len p <span class="ot">=</span> [a<span class="op">:</span>as <span class="op">|</span> a <span class="ot">&lt;-</span> [p<span class="op">..</span>m], as <span class="ot">&lt;-</span> go (len<span class="op">-</span><span class="dv">1</span>) a]</span></code></pre></div>
-<p>再帰自体は<a href="https://kazu-yamamoto.hatenablog.jp/entry/20171212/1513050147">goな関数</a>として定義している。 数列をCARとCDRに分けたとき、CDRのリストがすでに <code>go</code> によって構成されていると考え、そこから残りの数列を取り出している。 この「すでに構成されている」と見ることは、<a href="https://github.com/kazu-yamamoto/recursion-drill/blob/master/drill/6.md">再帰のこころ</a>そのものだ。</p>
+            <h1 id="はじめに">はじめに</h1>
+<p><strong><strong>この記事は、Gistに書いた記事を持ってきたものです</strong></strong></p>
+<p>Org-habitを使おうとしたときに、躓いたのでメモ。 <a href="https://orgmode.org/manual/Tracking-your-habits.html">公式マニュアル</a>には、以下のような記述がある。</p>
 <blockquote>
-<p>再帰のこころとは</p>
-<ul>
-<li>一歩手前ができているとすると次はどうする？</li>
-</ul>
-<p>だ。</p>
+<p>The TODO has a scheduled date, usually with a ‘.+’ style repeat interval. A ‘++’ style may be appropriate for habits with time constraints, e.g., must be done on weekends, or a ‘+’ style for an unusual habit that can have a backlog, e.g., weekly reports.</p>
 </blockquote>
-<p>今回で言えば、CDRは長さが1短い数列で、その要素の最小値はCAR未満になることがない、という事実から実装を導くことができる。</p>
-<h1 id="最後に">最後に</h1>
-<p>この記事を見ている人はいないと思うが、もし見ている人がいたら<a href="https://github.com/kazu-yamamoto/recursion-drill/blob/master/README.md">再帰ドリル</a>を是非やってみてください。 再帰のこころを身につけるために、とても良いコンテンツです。</p>
+<p>英語力が低いだけだと思うが、 <code>.+</code> 、 <code>++</code> 、 <code>+</code> でどう振る舞いが変わるのかがよくわからなかった。 なので、実験してみる。</p>
+<h1 id="doneにする前後での振る舞い">DONEにする前後での振る舞い</h1>
+<p>以下は、2020/05/13(水)に実施した。</p>
+<h2 id="doneにする前">DONEにする前</h2>
+<pre class="org"><code>
+** TODO 習慣タスク-日次1
+   SCHEDULED: &lt;2020-05-01 金 .+1d&gt;
+
+** TODO 習慣タスク-日次2
+   SCHEDULED: &lt;2020-05-01 金 ++1d&gt;
+
+** TODO 習慣タスク-日次3
+   SCHEDULED: &lt;2020-05-01 金 +1d&gt;
+
+** TODO 習慣タスク-週次1
+   SCHEDULED: &lt;2020-05-01 金 .+1w&gt;
+
+** TODO 習慣タスク-週次2
+   SCHEDULED: &lt;2020-05-01 金 ++1w&gt;
+
+** TODO 習慣タスク-週次3
+   SCHEDULED: &lt;2020-05-01 金 +1w&gt;
+
+</code></pre>
+<h2 id="org-agenda経由で-doneにした後">(org-agenda経由で) DONEにした後</h2>
+<pre class="org"><code>
+** TODO 習慣タスク-日次1
+   SCHEDULED: &lt;2020-05-14 木 .+1d&gt;
+
+** TODO 習慣タスク-日次2
+   SCHEDULED: &lt;2020-05-14 木 ++1d&gt;
+
+** TODO 習慣タスク-日次3
+   SCHEDULED: &lt;2020-05-02 土 +1d&gt;
+
+** TODO 習慣タスク-週次1
+   SCHEDULED: &lt;2020-05-20 水 .+1w&gt;
+
+** TODO 習慣タスク-週次2
+   SCHEDULED: &lt;2020-05-15 金 ++1w&gt;
+
+** TODO 習慣タスク-週次3
+   SCHEDULED: &lt;2020-05-08 金 +1w&gt;
+
+</code></pre>
+<h1 id="考察">考察</h1>
+<h2 id="比較">比較</h2>
+<ul>
+<li><code>.+</code> については、DONEにすると、DONEにした日 (2020/05/13 (水)) を起点にして、翌日もしくは翌週がセットされる。</li>
+<li><code>++</code> については以下の振る舞いとなった。
+<ul>
+<li>日次の方は、 <code>.+</code> の場合と同じ。</li>
+<li>週次の方は、 DONEにした日を起点にして、予めセットした日 (2020/05/01 (金)) と同じ曜日の日で直近の日がセットされる。</li>
+</ul></li>
+<li><code>+</code> については、予めセットした日 (2020/05/01 (金)) を起点にして、翌日もしくは翌週がセットされる。</li>
+</ul>
+<h2 id="どう使えばよいか">どう使えばよいか？</h2>
+<p>公式マニュアルの通り、以下のように使えばよい。 なお、予定されたTODOを必ずその日にこなすのであれば (遅延などがないのであれば) 、どれを選んでも差は出ない (はず) 。</p>
+<dl>
+<dt><code>.+</code></dt>
+<dd>とりあえずこれを選んでおけば良い。
+</dd>
+<dt><code>++</code></dt>
+<dd>毎週○曜日に実施する、といった場合。 (日次の場合は効果がない)
+</dd>
+<dt><code>+</code></dt>
+<dd>その日の分、その週の分を実施することが求められる場合。 (週次レポートは、その週に出したら以前のものを出さなくて良い、ということにはならない)
+</dd>
+</dl>
             </div>
             <!-- コメント機能は別途追加する -->
             <!-- {% if page.comments %} -->

@@ -10,6 +10,14 @@
     </author>
     <updated>2020-07-24T01:30:43Z</updated>
     <entry>
+    <title>Org-habitの、'.+' '++' '+' の振る舞いの違いについて</title>
+    <link href="https://chupaaaaaaan.github.io/2020-08-06-org-iterating-tasks.html" />
+    <id>https://chupaaaaaaan.github.io/2020-08-06-org-iterating-tasks.html</id>
+    <published>2020-07-24 01:30:43</published>
+    <updated>2020-07-24T01:30:43Z</updated>
+    <summary type="html"><![CDATA[feed description]]></summary>
+</entry>
+<entry>
     <title>Haskellで精進記録 - ABC165d</title>
     <link href="https://chupaaaaaaan.github.io/2020-07-23_kyopro_abc165c_full_search.html" />
     <id>https://chupaaaaaaan.github.io/2020-07-23_kyopro_abc165c_full_search.html</id>
@@ -39,14 +47,6 @@
     <id>https://chupaaaaaaan.github.io/2020-07-18_change_theme.html</id>
     <published>2020-07-18 23:16:04</published>
     <updated>2020-07-18T23:16:04Z</updated>
-    <summary type="html"><![CDATA[feed description]]></summary>
-</entry>
-<entry>
-    <title>ブログを始めた</title>
-    <link href="https://chupaaaaaaan.github.io/2020-07-09_first_post.html" />
-    <id>https://chupaaaaaaan.github.io/2020-07-09_first_post.html</id>
-    <published>2020-07-09 09:06:16</published>
-    <updated>2020-07-09T09:06:16Z</updated>
     <summary type="html"><![CDATA[feed description]]></summary>
 </entry>
 

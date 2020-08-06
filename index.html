@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./2020-08-06-org-iterating-tasks.html">Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></li>
+        
           <li><a href="./2020-07-23_kyopro_abc165c_full_search.html">Haskellで精進記録 - ABC165d</a></li>
         
           <li><a href="./2020-07-23_kyopro_abc162d_full_search.html">Haskellで精進記録 - ABC162d</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-07-19_encoding_mismatch_between_server_and_client.html">GitBash（MSYS2）でsshしたときの文字化けを解消する</a></li>
         
           <li><a href="./2020-07-18_change_theme.html">ブログのテーマを変更した</a></li>
-        
-          <li><a href="./2020-07-09_first_post.html">ブログを始めた</a></li>
         
     </ul>
 </div>
@@ -88,6 +88,97 @@
         </div>
         <div class="col-md-9">
             
+<div class="article">
+  <div class="well">
+        <h1><a href="./2020-08-06-org-iterating-tasks.html">2020-07-24 (Fri) - Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></h1>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and post.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="content">
+            <h1 id="はじめに">はじめに</h1>
+<p><strong><strong>この記事は、Gistに書いた記事を持ってきたものです</strong></strong></p>
+<p>Org-habitを使おうとしたときに、躓いたのでメモ。 <a href="https://orgmode.org/manual/Tracking-your-habits.html">公式マニュアル</a>には、以下のような記述がある。</p>
+<blockquote>
+<p>The TODO has a scheduled date, usually with a ‘.+’ style repeat interval. A ‘++’ style may be appropriate for habits with time constraints, e.g., must be done on weekends, or a ‘+’ style for an unusual habit that can have a backlog, e.g., weekly reports.</p>
+</blockquote>
+<p>英語力が低いだけだと思うが、 <code>.+</code> 、 <code>++</code> 、 <code>+</code> でどう振る舞いが変わるのかがよくわからなかった。 なので、実験してみる。</p>
+<h1 id="doneにする前後での振る舞い">DONEにする前後での振る舞い</h1>
+<p>以下は、2020/05/13(水)に実施した。</p>
+<h2 id="doneにする前">DONEにする前</h2>
+<pre class="org"><code>
+** TODO 習慣タスク-日次1
+   SCHEDULED: &lt;2020-05-01 金 .+1d&gt;
+
+** TODO 習慣タスク-日次2
+   SCHEDULED: &lt;2020-05-01 金 ++1d&gt;
+
+** TODO 習慣タスク-日次3
+   SCHEDULED: &lt;2020-05-01 金 +1d&gt;
+
+** TODO 習慣タスク-週次1
+   SCHEDULED: &lt;2020-05-01 金 .+1w&gt;
+
+** TODO 習慣タスク-週次2
+   SCHEDULED: &lt;2020-05-01 金 ++1w&gt;
+
+** TODO 習慣タスク-週次3
+   SCHEDULED: &lt;2020-05-01 金 +1w&gt;
+
+</code></pre>
+<h2 id="org-agenda経由で-doneにした後">(org-agenda経由で) DONEにした後</h2>
+<pre class="org"><code>
+** TODO 習慣タスク-日次1
+   SCHEDULED: &lt;2020-05-14 木 .+1d&gt;
+
+** TODO 習慣タスク-日次2
+   SCHEDULED: &lt;2020-05-14 木 ++1d&gt;
+
+** TODO 習慣タスク-日次3
+   SCHEDULED: &lt;2020-05-02 土 +1d&gt;
+
+** TODO 習慣タスク-週次1
+   SCHEDULED: &lt;2020-05-20 水 .+1w&gt;
+
+** TODO 習慣タスク-週次2
+   SCHEDULED: &lt;2020-05-15 金 ++1w&gt;
+
+** TODO 習慣タスク-週次3
+   SCHEDULED: &lt;2020-05-08 金 +1w&gt;
+
+</code></pre>
+<h1 id="考察">考察</h1>
+<h2 id="比較">比較</h2>
+<ul>
+<li><code>.+</code> については、DONEにすると、DONEにした日 (2020/05/13 (水)) を起点にして、翌日もしくは翌週がセットされる。</li>
+<li><code>++</code> については以下の振る舞いとなった。
+<ul>
+<li>日次の方は、 <code>.+</code> の場合と同じ。</li>
+<li>週次の方は、 DONEにした日を起点にして、予めセットした日 (2020/05/01 (金)) と同じ曜日の日で直近の日がセットされる。</li>
+</ul></li>
+<li><code>+</code> については、予めセットした日 (2020/05/01 (金)) を起点にして、翌日もしくは翌週がセットされる。</li>
+</ul>
+<h2 id="どう使えばよいか">どう使えばよいか？</h2>
+<p>公式マニュアルの通り、以下のように使えばよい。 なお、予定されたTODOを必ずその日にこなすのであれば (遅延などがないのであれば) 、どれを選んでも差は出ない (はず) 。</p>
+<dl>
+<dt><code>.+</code></dt>
+<dd>とりあえずこれを選んでおけば良い。
+</dd>
+<dt><code>++</code></dt>
+<dd>毎週○曜日に実施する、といった場合。 (日次の場合は効果がない)
+</dd>
+<dt><code>+</code></dt>
+<dd>その日の分、その週の分を実施することが求められる場合。 (週次レポートは、その週に出したら以前のものを出さなくて良い、ということにはならない)
+</dd>
+</dl>
+        </div>
+    </div>
+</div>
+
 <div class="article">
   <div class="well">
         <h1><a href="./2020-07-23_kyopro_abc165c_full_search.html">2020-07-24 (Fri) - Haskellで精進記録 - ABC165d</a></h1>
@@ -410,76 +501,6 @@
 <p>テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに<a href="https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html">スナップショットを利用する方法</a>もある。 こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、 スナップショット方式は採用していない。</p>
 <h1 id="終わりに">終わりに</h1>
 <p>とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。</p>
-        </div>
-    </div>
-</div>
-
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-07-09_first_post.html">2020-07-09 (Thu) - ブログを始めた</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
-            <p>いろいろ思うところがあり、ブログを運用することにしました。</p>
-<h1 id="はじめに">はじめに</h1>
-<p>もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、 なんとなく愛着がわかないなー、と思っていた。</p>
-<p>そんな中で、GitHub Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、 Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。</p>
-<h1 id="hakyllのセットアップ">Hakyllのセットアップ</h1>
-<p>今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。 Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。 （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）</p>
-<p>セットアップに当たっては以下を参考にした。（matsubaraさんのが特に参考になった。結構まねてる。）</p>
-<ul>
-<li><a href="https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html">GitHub Paghes はじめました</a></li>
-<li><a href="https://myuon.github.io/posts/hakyll-blog/">HakyllでBlogを作る</a></li>
-<li><a href="https://hackage.haskell.org/package/hakyll">hakyll: A static website compiler library</a></li>
-<li><a href="https://jaspervdj.be/hakyll/tutorials.html">TUTORIALS ABOUT HAKYLL</a></li>
-</ul>
-<p>インストール〜プロジェクト作成は、</p>
-<pre class="shell"><code>$ stack install hakyll
-$ stack exec hakyll-init my_site
-</code></pre>
-<p>とするだけ。プロジェクトを作成したら、 <code>stack.yaml</code> を作っておく。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">resolver</span><span class="kw">:</span><span class="at"> lts-16.3</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="fu">packages</span><span class="kw">:</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">-</span><span class="at"> .</span></span></code></pre></div>
-<p>プロジェクトを作成したばかりでも、 <code>stack build &amp;&amp; stack exec site build &amp;&amp; stack exec site watch</code> でサンプルサイトが立ち上がる （http://localhost:8000 から見ることができる）。 出来上がった <code>site.hs</code> やhackageを見つつ、どんな処理してるのかを確認する。</p>
-<p><code>stack exec site build</code> すると、デフォルトでは、 <code>_site</code> 配下にビルドされた静的コンテンツが、 <code>_cache</code> 配下に何らかのキャッシュが作成される。 これらは <code>.gitignore</code> で管理対象外にしておく（ついでに <code>.stack-work</code> も）。</p>
-<h1 id="github-pagesへのデプロイ">GitHub Pagesへのデプロイ</h1>
-<p>ほとんどこれ。</p>
-<ul>
-<li><a href="https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html">TUTORIAL: USING HAKYLL WITH GITHUB PAGES</a></li>
-</ul>
-<p><code>source</code> ブランチで記事を書き、ビルドしたコンテンツを <code>master</code> ブランチに反映させる。 ポイントは、 <code>source</code> ブランチはもとの記事やビルド用資材のみ、 <code>master</code> ブランチはコンテンツのみ持っているということだ。 <code>_site</code> をGit管理対象外にしておくことで、このディレクトリを通じて、 <code>master</code> ブランチがコンテンツのみ持っている、という状況を作り出せる。 （こういう使い方をするのは初めて見たが、参考になる。）</p>
-<p>ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。</p>
-<h2 id="ちなみに">ちなみに</h2>
-<p>最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。</p>
-<dl>
-<dt>ユーザー/Organizationページ</dt>
-<dd>&lt;user/organization name&gt;.github.io/
-</dd>
-<dt>プロジェクトページ</dt>
-<dd>&lt;username&gt;.github.io/&lt;repository&gt;/
-</dd>
-</dl>
-<p>（参考：<a href="https://docs.github.com/ja/github/working-with-github-pages/about-github-pages">GitHub Pages について</a>）</p>
-<p>当初はプロジェクトページとして作成していた。 この場合は、公開対象が <code>master</code> ブランチ直下以外に、 <code>master</code> ブランチ直下の <code>docs/</code> ディレクトリも選択することができる。 こうすると、わざわざ <code>source</code> ブランチと <code>master</code> ブランチを分けなくて楽だなー、と思っていたが、 パスの先頭に <code>&lt;repository&gt;</code> をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。 （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）</p>
-<h1 id="そのうち直したいなーなど">そのうち直したいなー、など</h1>
-<p>スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。 他にやっておきたいことは以下かなー。</p>
-<dl>
-<dt>タグ機能</dt>
-<dd>まだ記事が少ないからいいけど、記事が多くなったら分類できるようにしたい。
-</dd>
-<dt>ページネーション</dt>
-<dd>これはまあ、特になくてもいいかも。あると便利、くらい。
-</dd>
-</dl>
-<h1 id="追記-2020-07-09">追記 (2020-07-09)</h1>
-<p>hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。 メタ情報として <code>published: yyyy-mm-dd</code> とかくと、記事にタイムスタンプをつけることができる。 タイムスタンプは、 <code>recentFirst</code> で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。 （<a href="https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html">https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html</a> の <code>dateField</code> あたりに書いてある）</p>
         </div>
     </div>
 </div>
