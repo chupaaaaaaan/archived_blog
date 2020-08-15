@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>コーヒーと線香と万年筆</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/theme.css" rel="stylesheet" type="text/css">
+    <link href="./css/syntax.css" rel="stylesheet" type="text/css">
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and site.isso != '' %} -->
+<!-- <script data-isso="{{ site.isso }}" src="/js/embed.min.js"></script> -->
+<!-- {% endif %} -->
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./">コーヒーと線香と万年筆</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="./">Home</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
+                    <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./atom.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
+                    
+                    
+                      <li class="active"><a href="https://qiita.com/chupaaaaaaan">Qiita</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+勉強したことおきば
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
+        
+          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
+        
+          <li><a href="./2020-08-06_org_iterating_tasks.html">Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></li>
+        
+          <li><a href="./2020-07-23_kyopro_abc165c_full_search.html">Haskellで精進記録 - ABC165d</a></li>
+        
+          <li><a href="./2020-07-23_kyopro_abc162d_full_search.html">Haskellで精進記録 - ABC162d</a></li>
+        
+    </ul>
+</div>
+
+<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a target="_blank" href="https://hoogle.haskell.org/">Hoogle</a></li>
+  <li><a target="_blank" href="https://www.stackage.org/">Stackage Server</a></li>
+  <li><a target="_blank" href="https://scrapbox.io/haskell-shoen/">Haskell荘園</a></li>
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">2020-08-16 (Sun) - 実時間キューの挙動を追ってみる</a></h1>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if site.comments and page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            <div class="post-content">
+            <p>グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、 <a href="https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739">なぜ Haskell ではキューが軽んじられているか？</a>にもあるように、キューは標準では提供されていない。</p>
+<p>そこで、以下を参考にしてキューを実装した。 ここでは、実時間キューを実装した（最悪計算量・償却計算量とも <span class="math inline"><em>O</em>(1)</span> のため）。</p>
+<ol>
+<li><a href="http://www.kmonos.net/pub/Presen/PFDS.pdf">20分でわかるPurely Functional Data Structures</a></li>
+<li><a href="https://qiita.com/rst76/items/a7dd81b522a09d1b9986">キューの効率的な実装 または私は如何にしてHaskellを止めてF#を愛するようになったか</a></li>
+<li><a href="http://autotaker.hatenablog.com/entry/2017/12/21/125153">永続リアルタイムキューのHaskell実装と計算量解析</a></li>
+<li><a href="https://rst76.hatenablog.com/entry/20171222/1513963036">Haskell で RealTimeQueue</a></li>
+</ol>
+<p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、 実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。 特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
+<p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
+<h1 id="キューの実装">キューの実装</h1>
+<p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。 そのため、今回はそれらを 省いた実装とした。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Queue</span> a <span class="ot">=</span> <span class="dt">Q</span> {<span class="ot"> front ::</span> [a]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>                 ,<span class="ot"> rear  ::</span> [a]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                 ,<span class="ot"> thunk ::</span> [a]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>                 } <span class="kw">deriving</span> (<span class="dt">Eq</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="ot">empty ::</span> <span class="dt">Queue</span> a</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>empty <span class="ot">=</span> <span class="dt">Q</span> [] [] []</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="ot">pushBack ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Queue</span> a</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>pushBack (<span class="dt">Q</span> f r t) e <span class="ot">=</span> check <span class="op">$!</span> <span class="dt">Q</span> f (e<span class="op">:</span>r) t</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="ot">popFront ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> (a, <span class="dt">Queue</span> a)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>popFront (<span class="dt">Q</span> (e<span class="op">:</span>f) r t) <span class="ot">=</span> (e, check <span class="op">$!</span> <span class="dt">Q</span> f r t)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>popFront (<span class="dt">Q</span> [] _ _)    <span class="ot">=</span> <span class="fu">error</span> <span class="st">&quot;empty queue&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="ot">check ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> <span class="dt">Queue</span> a</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a>check (<span class="dt">Q</span> f r (_<span class="op">:</span>t)) <span class="ot">=</span> <span class="dt">Q</span> f r t</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>check (<span class="dt">Q</span> f r []) <span class="ot">=</span> <span class="kw">let</span> ff <span class="ot">=</span> rotate f r []</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a>                   <span class="kw">in</span> <span class="dt">Q</span> ff [] ff</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>  <span class="kw">where</span><span class="ot"> rotate ::</span> [a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a>        rotate [] (y<span class="op">:</span>_) zs      <span class="ot">=</span> y<span class="op">:</span>zs</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a>        rotate (x<span class="op">:</span>xs) (y<span class="op">:</span>ys) zs <span class="ot">=</span> x <span class="op">:</span> rotate xs ys (y<span class="op">:</span>zs)</span></code></pre></div>
+<h2 id="ちなみに">ちなみに</h2>
+<p>実際、スライドでは <code>thunk</code> が空かどうかでリストの反転操作をするかどうかを決めており、 キューの管理にリストの長さは使用していない。 「実は <code>fl+1 == rl</code> のときだけこっちに来る」のような記載もある （ <code>fl</code> は <code>front</code> リストの長さ、 <code>rl</code> は <code>rear</code> リストの長さ）。</p>
+<p>では、本当に上記が成り立っているのか、確認しておこう。</p>
+<p>ここで、 <code>(f, r, t)</code> をそれぞれ <code>front</code> リスト、 <code>rear</code> リスト、 <code>thunk</code> リストの長さを表すタプルとする。 <code>r = 0</code> のときの <code>f</code> を <code>g</code> とすると、 <code>check</code> の実装より、 <code>t = g</code> となる （なお、これはキューが空の場合も成り立つ）。</p>
+<p>すると、 <code>pushBack</code> もしくは <code>popFront</code> を合わせて <code>g</code> 回実行したとき、タプルは以下のようになっているはずである。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>(f, r, t) <span class="op">==</span> (g, g, <span class="dv">0</span>)     <span class="co">-- pushBackをg回、popFrontを0回</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>          <span class="fu">or</span> (g<span class="op">-</span><span class="dv">1</span>, g<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>) <span class="co">-- pushBackをg-1回、popFrontを1回</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>          <span class="fu">or</span> (g<span class="op">-</span><span class="dv">2</span>, g<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>) <span class="co">-- pushBackをg-2回、popFrontを2回</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>          <span class="op">...</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>          <span class="fu">or</span> (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)     <span class="co">-- pushBackを0回、popFrontをg回</span></span></code></pre></div>
+<p>よって、次に <code>pushBack</code> を実行したタイミングで必ず <code>fl + 1 == rl</code> が成り立つことがわかり、これはプログラムの普遍条件となっている。</p>
+<h1 id="評価の追跡-pushback-2回-popfront-4回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 4回）</h1>
+<p>では実際に、評価を追跡してみる。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>queue0 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>[]) (y<span class="op">:</span>[]) []</span></code></pre></div>
+<p>から初めて、いくつかの操作を行ったときの評価順を見る。 評価済みになったときは、適当に値を補う。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>queue1 <span class="op">==</span> pushBack queue0 e1</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> _ _ _) e1</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> _ (e1<span class="op">:</span>_) _</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) [] (rotate _ (e1<span class="op">:</span>_) [])</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>queue2 <span class="op">==</span> pushBack queue1 e2</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) [] (rotate _ (e1<span class="op">:</span>_) [])) e2</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) (e2<span class="op">:</span>[]) (rotate _ (e1<span class="op">:</span>_) [])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate (x<span class="op">:</span>_) (e1<span class="op">:</span>_) []) (e2<span class="op">:</span>[]) (rotate (x<span class="op">:</span>_) (e1<span class="op">:</span>_) [])</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[]))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[]))</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>(e3, queue3) <span class="op">==</span> popFront queue2</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>             <span class="op">==</span> popFront <span class="op">$</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[]))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[])))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (rotate [] (y<span class="op">:</span>_) (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate [] (y<span class="op">:</span>_) (e1<span class="op">:</span>[])))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (y<span class="op">:</span>e1<span class="op">:</span>[]) (e2<span class="op">:</span>[]) (y<span class="op">:</span>e1<span class="op">:</span>[]))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>             <span class="op">==</span> (x, <span class="dt">Q</span> (y<span class="op">:</span>e1<span class="op">:</span>[]) (e2<span class="op">:</span>[]) (e1<span class="op">:</span>[]))</span></code></pre></div>
+<p>となり、操作のたびに <code>rotate</code> が1つ簡約され、少しずつ <code>reverse</code> 処理が実行されている、というのがわかる。</p>
+<h1 id="評価の追跡-pushback-5回">評価の追跡（ <code>pushBack</code> 5回）</h1>
+<p>次に、 <code>pushBack</code> を連続で実施してみたときの挙動を確認する。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>queue4 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>y<span class="op">:</span>e1<span class="op">:</span>[]) (e4<span class="op">:</span>e3<span class="op">:</span>e2<span class="op">:</span>[]) []</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>queue5 <span class="op">==</span> pushBack queue4 e5</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> _ _ _) e5</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> _ (e5<span class="op">:</span>_) _</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) [] (rotate _ (e5<span class="op">:</span>_) [])</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a>queue6 <span class="op">==</span> pushBack queue5 e6</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) [] (rotate _ (e5<span class="op">:</span>_) [])) e6</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) (e6<span class="op">:</span>[]) (rotate _ (e5<span class="op">:</span>_) [])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate (x<span class="op">:</span>_) (e5<span class="op">:</span>_) []) (e6<span class="op">:</span>[]) (rotate (x<span class="op">:</span>_) (e5<span class="op">:</span>_) [])</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[])) (e6<span class="op">:</span>[]) (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[]))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[])) (e6<span class="op">:</span>[]) (rotate _ _ (e5<span class="op">:</span>[]))</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>queue7 <span class="op">==</span> pushBack queue6 e7</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span> <span class="co">-- queue6 と同じ操作なので省略</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> y <span class="op">:</span> rotate _ _ (e4<span class="op">:</span>e5<span class="op">:</span>[])) (e7<span class="op">:</span>e6<span class="op">:</span>[]) (rotate _ _ (e4<span class="op">:</span>e5<span class="op">:</span>[]))</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a>queue8 <span class="op">==</span> pushBack queue7 e8</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> y <span class="op">:</span> e1 <span class="op">:</span> rotate _ _ (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[])) (e8<span class="op">:</span>e7<span class="op">:</span>e6<span class="op">:</span>[]) (rotate _ _ (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[]))</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>queue9 <span class="op">==</span> pushBack queue8 e9</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x<span class="op">:</span>y<span class="op">:</span>e1<span class="op">:</span>e2<span class="op">:</span>e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[]) (e9<span class="op">:</span>e8<span class="op">:</span>e7<span class="op">:</span>e6<span class="op">:</span>[]) (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[])</span></code></pre></div>
+<p>こちらも、少しずつ <code>reverse</code> 処理が実行されているのがわかる。 トリックは、（2番目の記事で言っている）「停止計算用ストリーム」において、 <code>$!</code> 演算子を介して、 <code>check</code> がパターンマッチにより停止計算を進める（次のWHNFまで評価する）点。 「停止計算用ストリーム」の計算はメモ化されているので、「先頭側ストリーム」も同じ位置まで評価された状態になる （ <code>check</code> でストリームを構成するときに、同じデータを指すようになっている）。</p>
+<h1 id="最後に">最後に</h1>
+<p>実は前も、1番目の資料に挑戦してキューを実装しようとしていたのだが、今回再挑戦してようやく理解できたかな、という感じ。 遅延評価周りはちゃんと考えないと、なんでそうなっているのかが全く追えないので、今回のように1つずつ監訳してみるのは良い手かもしれない。</p>
+            </div>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!-- <div id="disqus_thread"> -->
+            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+            <!-- </div> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <section id="isso-thread"></section> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            </div>
+          </div>
+          <div class="pagination">
+              <!-- ページネーションは別途追加する -->
+              <!-- {% if page.next %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+              <!-- {% endif %} -->
+              <!-- {% if page.previous %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+              <!-- {% endif %} -->
+          </div>
+        </div>
+    </div>
+</div>
+
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
+
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
+
+<!--    (function() { -->
+<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--     })(); -->
+<!--   </script> -->
+<!-- {% endif %} -->
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2020 コーヒーと線香と万年筆. Powered by <a href="https://jaspervdj.be/hakyll/">Hakyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a>, theme adjusted to Hakyll by Takayuki Uchida</p>
+        </div>
+    </div>
+</div>
+
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
+
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
+
+<!--    (function () { -->
+<!--      var s = document.createElement('script'); s.async = true; -->
+<!--      s.type = 'text/javascript'; -->
+<!--      s.src = '//' + disqus_shortname + '.disqus.com/count.js'; -->
+<!--      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s); -->
+<!--    }()); -->
+<!--  </script> -->
+<!-- {% endif %} -->
+
+
+
+
+</body>
+</html>
+

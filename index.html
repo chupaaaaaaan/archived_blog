@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
+        
           <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
         
           <li><a href="./2020-08-06_org_iterating_tasks.html">Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-07-23_kyopro_abc165c_full_search.html">Haskellで精進記録 - ABC165d</a></li>
         
           <li><a href="./2020-07-23_kyopro_abc162d_full_search.html">Haskellで精進記録 - ABC162d</a></li>
-        
-          <li><a href="./2020-07-19_encoding_mismatch_between_server_and_client.html">GitBash（MSYS2）でsshしたときの文字化けを解消する</a></li>
         
     </ul>
 </div>
@@ -88,6 +88,113 @@
         </div>
         <div class="col-md-9">
             
+<div class="article">
+  <div class="well">
+        <h1><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">2020-08-16 (Sun) - 実時間キューの挙動を追ってみる</a></h1>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and post.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="content">
+            <p>グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、 <a href="https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739">なぜ Haskell ではキューが軽んじられているか？</a>にもあるように、キューは標準では提供されていない。</p>
+<p>そこで、以下を参考にしてキューを実装した。 ここでは、実時間キューを実装した（最悪計算量・償却計算量とも <span class="math inline"><em>O</em>(1)</span> のため）。</p>
+<ol>
+<li><a href="http://www.kmonos.net/pub/Presen/PFDS.pdf">20分でわかるPurely Functional Data Structures</a></li>
+<li><a href="https://qiita.com/rst76/items/a7dd81b522a09d1b9986">キューの効率的な実装 または私は如何にしてHaskellを止めてF#を愛するようになったか</a></li>
+<li><a href="http://autotaker.hatenablog.com/entry/2017/12/21/125153">永続リアルタイムキューのHaskell実装と計算量解析</a></li>
+<li><a href="https://rst76.hatenablog.com/entry/20171222/1513963036">Haskell で RealTimeQueue</a></li>
+</ol>
+<p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、 実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。 特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
+<p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
+<h1 id="キューの実装">キューの実装</h1>
+<p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。 そのため、今回はそれらを 省いた実装とした。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Queue</span> a <span class="ot">=</span> <span class="dt">Q</span> {<span class="ot"> front ::</span> [a]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>                 ,<span class="ot"> rear  ::</span> [a]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                 ,<span class="ot"> thunk ::</span> [a]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>                 } <span class="kw">deriving</span> (<span class="dt">Eq</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="ot">empty ::</span> <span class="dt">Queue</span> a</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>empty <span class="ot">=</span> <span class="dt">Q</span> [] [] []</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="ot">pushBack ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Queue</span> a</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>pushBack (<span class="dt">Q</span> f r t) e <span class="ot">=</span> check <span class="op">$!</span> <span class="dt">Q</span> f (e<span class="op">:</span>r) t</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="ot">popFront ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> (a, <span class="dt">Queue</span> a)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>popFront (<span class="dt">Q</span> (e<span class="op">:</span>f) r t) <span class="ot">=</span> (e, check <span class="op">$!</span> <span class="dt">Q</span> f r t)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>popFront (<span class="dt">Q</span> [] _ _)    <span class="ot">=</span> <span class="fu">error</span> <span class="st">&quot;empty queue&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="ot">check ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> <span class="dt">Queue</span> a</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a>check (<span class="dt">Q</span> f r (_<span class="op">:</span>t)) <span class="ot">=</span> <span class="dt">Q</span> f r t</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>check (<span class="dt">Q</span> f r []) <span class="ot">=</span> <span class="kw">let</span> ff <span class="ot">=</span> rotate f r []</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a>                   <span class="kw">in</span> <span class="dt">Q</span> ff [] ff</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>  <span class="kw">where</span><span class="ot"> rotate ::</span> [a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a>        rotate [] (y<span class="op">:</span>_) zs      <span class="ot">=</span> y<span class="op">:</span>zs</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a>        rotate (x<span class="op">:</span>xs) (y<span class="op">:</span>ys) zs <span class="ot">=</span> x <span class="op">:</span> rotate xs ys (y<span class="op">:</span>zs)</span></code></pre></div>
+<h2 id="ちなみに">ちなみに</h2>
+<p>実際、スライドでは <code>thunk</code> が空かどうかでリストの反転操作をするかどうかを決めており、 キューの管理にリストの長さは使用していない。 「実は <code>fl+1 == rl</code> のときだけこっちに来る」のような記載もある （ <code>fl</code> は <code>front</code> リストの長さ、 <code>rl</code> は <code>rear</code> リストの長さ）。</p>
+<p>では、本当に上記が成り立っているのか、確認しておこう。</p>
+<p>ここで、 <code>(f, r, t)</code> をそれぞれ <code>front</code> リスト、 <code>rear</code> リスト、 <code>thunk</code> リストの長さを表すタプルとする。 <code>r = 0</code> のときの <code>f</code> を <code>g</code> とすると、 <code>check</code> の実装より、 <code>t = g</code> となる （なお、これはキューが空の場合も成り立つ）。</p>
+<p>すると、 <code>pushBack</code> もしくは <code>popFront</code> を合わせて <code>g</code> 回実行したとき、タプルは以下のようになっているはずである。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>(f, r, t) <span class="op">==</span> (g, g, <span class="dv">0</span>)     <span class="co">-- pushBackをg回、popFrontを0回</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>          <span class="fu">or</span> (g<span class="op">-</span><span class="dv">1</span>, g<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>) <span class="co">-- pushBackをg-1回、popFrontを1回</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>          <span class="fu">or</span> (g<span class="op">-</span><span class="dv">2</span>, g<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>) <span class="co">-- pushBackをg-2回、popFrontを2回</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>          <span class="op">...</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>          <span class="fu">or</span> (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)     <span class="co">-- pushBackを0回、popFrontをg回</span></span></code></pre></div>
+<p>よって、次に <code>pushBack</code> を実行したタイミングで必ず <code>fl + 1 == rl</code> が成り立つことがわかり、これはプログラムの普遍条件となっている。</p>
+<h1 id="評価の追跡-pushback-2回-popfront-4回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 4回）</h1>
+<p>では実際に、評価を追跡してみる。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>queue0 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>[]) (y<span class="op">:</span>[]) []</span></code></pre></div>
+<p>から初めて、いくつかの操作を行ったときの評価順を見る。 評価済みになったときは、適当に値を補う。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>queue1 <span class="op">==</span> pushBack queue0 e1</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> _ _ _) e1</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> _ (e1<span class="op">:</span>_) _</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) [] (rotate _ (e1<span class="op">:</span>_) [])</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>queue2 <span class="op">==</span> pushBack queue1 e2</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) [] (rotate _ (e1<span class="op">:</span>_) [])) e2</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) (e2<span class="op">:</span>[]) (rotate _ (e1<span class="op">:</span>_) [])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate (x<span class="op">:</span>_) (e1<span class="op">:</span>_) []) (e2<span class="op">:</span>[]) (rotate (x<span class="op">:</span>_) (e1<span class="op">:</span>_) [])</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[]))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[]))</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>(e3, queue3) <span class="op">==</span> popFront queue2</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>             <span class="op">==</span> popFront <span class="op">$</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[]))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[])))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (rotate [] (y<span class="op">:</span>_) (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate [] (y<span class="op">:</span>_) (e1<span class="op">:</span>[])))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (y<span class="op">:</span>e1<span class="op">:</span>[]) (e2<span class="op">:</span>[]) (y<span class="op">:</span>e1<span class="op">:</span>[]))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>             <span class="op">==</span> (x, <span class="dt">Q</span> (y<span class="op">:</span>e1<span class="op">:</span>[]) (e2<span class="op">:</span>[]) (e1<span class="op">:</span>[]))</span></code></pre></div>
+<p>となり、操作のたびに <code>rotate</code> が1つ簡約され、少しずつ <code>reverse</code> 処理が実行されている、というのがわかる。</p>
+<h1 id="評価の追跡-pushback-5回">評価の追跡（ <code>pushBack</code> 5回）</h1>
+<p>次に、 <code>pushBack</code> を連続で実施してみたときの挙動を確認する。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>queue4 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>y<span class="op">:</span>e1<span class="op">:</span>[]) (e4<span class="op">:</span>e3<span class="op">:</span>e2<span class="op">:</span>[]) []</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>queue5 <span class="op">==</span> pushBack queue4 e5</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> _ _ _) e5</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> _ (e5<span class="op">:</span>_) _</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) [] (rotate _ (e5<span class="op">:</span>_) [])</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a>queue6 <span class="op">==</span> pushBack queue5 e6</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) [] (rotate _ (e5<span class="op">:</span>_) [])) e6</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) (e6<span class="op">:</span>[]) (rotate _ (e5<span class="op">:</span>_) [])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate (x<span class="op">:</span>_) (e5<span class="op">:</span>_) []) (e6<span class="op">:</span>[]) (rotate (x<span class="op">:</span>_) (e5<span class="op">:</span>_) [])</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[])) (e6<span class="op">:</span>[]) (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[]))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[])) (e6<span class="op">:</span>[]) (rotate _ _ (e5<span class="op">:</span>[]))</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>queue7 <span class="op">==</span> pushBack queue6 e7</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span> <span class="co">-- queue6 と同じ操作なので省略</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> y <span class="op">:</span> rotate _ _ (e4<span class="op">:</span>e5<span class="op">:</span>[])) (e7<span class="op">:</span>e6<span class="op">:</span>[]) (rotate _ _ (e4<span class="op">:</span>e5<span class="op">:</span>[]))</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a>queue8 <span class="op">==</span> pushBack queue7 e8</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> y <span class="op">:</span> e1 <span class="op">:</span> rotate _ _ (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[])) (e8<span class="op">:</span>e7<span class="op">:</span>e6<span class="op">:</span>[]) (rotate _ _ (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[]))</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>queue9 <span class="op">==</span> pushBack queue8 e9</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x<span class="op">:</span>y<span class="op">:</span>e1<span class="op">:</span>e2<span class="op">:</span>e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[]) (e9<span class="op">:</span>e8<span class="op">:</span>e7<span class="op">:</span>e6<span class="op">:</span>[]) (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[])</span></code></pre></div>
+<p>こちらも、少しずつ <code>reverse</code> 処理が実行されているのがわかる。 トリックは、（2番目の記事で言っている）「停止計算用ストリーム」において、 <code>$!</code> 演算子を介して、 <code>check</code> がパターンマッチにより停止計算を進める（次のWHNFまで評価する）点。 「停止計算用ストリーム」の計算はメモ化されているので、「先頭側ストリーム」も同じ位置まで評価された状態になる （ <code>check</code> でストリームを構成するときに、同じデータを指すようになっている）。</p>
+<h1 id="最後に">最後に</h1>
+<p>実は前も、1番目の資料に挑戦してキューを実装しようとしていたのだが、今回再挑戦してようやく理解できたかな、という感じ。 遅延評価周りはちゃんと考えないと、なんでそうなっているのかが全く追えないので、今回のように1つずつ監訳してみるのは良い手かもしれない。</p>
+        </div>
+    </div>
+</div>
+
 <div class="article">
   <div class="well">
         <h1><a href="./2020-08-06_construct_k8s_with_minikube.html">2020-08-06 (Thu) - Minikubeを使って、kubernetesを構築する。</a></h1>
@@ -444,49 +551,6 @@ kubeconfig: Configured</code></pre>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="ot">readLnAsVecNWith ::</span> <span class="dt">VU.Unbox</span> a <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">StateT</span> <span class="dt">BS.ByteString</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Vector</span> a)</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>readLnAsVecNWith n st <span class="ot">=</span> VU.unfoldrN n (runStateT st) <span class="op">&lt;$&gt;</span> BS.getLine</span></code></pre></div>
 <p>これもmod_poppo氏の本を参考に実装したもの。 第2引数の <code>StateT BS.ByteString Maybe</code> モナドを取り替えることで、文字列ではなく整数の <code>Vector</code> なども作ることができる。 （変換処理が <code>s -&gt; Maybe (a, s)</code> であることを利用して、生の関数ではなく <code>StateT</code> モナドトランスフォーマーでラップしてる。なるほど・・・）</p>
-        </div>
-    </div>
-</div>
-
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-07-19_encoding_mismatch_between_server_and_client.html">2020-07-19 (Sun) - GitBash（MSYS2）でsshしたときの文字化けを解消する</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
-            <h1 id="はじめに">はじめに</h1>
-<p>タイトルまんまです。</p>
-<p>やんごとなき理由により、Linuxサーバ（RHEL7）でとあるユーザの文字エンコーディングをUTF-8からEUC-JPに変更する必要があった。 ちゃんと <code>ja_JP.eucjp</code> もインストールされていたので、対象ユーザの <code>~/.bash_profile</code> に以下を設定すれば良い。</p>
-<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>$ <span class="fu">cat</span> ~/.bash_profile <span class="kw">|</span> <span class="fu">grep</span> LANG</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
-<p>設定されているかの確認は以下（ <code>source</code> するか、再ログインしてから確認する） 。</p>
-<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>$ <span class="fu">env</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^LANG=&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
-<p>これでちゃんと日本語が表示されるはずなのだが、GitBashでsshして接続すると、何故か文字化けしてしまう。</p>
-<h1 id="原因">原因</h1>
-<p>まんまこれと同じでした。</p>
-<ul>
-<li><a href="https://ja.stackoverflow.com/questions/55304/msys2-%25E3%2581%25AE-ssh-%25E3%2581%25A7euc-jp%25E7%2592%25B0%25E5%25A2%2583%25E3%2581%25AB%25E3%2583%25AA%25E3%2583%25A2%25E3%2583%25BC%25E3%2583%2588%25E6%258E%25A5%25E7%25B6%259A%25E3%2581%2597%25E3%2581%259F%25E5%25A0%25B4%25E5%2590%2588%25E3%2581%25AB%25E6%2596%2587%25E5%25AD%2597%25E5%258C%2596%25E3%2581%2591%25E3%2582%2592%25E5%259B%259E%25E9%2581%25BF%25E3%2581%2599%25E3%2582%258B%25E6%2596%25B9%25E6%25B3%2595">msys2 の ssh でeuc-jp環境にリモート接続した場合に文字化けを回避する方法</a></li>
-</ul>
-<p>GitBash（Git for Windowsに同梱されているシェル環境）は<a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#git-for-windows">MSYS2ベース</a>なので、同じ現象に該当すると思われる。 状況としては、サーバからEUC-JPエンコーディングのバイナリが送られているが、クライアント側で別のエンコーディングのデータとして解釈されており、結果として文字化けが発生しているようだ。</p>
-<h1 id="解決">解決</h1>
-<p>同じページの回答にある、 <code>luit</code> というツールを導入することで解消した。このツールは、プロセスの間に立って受け取るデータのエンコーディングをいい感じに変換してくれるみたい。 <code>luit.exe</code> のバイナリをパスの通ったディレクトリに起き、以下を実行すれば文字化けなく表示される。</p>
-<div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">luit.exe</span> -encoding eucjp -- ssh <span class="va">${SERVERNAME}</span></span></code></pre></div>
-<p>毎回これをするのはめんどいが、そんなに実行する機会もないはずなので、一旦はこれでOK。 （当初はサーバ側の問題と勘違いし、設定方法を確認したり<a href="https://qiita.com/qiitamatumoto/items/efffc0ef6e6249533201">このあたり</a>やってみたりで半日くらい時間を溶かしてしまったのは秘密。）</p>
-<h2 id="ちなみに">ちなみに</h2>
-<p>同様にクライアントが受け取る文字エンコーディングをいい感じに変換してくれるツールとして、 <a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#cocot">cocot</a>というのもある。 最初自分もこちらを試してみたが、うまく動かせなかった（多分使い方が間違ってる）。</p>
-<h1 id="補記">補記</h1>
-<p>Windowsで使えるシェル環境ってあんまり知らなかったけど、調べている中で面白い記事を発見した。</p>
-<ul>
-<li><a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904">Windowsで使えるターミナルとシェルのまとめ</a></li>
-</ul>
-<p>結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）しか使ってないけど、ちょっと他のも使ってみようかな。</p>
         </div>
     </div>
 </div>
