@@ -1,0 +1,167 @@
+---
+title: 実時間キューの挙動を追ってみる
+published: 2020-08-16 03:01:59
+tags: haskell
+---
+#+OPTIONS: ^:{}
+
+グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、
+[[https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739][なぜ Haskell ではキューが軽んじられているか？]]にもあるように、キューは標準では提供されていない。
+
+そこで、以下を参考にしてキューを実装した。
+ここでは、実時間キューを実装した（最悪計算量・償却計算量とも $O(1)$ のため）。
+
+1. [[http://www.kmonos.net/pub/Presen/PFDS.pdf][20分でわかるPurely Functional Data Structures]]
+2. [[https://qiita.com/rst76/items/a7dd81b522a09d1b9986][キューの効率的な実装 または私は如何にしてHaskellを止めてF#を愛するようになったか]]
+3. [[http://autotaker.hatenablog.com/entry/2017/12/21/125153][永続リアルタイムキューのHaskell実装と計算量解析]]
+4. [[https://rst76.hatenablog.com/entry/20171222/1513963036][Haskell で RealTimeQueue]]
+
+
+ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、
+実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。
+特に、「少しずつ ~reverse~ 処理を進める」といったところ。
+
+ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。
+
+* キューの実装
+  スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。
+  そのため、今回はそれらを 省いた実装とした。
+
+  #+BEGIN_SRC haskell
+  data Queue a = Q { front :: [a]
+                   , rear  :: [a]
+                   , thunk :: [a]
+                   } deriving (Eq)
+  
+  empty :: Queue a
+  empty = Q [] [] []
+  
+  pushBack :: Queue a -> a -> Queue a
+  pushBack (Q f r t) e = check $! Q f (e:r) t
+  
+  popFront :: Queue a -> (a, Queue a)
+  popFront (Q (e:f) r t) = (e, check $! Q f r t)
+  popFront (Q [] _ _)    = error "empty queue"
+  
+  check :: Queue a -> Queue a
+  check (Q f r (_:t)) = Q f r t
+  check (Q f r []) = let ff = rotate f r []
+                     in Q ff [] ff
+    where rotate :: [a] -> [a] -> [a] -> [a]
+          rotate [] (y:_) zs      = y:zs
+          rotate (x:xs) (y:ys) zs = x : rotate xs ys (y:zs)
+  #+END_SRC
+
+** ちなみに
+   実際、スライドでは ~thunk~ が空かどうかでリストの反転操作をするかどうかを決めており、
+   キューの管理にリストの長さは使用していない。
+   「実は ~fl+1 == rl~ のときだけこっちに来る」のような記載もある
+   （ ~fl~ は ~front~ リストの長さ、 ~rl~ は ~rear~ リストの長さ）。
+
+   では、本当に上記が成り立っているのか、確認しておこう。
+
+   ここで、 ~(f, r, t)~ をそれぞれ ~front~ リスト、 ~rear~ リスト、 ~thunk~ リストの長さを表すタプルとする。
+   ~r = 0~ のときの ~f~ を ~g~ とすると、 ~check~ の実装より、 ~t = g~ となる
+   （なお、これはキューが空の場合も成り立つ）。
+
+   すると、 ~pushBack~ もしくは ~popFront~ を合わせて ~g~ 回実行したとき、タプルは以下のようになっているはずである。
+
+   #+BEGIN_SRC haskell
+   (f, r, t) == (g, g, 0)     -- pushBackをg回、popFrontを0回
+             or (g-1, g-1, 0) -- pushBackをg-1回、popFrontを1回
+             or (g-2, g-2, 0) -- pushBackをg-2回、popFrontを2回
+             ...
+             or (0, 0, 0)     -- pushBackを0回、popFrontをg回
+   #+END_SRC
+
+   よって、次に ~pushBack~ を実行したタイミングで必ず ~fl + 1 == rl~ が成り立つことがわかり、これはプログラムの普遍条件となっている。
+
+* 評価の追跡（ ~pushBack~ 2回→ ~popFront~ 4回）
+
+  では実際に、評価を追跡してみる。
+
+  #+BEGIN_SRC haskell
+  queue0 = Q (x:[]) (y:[]) []
+  #+END_SRC
+
+  から初めて、いくつかの操作を行ったときの評価順を見る。
+  評価済みになったときは、適当に値を補う。
+
+  #+BEGIN_SRC haskell
+  queue1 == pushBack queue0 e1
+         == pushBack (Q _ _ _) e1
+         == check $! Q _ (e1:_) _
+         == Q (rotate _ (e1:_) []) [] (rotate _ (e1:_) [])
+  #+END_SRC
+
+  #+BEGIN_SRC haskell
+  queue2 == pushBack queue1 e2
+         == pushBack (Q (rotate _ (e1:_) []) [] (rotate _ (e1:_) [])) e2
+         == check $! Q (rotate _ (e1:_) []) (e2:[]) (rotate _ (e1:_) [])
+         == check $! Q (rotate (x:_) (e1:_) []) (e2:[]) (rotate (x:_) (e1:_) [])
+         == check $! Q (x : rotate _ _ (e1:[])) (e2:[]) (x : rotate _ _ (e1:[]))
+         == Q (x : rotate _ _ (e1:[])) (e2:[]) (rotate _ _ (e1:[]))
+  #+END_SRC
+
+  #+BEGIN_SRC haskell
+  (e3, queue3) == popFront queue2
+               == popFront $ Q (x : rotate _ _ (e1:[])) (e2:[]) (rotate _ _ (e1:[]))
+               == (x, check $! Q (rotate _ _ (e1:[])) (e2:[]) (rotate _ _ (e1:[])))
+               == (x, check $! Q (rotate [] (y:_) (e1:[])) (e2:[]) (rotate [] (y:_) (e1:[])))
+               == (x, check $! Q (y:e1:[]) (e2:[]) (y:e1:[]))
+               == (x, Q (y:e1:[]) (e2:[]) (e1:[]))
+  #+END_SRC
+
+  となり、操作のたびに ~rotate~ が1つ簡約され、少しずつ ~reverse~ 処理が実行されている、というのがわかる。
+
+
+
+* 評価の追跡（ ~pushBack~ 5回）
+  次に、 ~pushBack~ を連続で実施してみたときの挙動を確認する。
+  #+BEGIN_SRC haskell
+  queue4 = Q (x:y:e1:[]) (e4:e3:e2:[]) []
+  #+END_SRC
+
+  #+BEGIN_SRC haskell
+  queue5 == pushBack queue4 e5
+         == pushBack (Q _ _ _) e5
+         == check $! Q _ (e5:_) _
+         == Q (rotate _ (e5:_) []) [] (rotate _ (e5:_) [])
+  #+END_SRC
+
+  #+BEGIN_SRC haskell
+  queue6 == pushBack queue5 e6
+         == pushBack (Q (rotate _ (e5:_) []) [] (rotate _ (e5:_) [])) e6
+         == check $! Q (rotate _ (e5:_) []) (e6:[]) (rotate _ (e5:_) [])
+         == check $! Q (rotate (x:_) (e5:_) []) (e6:[]) (rotate (x:_) (e5:_) [])
+         == check $! Q (x : rotate _ _ (e5:[])) (e6:[]) (x : rotate _ _ (e5:[]))
+         == Q (x : rotate _ _ (e5:[])) (e6:[]) (rotate _ _ (e5:[]))
+  #+END_SRC
+
+  #+BEGIN_SRC haskell
+  queue7 == pushBack queue6 e7
+         == ... -- queue6 と同じ操作なので省略
+         == Q (x : y : rotate _ _ (e4:e5:[])) (e7:e6:[]) (rotate _ _ (e4:e5:[]))
+  #+END_SRC
+
+  #+BEGIN_SRC haskell
+  queue8 == pushBack queue7 e8
+         == ...
+         == Q (x : y : e1 : rotate _ _ (e3:e4:e5:[])) (e8:e7:e6:[]) (rotate _ _ (e3:e4:e5:[]))
+  #+END_SRC
+
+  #+BEGIN_SRC haskell
+  queue9 == pushBack queue8 e9
+         == ...
+         == Q (x:y:e1:e2:e3:e4:e5:[]) (e9:e8:e7:e6:[]) (e3:e4:e5:[])
+  #+END_SRC
+
+  こちらも、少しずつ ~reverse~ 処理が実行されているのがわかる。
+  トリックは、（2番目の記事で言っている）「停止計算用ストリーム」において、 ~$!~ 演算子を介して、 ~check~ がパターンマッチにより停止計算を進める（次のWHNFまで評価する）点。
+  「停止計算用ストリーム」の計算はメモ化されているので、「先頭側ストリーム」も同じ位置まで評価された状態になる
+  （ ~check~ でストリームを構成するときに、同じデータを指すようになっている）。
+
+
+* 最後に
+  実は前も、1番目の資料に挑戦してキューを実装しようとしていたのだが、今回再挑戦してようやく理解できたかな、という感じ。
+  遅延評価周りはちゃんと考えないと、なんでそうなっているのかが全く追えないので、今回のように1つずつ監訳してみるのは良い手かもしれない。
