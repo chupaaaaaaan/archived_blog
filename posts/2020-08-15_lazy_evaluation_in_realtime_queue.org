@@ -76,7 +76,7 @@ tags: haskell
 
    よって、次に ~pushBack~ を実行したタイミングで必ず ~fl + 1 == rl~ が成り立つことがわかり、これはプログラムの普遍条件となっている。
 
-* 評価の追跡（ ~pushBack~ 2回→ ~popFront~ 4回）
+* 評価の追跡（ ~pushBack~ 2回→ ~popFront~ 1回）
 
   では実際に、評価を追跡してみる。
 
