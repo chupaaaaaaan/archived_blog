@@ -145,7 +145,7 @@
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>          <span class="op">...</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>          <span class="fu">or</span> (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)     <span class="co">-- pushBackを0回、popFrontをg回</span></span></code></pre></div>
 <p>よって、次に <code>pushBack</code> を実行したタイミングで必ず <code>fl + 1 == rl</code> が成り立つことがわかり、これはプログラムの普遍条件となっている。</p>
-<h1 id="評価の追跡-pushback-2回-popfront-4回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 4回）</h1>
+<h1 id="評価の追跡-pushback-2回-popfront-1回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 1回）</h1>
 <p>では実際に、評価を追跡してみる。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>queue0 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>[]) (y<span class="op">:</span>[]) []</span></code></pre></div>
 <p>から初めて、いくつかの操作を行ったときの評価順を見る。 評価済みになったときは、適当に値を補う。</p>
