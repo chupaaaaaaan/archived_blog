@@ -110,7 +110,7 @@
 <p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、 実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。 特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
 <p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
 <h1 id="キューの実装">キューの実装</h1>
-<p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。 そのため、今回はそれらを 省いた実装とした。</p>
+<p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。 そのため、今回はそれらを省いた実装とした。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Queue</span> a <span class="ot">=</span> <span class="dt">Q</span> {<span class="ot"> front ::</span> [a]</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>                 ,<span class="ot"> rear  ::</span> [a]</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                 ,<span class="ot"> thunk ::</span> [a]</span>
@@ -143,7 +143,7 @@
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>          <span class="fu">or</span> (g<span class="op">-</span><span class="dv">2</span>, g<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>) <span class="co">-- pushBackをg-2回、popFrontを2回</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>          <span class="op">...</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>          <span class="fu">or</span> (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)     <span class="co">-- pushBackを0回、popFrontをg回</span></span></code></pre></div>
-<p>よって、次に <code>pushBack</code> を実行したタイミングで必ず <code>fl + 1 == rl</code> が成り立つことがわかり、これはプログラムの普遍条件となっている。</p>
+<p>よって、次に <code>pushBack</code> を実行したタイミングで必ず <code>fl + 1 == rl</code> が成り立つことがわかり、これはプログラムの不変条件となっている。</p>
 <h1 id="評価の追跡-pushback-2回-popfront-1回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 1回）</h1>
 <p>では実際に、評価を追跡してみる。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>queue0 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>[]) (y<span class="op">:</span>[]) []</span></code></pre></div>
