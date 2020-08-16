@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
-import Debug.Trace
+import qualified Skylighting
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -10,6 +10,10 @@ main = hakyll $ do
     match "images/*" $ do
         route   idRoute
         compile copyFileCompiler
+
+    create ["css/highlight.css"] $ do
+        route   idRoute
+        compile $ makeItem (compressCss $ Skylighting.styleToCss Skylighting.pygments)
 
     match "css/*" $ do
         route   idRoute
@@ -30,7 +34,7 @@ main = hakyll $ do
             let postsCtx =
                     listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
                     postCtx `mappend` siteCtx
-          
+
             pandocCompiler
               >>= loadAndApplyTemplate "layouts/post.html" postsCtx
               >>= relativizeUrls
@@ -76,7 +80,7 @@ postCtx =
   dateField "date" "%Y-%m-%d (%a)" `mappend`
   dateField "year" "%Y" `mappend`
   defaultContext
-  
+
 feedConf :: FeedConfiguration
 feedConf = FeedConfiguration
     { feedTitle       = "コーヒーと線香と万年筆: 最近の投稿"
