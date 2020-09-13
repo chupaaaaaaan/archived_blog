@@ -6,7 +6,7 @@ cd $(dirname $0)
 
 git checkout source
 
-./build.sh
+./build.sh no-watch
 
 git add . && git commit -m "publish" && git push
 
