@@ -8,8 +8,16 @@
         <name>Takayuki Uchida</name>
         <email></email>
     </author>
-    <updated>2020-08-24 23:06:02</updated>
+    <updated>2020-09-14T10:10:33Z</updated>
     <entry>
+    <title>Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</title>
+    <link href="https://chupaaaaaaan.github.io/2020-09-14_webapp_security_01.html" />
+    <id>https://chupaaaaaaan.github.io/2020-09-14_webapp_security_01.html</id>
+    <published>2020-09-14 10:10:33</published>
+    <updated>2020-09-14T10:10:33Z</updated>
+    <summary type="html"><![CDATA[feed description]]></summary>
+</entry>
+<entry>
     <title>実時間キューの挙動を追ってみる</title>
     <link href="https://chupaaaaaaan.github.io/2020-08-15_lazy_evaluation_in_realtime_queue.html" />
     <id>https://chupaaaaaaan.github.io/2020-08-15_lazy_evaluation_in_realtime_queue.html</id>
@@ -39,14 +47,6 @@
     <id>https://chupaaaaaaan.github.io/2020-07-23_kyopro_abc165c_full_search.html</id>
     <published>2020-07-24 01:30:43</published>
     <updated>2020-07-24T01:30:43Z</updated>
-    <summary type="html"><![CDATA[feed description]]></summary>
-</entry>
-<entry>
-    <title>Haskellで精進記録 - ABC162d</title>
-    <link href="https://chupaaaaaaan.github.io/2020-07-23_kyopro_abc162d_full_search.html" />
-    <id>https://chupaaaaaaan.github.io/2020-07-23_kyopro_abc162d_full_search.html</id>
-    <published>2020-07-23 18:06:00</published>
-    <updated>2020-07-23T18:06:00Z</updated>
     <summary type="html"><![CDATA[feed description]]></summary>
 </entry>
 
