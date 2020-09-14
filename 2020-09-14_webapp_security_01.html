@@ -151,72 +151,37 @@
 <tr class="odd">
 <td>1</td>
 <td>要素内容（通常のテキスト）</td>
-<td>タグ、文字参照が解釈される</td>
+<td>タグ、文字参照が解釈される。終端文字は <code>&lt;</code></td>
 <td><code>&lt;</code> <code>&amp;</code> を文字参照にする</td>
 <td></td>
 </tr>
 <tr class="even">
-<td></td>
-<td></td>
-<td>終端文字は <code>&lt;</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
 <td>2</td>
 <td>属性値</td>
-<td>文字参照が解釈される</td>
-<td>属性値を <code>"</code> で囲み、</td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td>終端文字は <code>"</code></td>
-<td><code>"</code> <code>&lt;</code> <code>&amp;</code> を文字参照にする</td>
+<td>文字参照が解釈される。終端文字は <code>"</code></td>
+<td>属性値を <code>"</code> で囲み、~“~ <code>&lt;</code> <code>&amp;</code> を文字参照にする | |</td>
 <td></td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>属性値（url）</td>
 <td>同上</td>
-<td>urlの形式を検査（https/http）</td>
+<td>urlの形式を検査（https/http）してから、属性値としてエスケープ</td>
 <td><code>href</code> など</td>
 </tr>
 <tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td>してから、属性値としてエスケープ</td>
-<td></td>
-</tr>
-<tr class="odd">
 <td>4</td>
 <td>イベントハンドラ</td>
 <td>同上</td>
-<td>Javascriptとしてエスケープ</td>
-<td><code>&lt;body&gt;</code> タグの <code>onload</code> 属性で</td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td>してから、属性値としてエスケープ</td>
-<td>呼び出す関数のパラメータなど</td>
+<td>Javascriptとしてエスケープしてから、属性値としてエスケープ</td>
+<td><code>&lt;body&gt;</code> タグの <code>onload</code> 属性で呼び出す関数のパラメータなど</td>
 </tr>
 <tr class="odd">
 <td>5</td>
-<td>script要素内の</td>
-<td>タグ、文字参照とも解釈</td>
-<td>Javascriptとしてエスケープ</td>
-<td><code>&lt;script&gt;</code> タグの内容を</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>文字列リテラル</td>
-<td>されない。終端文字は <code>&lt;/</code></td>
-<td>及び <code>&lt;/</code> が出現しないよう考慮</td>
-<td>動的に生成する場合。できれば使わない</td>
+<td>script要素内の文字列リテラル</td>
+<td>タグ、文字参照とも解釈されない。終端文字は <code>&lt;/</code></td>
+<td>Javascriptとしてエスケープ及び <code>&lt;/</code> が出現しないよう考慮する</td>
+<td><code>&lt;script&gt;</code> タグの内容を動的に生成する場合。できれば使わない</td>
 </tr>
 </tbody>
 </table>
