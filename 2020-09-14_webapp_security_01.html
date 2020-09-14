@@ -230,7 +230,7 @@
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a>    <span class="kw">&lt;/div&gt;</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a><span class="kw">&lt;/body&gt;</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a><span class="kw">&lt;/html&gt;</span></span></code></pre></div>
-<p>最初の画面でフォームよりウェブアプリケーションに入力が渡され、アプリケーション内の <code>DemoForm</code> オブジェクトに格納されている。 次の画面では、 <code>DemoForm</code> オブジェクトを出力している。 <code>th:text</code> 属性を使用して値を表示する場合、値はデフォルトでhtmlエスケープされる（具体的には、~&lt;~ <code>&gt;</code> <code>&amp;</code> <code>"</code> <code>'</code> が文字参照となる）。 そのため、属性値に対するエスケープとしては問題がない。</p>
+<p>最初の画面でフォームよりウェブアプリケーションに入力が渡され、アプリケーション内の <code>DemoForm</code> オブジェクトに格納されている。 次の画面では、 <code>DemoForm</code> オブジェクトを出力している。 <code>th:text</code> 属性を使用して値を表示する場合、値はデフォルトでhtmlエスケープされる（具体的には、 <code>&lt;</code> <code>&gt;</code> <code>&amp;</code> <code>"</code> <code>'</code> が文字参照となる）。 そのため、属性値に対するエスケープとしては問題がない。</p>
 <p>一方、 <code>th:text</code> の代わりに <code>th:utext</code> を使用した場合、中身の値はエスケープされないため、問題がある。 例えば、 前画面で <code>name</code> パラメータに以下のような文字列を渡した場合を考える（書籍の記載例参照）。</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="st">&quot;+onmouseover%3d&quot;</span><span class="fu">alert</span>(<span class="bu">document</span><span class="op">.</span><span class="at">cockie</span>)</span></code></pre></div>
 <p><code>th:utext</code> を使用して表示していた場合、該当要素をマウスオーバーすると、ブラウザに保存されているcockieが表示されてしまう。</p>
