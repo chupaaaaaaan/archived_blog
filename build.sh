@@ -7,3 +7,5 @@ stack build --fast
 stack exec site rebuild
 
 [ "$1" != "no-watch" ] && stack exec site watch
+
+exit 0
