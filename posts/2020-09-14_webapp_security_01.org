@@ -39,58 +39,6 @@ tags: security
   また、偽サイトで、本物サイトと同じ見た目のフォームを作成しておけば、攻撃者に対して入力値をPOSTすることもできてしまう。
   この攻撃は、閲覧者がJavascriptを無効としていても、なお有効な攻撃となる。
 
-  例として、Thyemleafで、脆弱性のあるコードを記載してみる。
-
-  #+BEGIN_SRC html
-  <!DOCTYPE html>
-  
-  <html xmlns:th="http://www.thymeleaf.org">
-  
-  <head>
-      <title>Input your information</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  </head>
-  
-  <body>
-      <form th:action="@{/confirm}" method="POST" th:object="${demoForm}">
-          <input type="text" th:field="*{name}"></input>
-          <input type="text" th:field="*{address}"></input>
-          <button type="submit">送信</button>          
-      </form>
-  </body>
-  </html>
-  
-  #+END_SRC
-
-  #+BEGIN_SRC html
-  <!DOCTYPE html>
-  
-  <html xmlns:th="http://www.thymeleaf.org">
-  
-  <head>
-      <title>Confirm your information</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  </head>
-  
-  <body>
-      <div th:object="${demoForm}">
-          <p th:text="*{name}"></p>
-          <p th:text="*{address}"></p>
-      </div>
-  </body>
-  </html>
-  #+END_SRC
-
-  最初の画面でフォームよりウェブアプリケーションに入力が渡され、アプリケーション内の ~DemoForm~ オブジェクトに格納されている。
-  次の画面では、 ~DemoForm~ オブジェクトの中身をそのまま出力するような実装になっているため、問題がある。
-  例えば、 前画面で ~name~ パラメータに以下のような文字列を渡した場合（書籍の記載例参照）、
-
-  #+BEGIN_SRC javascript
-  "+onmouseover%3d"alert(document.cockie)
-  #+END_SRC
-
-  該当要素をマウスオーバーすると、ブラウザに保存されているcockieが表示されてしまう。
-
   実際には、脆弱性のあるウェブサイトには任意のJavascriptコードを埋め込むことができるため、まさに「やりたい放題」である。
   ページを表示しただけで、即座に攻撃者へ情報を送信してしまうことも可能だ。
 
@@ -143,6 +91,63 @@ tags: security
    #+END_SRC
    
    として扱われるため、スクリプトが実行される。
+
+** Thymeleafの例
+  例として、Thyemleafでコードを記載してみる。
+
+  #+BEGIN_SRC html
+  <!DOCTYPE html>
+  
+  <html xmlns:th="http://www.thymeleaf.org">
+  
+  <head>
+      <title>Input your information</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  
+  <body>
+      <form th:action="@{/confirm}" method="POST" th:object="${demoForm}">
+          <input type="text" th:field="*{name}"></input>
+          <input type="text" th:field="*{address}"></input>
+          <button type="submit">送信</button>          
+      </form>
+  </body>
+  </html>
+  
+  #+END_SRC
+
+  #+BEGIN_SRC html
+  <!DOCTYPE html>
+  
+  <html xmlns:th="http://www.thymeleaf.org">
+  
+  <head>
+      <title>Confirm your information</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  
+  <body>
+      <div th:object="${demoForm}">
+          <p th:text="*{name}"></p>
+          <p th:text="*{address}"></p>
+      </div>
+  </body>
+  </html>
+  #+END_SRC
+
+  最初の画面でフォームよりウェブアプリケーションに入力が渡され、アプリケーション内の ~DemoForm~ オブジェクトに格納されている。
+  次の画面では、 ~DemoForm~ オブジェクトを出力している。
+  ~th:text~ 属性を使用して値を表示する場合、値はデフォルトでhtmlエスケープされる（具体的には、~<~ ~>~ ~&~ ~"~ ~'~ が文字参照となる）。
+  そのため、属性値に対するエスケープとしては問題がない。
+
+  一方、 ~th:text~ の代わりに ~th:utext~ を使用した場合、中身の値はエスケープされないため、問題がある。
+  例えば、 前画面で ~name~ パラメータに以下のような文字列を渡した場合を考える（書籍の記載例参照）。
+
+  #+BEGIN_SRC javascript
+  "+onmouseover%3d"alert(document.cockie)
+  #+END_SRC
+
+  ~th:utext~ を使用して表示していた場合、該当要素をマウスオーバーすると、ブラウザに保存されているcockieが表示されてしまう。
 
 ** 保険的対策
    上記の対策以外に、保険的対策として以下のことも実施できる。
