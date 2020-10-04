@@ -2,7 +2,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Semigroup
 import           Hakyll
-import           Text.Pandoc.Options
 import qualified Skylighting
 
 --------------------------------------------------------------------------------
@@ -27,7 +26,6 @@ main = hakyll $ do
     match "posts/*" $ version "postContents" $ do
       route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
       compile $ pandocCompiler
-      -- compile $ pandocCompilerWith def (def {writerPreferAscii = True})
         >>= saveSnapshot "content"
         >>= relativizeUrls
 
