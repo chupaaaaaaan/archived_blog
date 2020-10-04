@@ -109,7 +109,7 @@
 </ol>
 <p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、 実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。 特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
 <p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
-<p>#TEASER#</p>
+<p><!--more--></p>
 <h1 id="キューの実装">キューの実装</h1>
 <p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。 そのため、今回はそれらを省いた実装とした。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Queue</span> a <span class="ot">=</span> <span class="dt">Q</span> {<span class="ot"> front ::</span> [a]</span>
