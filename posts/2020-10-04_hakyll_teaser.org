@@ -1,0 +1,119 @@
+---
+title: Hakyllでのteaser（続きを読む）の設定
+published: 2020-10-04 23:53:23
+# updated: 
+tags: haskell, hakyll, org-mode
+---
+#+OPTIONS: ^:{}
+
+このブログも少しずつ記事が増えてきている。
+現在トップページには、最新から数えて過去5件の記事まで、すべての内容が表示されるようになっているが、
+これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。
+
+そこで、今回はトップページに表示される記事はteaserとして表示されるよう、設定を追加した。
+
+
+@@html:<!--more-->@@
+
+* 設定
+
+  と言っても、ほとんど以下のページのとおりに設定しただけだ。
+
+  - [[https://jaspervdj.be/hakyll/tutorials/using-teasers-in-hakyll.html][TUTORIAL: USING TEASERS IN HAKYLL]]
+
+
+  設定が必要なのは3点。
+
+  1. 記事を書いた ~.org~ ファイルに、teaser用のマーキングを挿入する
+  2. テンプレートでteaserを参照する
+  3. 記事のビルド時にteaserを生成する
+
+
+  以下でそれぞれ見る。
+
+* teaser用マーキングの挿入
+
+  これが一番悩んだ・・・
+
+  hakyllのデフォルトでは、htmlコメントとして以下を記載したとき、記載箇所より上がteaserとなる。
+
+  #+BEGIN_SRC html
+  <!--more-->
+  #+END_SRC
+
+  自分は、もとの記事を[[https://orgmode.org/][Emacs Org mode]]で記載しているが、記事中にそのまま ~<!--more-->~ と書いても、ビルド後の記事はすべてhtmlエスケープされて出力されてしまう。
+  単にエスケープされるだけならコメントとして処理されないだけなのだが（それはそれで困る）、 Org mode文書からPandocの内部データ型に変換されるときにすでに、
+  エスケープされた文字列として保持されているようだ。
+  そのため、 ~<!--more-->~ と書いてもhakyll側これをteaser用のマーキングと認識できず、teaserとして表示させることができない。
+  ちなみにMarkdownであれば、特にエスケープされることないみたい（実際、コメントとしてそのまま残っている）。
+
+  要は、変換のときにエスケープされないように制御すればよい。答えは以下にあった。
+
+  - [[https://orgmode.org/manual/Quoting-HTML-tags.html][13.9.5 Quoting HTML tags]]
+
+
+  代わりに ~@@html:<!--more-->@@~ と書けば、ちゃんと意図通りにteaserとして表示できる。
+  （ここにたどり着く前に、 ~pandocCompiler~ 側でなんとかならないか調べてみたが、これは無理そうだった。
+  Org mode文書をどのようにPandoc内部データ型に変換しているのかはわからないが、エスケープする・しないを制御するパラメータが見つからない・・・）
+
+* テンプレートでのteaserの参照
+
+  これはそのまま、書いてあるとおりに記載すれば良い。
+
+  #+BEGIN_SRC haskell
+  <div class="content">
+    $if(teaser)$
+      $teaser$
+      <a href="$url$">続きを読む</a>
+    $else$
+      $body$
+    $endif$
+  </div>
+  #+END_SRC
+
+* teaserの生成
+
+  自分のサイトの実装とチュートリアルのコードが少し違っているが、基本的な考え方は同じ。
+
+  最初に、teaserとして表示するコンテンツ（余計なcssやjavascriptを含まない、記事のみ）を、snapshotとして保持しておく。
+
+  #+BEGIN_SRC haskell
+  match "posts/*" $ version "postContents" $ do
+    route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+    compile $ pandocCompiler
+      >>= saveSnapshot "content"
+      >>= relativizeUrls
+  #+END_SRC
+
+  次に、teaserを実際に生成する。
+
+  #+BEGIN_SRC haskell
+  match "index.html" $ do
+      route idRoute
+      compile $ do
+          posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
+          let postsCtx =
+                  listField "recent_posts" (teaserField "teaser" "content" <> postCtx) (return $ take 5 posts) <>
+                  siteCtx
+
+          getResourceBody
+              >>= applyAsTemplate postsCtx
+              >>= loadAndApplyTemplate "layouts/default.html" postsCtx
+              >>= relativizeUrls
+  #+END_SRC
+
+  ~teaserField~ を使って、teaserを各記事のコンテキストに追加すると、
+  テンプレートから ~teaser~ というキーで、 ~content~ スナップショットの内容のうち ~<!--more-->~ より前に記載された内容を参照できる。
+
+** ちなみに
+
+   teaser用のマーキング用文字列を任意に指定できる ~teaserFieldWithSeparator~ もある。
+   最初、htmlエスケープの問題が解決できなかったので、マーキング用文字列として ~#TEASER#~ みたいなのを設定して使用しようとした。
+   こちらを使用しても同じようにteaserを挿入することができるのだが、実際の記事を見に行くと、 =#TEASER#= の文字が表示されている・・・
+   というわけで、こちらは失敗。きちんとhtmlコメントの形式で文字列を指定しておかないとだめ。
+
+
+* 終わりに
+
+  これでteaserはなんとかなったので、次はページネーションをなんとかしたい。
+  （常に最新5件だけ表示、みたいなのから脱却したい・・・）
