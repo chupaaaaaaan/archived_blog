@@ -24,7 +24,8 @@ tags: encoding
   #+END_SRC
 
   これでちゃんと日本語が表示されるはずなのだが、GitBashでsshして接続すると、何故か文字化けしてしまう。
-  
+
+#TEASER#  
 
 * 原因
 

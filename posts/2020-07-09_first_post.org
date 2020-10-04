@@ -14,6 +14,8 @@ tags: haskell, hakyll
 そんな中で、GitHub Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、
 Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。
 
+#TEASER#
+
 * Hakyllのセットアップ
   
   今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。

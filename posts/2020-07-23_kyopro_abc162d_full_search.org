@@ -9,6 +9,8 @@ tags: haskell, 競プロ
 
 今回の問題は[[https://atcoder.jp/contests/abc162/tasks/abc162_d][これ]]。テーマは全探索。
 
+#TEASER#
+
 * 最初に振り返り
 
   - 全探索するときは、制約にもよるが、3重ループになってたらちょっとくさい、と思えると良いのかな？

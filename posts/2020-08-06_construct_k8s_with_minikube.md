@@ -15,6 +15,9 @@ kubernetesを全く触ったことがなく、どんなものか知りたかっ�
 もともとはEKSで試そうとしましたが、0.20$/hと試してみるには高かったので、ローカル環境でMinikubeを使って構築してみます。
 
 試した環境はこちら。
+
+#TEASER#
+
 ```
 $ cat /etc/centos-release
 CentOS Linux release 7.7.1908 (Core)

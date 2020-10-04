@@ -11,7 +11,12 @@ $for(recent_posts)$
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="content">
+          $if(teaser)$
+            $teaser$
+            <a href="$url$">続きを読む</a>
+          $else$
             $body$
+          $endif$
         </div>
     </div>
 </div>

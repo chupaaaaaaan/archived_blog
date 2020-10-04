@@ -25,6 +25,8 @@ tags: haskell, hakyll
 
   今回対応したテーマは[[https://github.com/chupaaaaaaan/chupaaaaaaan.github.io][こちら]]に置いてある。
 
+#TEASER#
+
 * サイドバーの対応
   画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。
   

@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid (mappend)
+import           Data.Semigroup
 import           Hakyll
 import qualified Skylighting
 
@@ -25,15 +25,17 @@ main = hakyll $ do
 
     match "posts/*" $ version "postContents" $ do
       route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
-      compile $ pandocCompiler >>= relativizeUrls
+      compile $ pandocCompiler
+        >>= saveSnapshot "content"
+        >>= relativizeUrls
 
     match "posts/*" $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
         compile $ do
             recentPosts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
             let postsCtx =
-                    listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
-                    postCtx `mappend` siteCtx
+                    listField "recent_posts" postCtx (return $ take 5 recentPosts) <>
+                    postCtx <> siteCtx
 
             pandocCompiler
               >>= loadAndApplyTemplate "layouts/post.html" postsCtx
@@ -44,8 +46,8 @@ main = hakyll $ do
         compile $ do
             posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
             let postsCtx =
-                    listField "recent_posts" postCtx (return $ take 5 posts) `mappend`
-                    listField "posts" postCtx (return posts) `mappend`
+                    listField "recent_posts" (teaserFieldWithSeparator tfs "teaser" "content" <> postCtx) (return $ take 5 posts) <>
+                    listField "posts" postCtx (return posts) <>
                     siteCtx
 
             getResourceBody
@@ -56,7 +58,7 @@ main = hakyll $ do
     create ["atom.xml"] $ do
         route idRoute
         compile $ do
-          let feedCtx = constField "description" "feed description" `mappend` postCtx `mappend` siteCtx
+          let feedCtx = constField "description" "feed description" <> postCtx <> siteCtx
           posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
           renderAtom feedConf feedCtx (take 5 posts)
 
@@ -66,19 +68,23 @@ main = hakyll $ do
 
 
 --------------------------------------------------------------------------------
+-- teaser separator
+tfs :: String
+tfs = "#TEASER#"
+
 siteCtx :: Context String
 siteCtx =
-  boolField "comments" (const False) `mappend`
-  constField "site_name" "コーヒーと線香と万年筆" `mappend`
-  constField "site_description" "勉強したことおきば" `mappend`
-  constField "github" "chupaaaaaaan" `mappend`
-  constField "qiita" "chupaaaaaaan" `mappend`
+  boolField "comments" (const False) <>
+  constField "site_name" "コーヒーと線香と万年筆" <>
+  constField "site_description" "勉強したことおきば" <>
+  constField "github" "chupaaaaaaan" <>
+  constField "qiita" "chupaaaaaaan" <>
   defaultContext
 
 postCtx :: Context String
 postCtx =
-  dateField "date" "%Y-%m-%d (%a)" `mappend`
-  dateField "year" "%Y" `mappend`
+  dateField "date" "%Y-%m-%d (%a)" <>
+  dateField "year" "%Y" <>
   defaultContext
 
 feedConf :: FeedConfiguration
