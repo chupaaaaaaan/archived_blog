@@ -39,12 +39,21 @@ body {
 
 .well h1 {
     color: #ee4444;
-    font-size: 1.3em;
+    font-size: 1.5em;
 }
 
 .well h2 {
     color: #ee4444;
     font-size: 1.2em;
+}
+
+.well h3 {
+    color: #ee4444;
+    font-size: 1em;
+}
+
+.well blockquote {
+    font-size: 1em;
 }
 
 .author {
