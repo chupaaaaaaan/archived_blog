@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
+        
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
           <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
-        
-          <li><a href="./2020-08-06_org_iterating_tasks.html">Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></li>
         
     </ul>
 </div>
@@ -88,6 +88,28 @@
         </div>
         <div class="col-md-9">
             
+<div class="article">
+  <div class="well">
+        <h1><a href="./2020-10-04_hakyll_teaser.html">2020-10-04 (Sun) - Hakyllでのteaser（続きを読む）の設定</a></h1>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and post.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="content">
+          
+            <p>このブログも少しずつ記事が増えてきている。 現在トップページには、最新から数えて過去5件の記事まで、すべての内容が表示されるようになっているが、 これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。</p>
+<p>そこで、今回はトップページに表示される記事はteaserとして表示されるよう、設定を追加した。</p>
+<p>
+            <a href="./2020-10-04_hakyll_teaser.html">続きを読む</a>
+          
+        </div>
+    </div>
+</div>
+
 <div class="article">
   <div class="well">
         <h1><a href="./2020-09-15_webapp_security_02.html">2020-09-15 (Tue) - Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></h1>
@@ -194,33 +216,6 @@
 <p>試した環境はこちら。</p>
 
             <a href="./2020-08-06_construct_k8s_with_minikube.html">続きを読む</a>
-          
-        </div>
-    </div>
-</div>
-
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-08-06_org_iterating_tasks.html">2020-08-06 (Thu) - Org-habitの、'.+' '++' '+' の振る舞いの違いについて</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
-          
-            <h1 id="はじめに">はじめに</h1>
-<p><strong><strong>この記事は、Gistに書いた記事を持ってきたものです</strong></strong></p>
-<p>Org-habitを使おうとしたときに、躓いたのでメモ。 <a href="https://orgmode.org/manual/Tracking-your-habits.html">公式マニュアル</a>には、以下のような記述がある。</p>
-<blockquote>
-<p>The TODO has a scheduled date, usually with a ‘.+’ style repeat interval. A ‘++’ style may be appropriate for habits with time constraints, e.g., must be done on weekends, or a ‘+’ style for an unusual habit that can have a backlog, e.g., weekly reports.</p>
-</blockquote>
-<p>英語力が低いだけだと思うが、 <code>.+</code> 、 <code>++</code> 、 <code>+</code> でどう振る舞いが変わるのかがよくわからなかった。 なので、実験してみる。</p>
-<p>
-            <a href="./2020-08-06_org_iterating_tasks.html">続きを読む</a>
           
         </div>
     </div>

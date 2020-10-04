@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>コーヒーと線香と万年筆</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/theme.css" rel="stylesheet" type="text/css">
+    <link href="./css/highlight.css" rel="stylesheet" type="text/css">
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and site.isso != '' %} -->
+<!-- <script data-isso="{{ site.isso }}" src="/js/embed.min.js"></script> -->
+<!-- {% endif %} -->
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./">コーヒーと線香と万年筆</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="./">Home</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
+                    <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./atom.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
+                    
+                    
+                      <li class="active"><a href="https://qiita.com/chupaaaaaaan">Qiita</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+勉強したことおきば
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
+        
+          <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
+        
+          <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
+        
+          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
+        
+          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
+        
+    </ul>
+</div>
+
+<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a target="_blank" href="https://hoogle.haskell.org/">Hoogle</a></li>
+  <li><a target="_blank" href="https://www.stackage.org/">Stackage Server</a></li>
+  <li><a target="_blank" href="https://scrapbox.io/haskell-shoen/">Haskell荘園</a></li>
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="./2020-10-04_hakyll_teaser.html">2020-10-04 (Sun) - Hakyllでのteaser（続きを読む）の設定</a></h1>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if site.comments and page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            <div class="post-content">
+            <p>このブログも少しずつ記事が増えてきている。 現在トップページには、最新から数えて過去5件の記事まで、すべての内容が表示されるようになっているが、 これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。</p>
+<p>そこで、今回はトップページに表示される記事はteaserとして表示されるよう、設定を追加した。</p>
+<p><!--more--></p>
+<h1 id="設定">設定</h1>
+<p>と言っても、ほとんど以下のページのとおりに設定しただけだ。</p>
+<ul>
+<li><a href="https://jaspervdj.be/hakyll/tutorials/using-teasers-in-hakyll.html">TUTORIAL: USING TEASERS IN HAKYLL</a></li>
+</ul>
+<p>設定が必要なのは3点。</p>
+<ol>
+<li>記事を書いた <code>.org</code> ファイルに、teaser用のマーキングを挿入する</li>
+<li>テンプレートでteaserを参照する</li>
+<li>記事のビルド時にteaserを生成する</li>
+</ol>
+<p>以下でそれぞれ見る。</p>
+<h1 id="teaser用マーキングの挿入">teaser用マーキングの挿入</h1>
+<p>これが一番悩んだ・・・</p>
+<p>hakyllのデフォルトでは、htmlコメントとして以下を記載したとき、記載箇所より上がteaserとなる。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="co">&lt;!--more--&gt;</span></span></code></pre></div>
+<p>自分は、もとの記事を<a href="https://orgmode.org/">Emacs Org mode</a>で記載しているが、記事中にそのまま <code>&lt;!--more--&gt;</code> と書いても、ビルド後の記事はすべてhtmlエスケープされて出力されてしまう。 単にエスケープされるだけならコメントとして処理されないだけなのだが（それはそれで困る）、 Org mode文書からPandocの内部データ型に変換されるときにすでに、 エスケープされた文字列として保持されているようだ。 そのため、 <code>&lt;!--more--&gt;</code> と書いてもhakyll側これをteaser用のマーキングと認識できず、teaserとして表示させることができない。 ちなみにMarkdownであれば、特にエスケープされることないみたい（実際、コメントとしてそのまま残っている）。</p>
+<p>要は、変換のときにエスケープされないように制御すればよい。答えは以下にあった。</p>
+<ul>
+<li><a href="https://orgmode.org/manual/Quoting-HTML-tags.html">13.9.5 Quoting HTML tags</a></li>
+</ul>
+<p>代わりに <code>@@html:&lt;!--more--&gt;@@</code> と書けば、ちゃんと意図通りにteaserとして表示できる。 （ここにたどり着く前に、 <code>pandocCompiler</code> 側でなんとかならないか調べてみたが、これは無理そうだった。 Org mode文書をどのようにPandoc内部データ型に変換しているのかはわからないが、エスケープする・しないを制御するパラメータが見つからない・・・）</p>
+<h1 id="テンプレートでのteaserの参照">テンプレートでのteaserの参照</h1>
+<p>これはそのまま、書いてあるとおりに記載すれば良い。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="op">&lt;</span><span class="fu">div</span> <span class="kw">class</span><span class="ot">=</span><span class="st">&quot;content&quot;</span><span class="op">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="op">$</span>if(teaser)<span class="op">$</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>    <span class="op">$</span>teaser<span class="op">$</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>    <span class="op">&lt;</span>a href<span class="ot">=</span><span class="st">&quot;$url$&quot;</span><span class="op">&gt;</span>続きを読む<span class="op">&lt;/</span>a<span class="op">&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>  <span class="op">$</span>else<span class="op">$</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>    <span class="op">$</span>body<span class="op">$</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>  <span class="op">$</span>endif<span class="op">$</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="op">&lt;/</span><span class="fu">div</span><span class="op">&gt;</span></span></code></pre></div>
+<h1 id="teaserの生成">teaserの生成</h1>
+<p>自分のサイトの実装とチュートリアルのコードが少し違っているが、基本的な考え方は同じ。</p>
+<p>最初に、teaserとして表示するコンテンツ（余計なcssやjavascriptを含まない、記事のみ）を、snapshotとして保持しておく。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> version <span class="st">&quot;postContents&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  compile <span class="op">$</span> pandocCompiler</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>    <span class="op">&gt;&gt;=</span> saveSnapshot <span class="st">&quot;content&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>    <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
+<p>次に、teaserを実際に生成する。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>match <span class="st">&quot;index.html&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>    route idRoute</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> (teaserField <span class="st">&quot;teaser&quot;</span> <span class="st">&quot;content&quot;</span> <span class="op">&lt;&gt;</span> postCtx) (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="op">&lt;&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>                siteCtx</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>        getResourceBody</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
+<p><code>teaserField</code> を使って、teaserを各記事のコンテキストに追加すると、 テンプレートから <code>teaser</code> というキーで、 <code>content</code> スナップショットの内容のうち <code>&lt;!--more--&gt;</code> より前に記載された内容を参照できる。</p>
+<h2 id="ちなみに">ちなみに</h2>
+<p>teaser用のマーキング用文字列を任意に指定できる <code>teaserFieldWithSeparator</code> もある。 最初、htmlエスケープの問題が解決できなかったので、マーキング用文字列として <code>#TEASER#</code> みたいなのを設定して使用しようとした。 こちらを使用しても同じようにteaserを挿入することができるのだが、実際の記事を見に行くと、 <code>#TEASER#</code> の文字が表示されている・・・ というわけで、こちらは失敗。きちんとhtmlコメントの形式で文字列を指定しておかないとだめ。</p>
+<h1 id="終わりに">終わりに</h1>
+<p>これでteaserはなんとかなったので、次はページネーションをなんとかしたい。 （常に最新5件だけ表示、みたいなのから脱却したい・・・）</p>
+            </div>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!-- <div id="disqus_thread"> -->
+            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+            <!-- </div> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <section id="isso-thread"></section> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            </div>
+          </div>
+          <div class="pagination">
+              <!-- ページネーションは別途追加する -->
+              <!-- {% if page.next %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+              <!-- {% endif %} -->
+              <!-- {% if page.previous %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+              <!-- {% endif %} -->
+          </div>
+        </div>
+    </div>
+</div>
+
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
+
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
+
+<!--    (function() { -->
+<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--     })(); -->
+<!--   </script> -->
+<!-- {% endif %} -->
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2020 コーヒーと線香と万年筆. Powered by <a href="https://jaspervdj.be/hakyll/">Hakyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a>, theme adjusted to Hakyll by Takayuki Uchida</p>
+        </div>
+    </div>
+</div>
+
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
+
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
+
+<!--    (function () { -->
+<!--      var s = document.createElement('script'); s.async = true; -->
+<!--      s.type = 'text/javascript'; -->
+<!--      s.src = '//' + disqus_shortname + '.disqus.com/count.js'; -->
+<!--      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s); -->
+<!--    }()); -->
+<!--  </script> -->
+<!-- {% endif %} -->
+
+
+
+
+</body>
+</html>
+
