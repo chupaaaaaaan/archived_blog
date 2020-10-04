@@ -17,7 +17,7 @@ The TODO has a scheduled date, usually with a ‘.+’ style repeat interval. A 
   英語力が低いだけだと思うが、 ~.+~ 、 ~++~ 、 ~+~ でどう振る舞いが変わるのかがよくわからなかった。
   なので、実験してみる。
 
-#TEASER#
+@@html:<!--more-->@@
 
 * DONEにする前後での振る舞い
   以下は、2020/05/13(水)に実施した。

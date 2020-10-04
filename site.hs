@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Semigroup
 import           Hakyll
+import           Text.Pandoc.Options
 import qualified Skylighting
 
 --------------------------------------------------------------------------------
@@ -26,6 +27,7 @@ main = hakyll $ do
     match "posts/*" $ version "postContents" $ do
       route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
       compile $ pandocCompiler
+      -- compile $ pandocCompilerWith def (def {writerPreferAscii = True})
         >>= saveSnapshot "content"
         >>= relativizeUrls
 
@@ -46,7 +48,7 @@ main = hakyll $ do
         compile $ do
             posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
             let postsCtx =
-                    listField "recent_posts" (teaserFieldWithSeparator tfs "teaser" "content" <> postCtx) (return $ take 5 posts) <>
+                    listField "recent_posts" (teaserField "teaser" "content" <> postCtx) (return $ take 5 posts) <>
                     listField "posts" postCtx (return posts) <>
                     siteCtx
 
@@ -68,10 +70,6 @@ main = hakyll $ do
 
 
 --------------------------------------------------------------------------------
--- teaser separator
-tfs :: String
-tfs = "#TEASER#"
-
 siteCtx :: Context String
 siteCtx =
   boolField "comments" (const False) <>

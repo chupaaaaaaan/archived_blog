@@ -25,7 +25,7 @@ tags: encoding
 
   これでちゃんと日本語が表示されるはずなのだが、GitBashでsshして接続すると、何故か文字化けしてしまう。
 
-#TEASER#  
+@@html:<!--more-->@@  
 
 * 原因
 
