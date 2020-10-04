@@ -62,7 +62,7 @@
     <h1>Recent Posts</h1>
     <ul>
         
-          <li><a href="./2020-09-14_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
+          <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
         
@@ -90,7 +90,7 @@
             
 <div class="article">
   <div class="well">
-        <h1><a href="./2020-09-14_webapp_security_02.html">2020-09-15 (Tue) - Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></h1>
+        <h1><a href="./2020-09-15_webapp_security_02.html">2020-09-15 (Tue) - Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></h1>
         <!-- コメント機能は別途追加する -->
         <!-- {% if site.comments and post.comments %} -->
         <!--     {% if site.disqus != '' %} -->
@@ -100,6 +100,7 @@
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="content">
+          
             <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。 特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
 <p>この記事では、クロスサイト・リクエストフォージェリについて、概要と基本的な対策について記載する。</p>
 <p>なお、今回学習に使用する資料はこちら。</p>
@@ -107,106 +108,9 @@
 <li><a href="https://www.amazon.co.jp/%25E4%25BD%2593%25E7%25B3%25BB%25E7%259A%2584%25E3%2581%25AB%25E5%25AD%25A6%25E3%2581%25B6-%25E5%25AE%2589%25E5%2585%25A8%25E3%2581%25AAWeb%25E3%2582%25A2%25E3%2583%2597%25E3%2583%25AA%25E3%2582%25B1%25E3%2583%25BC%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%25B3%25E3%2581%25AE%25E4%25BD%259C%25E3%2582%258A%25E6%2596%25B9-%25E7%25AC%25AC2%25E7%2589%2588-%25E8%2584%2586%25E5%25BC%25B1%25E6%2580%25A7%25E3%2581%258C%25E7%2594%259F%25E3%2581%25BE%25E3%2582%258C%25E3%2582%258B%25E5%258E%259F%25E7%2590%2586%25E3%2581%25A8%25E5%25AF%25BE%25E7%25AD%2596%25E3%2581%25AE%25E5%25AE%259F%25E8%25B7%25B5-%25E5%25BE%25B3%25E4%25B8%25B8/dp/4797393165/ref=tmm_hrd_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=">体系的に学ぶ 安全なWebアプリケーションの作り方 第2版 脆弱性が生まれる原理と対策の実践</a></li>
 <li><a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> （IPA）</li>
 </ul>
-<h1 id="csrfとはなんじゃらほい">CSRFとは？なんじゃらほい</h1>
-<p>IPA「<a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> - 1.6 CSRF（クロスサイト・リクエスト・フォージェリ）」は、以下の記載がある。</p>
-<blockquote>
-<p>ログインした利用者からのリクエストについて、その利用者が意図したリクエストであるかどうかを識別する仕組みを持たないウェブサイトは、外部サイトを経由した悪意のあるリクエストを受け入れてしまう場合があります。</p>
-</blockquote>
-<p>書籍の方には、こう書いてある（一部編集）。</p>
-<blockquote>
-<p>「ログインした利用者のアカウントにより実行される重要な処理（重要な処理）」の受付に際して、利用者の意図したリクエストであることを確認する処理が抜けている場合は、罠のサイトなどを閲覧しただけで、利用者のブラウザから勝手に「重要な処理」を実行させられる場合があります。</p>
-</blockquote>
-<p>いずれの記載も、 <strong><strong>ログインした利用者</strong></strong> 、つまり認証済みの利用者によるリクエストが、利用者が意図したリクエストであるか <strong><strong>確認していない</strong></strong> 場合に発生すると述べている。</p>
-<p>そして、「重要な処理」の実行が利用者の意図通りかを確認していないことにより、攻撃者が利用者本人になりすまし、 悪意のあるリクエストを脆弱性のあるウェブアプリケーションに受け入れさせることができる。</p>
-<p>ここで、「重要な処理」として想定されるものは以下のようなものがある（書籍より引用）。</p>
-<ul>
-<li>利用者のアカウントによる物品の購入</li>
-<li>利用者の退会処理</li>
-<li>利用者のアカウントによるSNSや問い合わせフォームへの書き込み</li>
-<li>利用者のパスワードやメールアドレスの変更</li>
-</ul>
-<p>見てわかるとおり、全て利用者にとっての何らかの変更処理である。</p>
-<p>これは当然の話で、（後に述べるように）リクエストは利用者として発行されるので、レスポンスも当然利用者に対して返却される。 そのため、CSRF攻撃により参照処理が、利用者が意図せず実施されたとしても、参照する情報が攻撃者に行くことはない。</p>
-<p>一方で、変更処理はサーバ側に対しての変更であるため、レスポンスの有無にかかわらず、利用者としてリクエストを発行できさえすればよい。</p>
-<p>CSRF攻撃にて、どのように悪意のあるリクエストを受け入れさせるか、大まかな流れは以下のとおりである。</p>
-<ol>
-<li>攻撃者が、罠サイトを設置する。罠サイトには、脆弱性のあるウェブアプリケーションの「重要な処理」へのPOSTリクエストを実行するJavascriptなどが埋め込まれている。 POSTリクエストの <code>form-data</code> には、攻撃者が脆弱性のあるウェブアプリケーションに受け入れさせたいデータを記載する。</li>
-<li>利用者が、脆弱性のあるウェブアプリケーションにログインした状態で、罠サイトへアクセスする。 利用者はログイン済みであり、セッションid等はクッキーから読み取られ、リクエストヘッダに設定される。 結果として、罠サイトに埋め込まれたJavascriptが、利用者として、利用者が意図せず実行される。</li>
-</ol>
-<p>罠サイトへの誘い出し方は、XSSのときと同じである。</p>
-<h2 id="xssとcsrfの違い">XSSとCSRFの違い</h2>
-<p>XSSとCSRFは異なる種類の脆弱性を悪用した攻撃手法だが、以下の点で混同しやすいのではないか？と思われる。 （実際私も、最初はあまり違いがよくわからなかった）</p>
-<ul>
-<li>「クロスサイト」から始まる</li>
-<li>「脆弱性のあるウェブサイト」が登場する</li>
-<li>「罠となるサイト」が登場し、利用者がそこにアクセスすることで攻撃が開始される</li>
-</ul>
-<p>そこで、「実行させたいこと」と「脆弱性の存在する箇所」の2点で、XSSとCSRFを比較すると、以下のようになる。</p>
-<table>
-<thead>
-<tr class="header">
-<th>攻撃手法</th>
-<th>実行させたいこと</th>
-<th>脆弱性の存在する箇所</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>XSS</td>
-<td>閲覧者のブラウザ上で、任意の処理を実行</td>
-<td>エスケープされることなく、入力値を出力の一部として使用している箇所</td>
-</tr>
-<tr class="even">
-<td>CSRF</td>
-<td>利用者になりすまし、ウェブアプリケーションへの変更処理を実行</td>
-<td>本人の意図通りかを確認せず、処理の実行を行っている箇所</td>
-</tr>
-</tbody>
-</table>
-<p>上記を見てみると、Javascriptの任意実行をさせる分、XSSのほうが質が悪そうに見える。 しかし、書籍によると、</p>
-<ul>
-<li>CSRFは設計段階から対策を盛り込む必要がある（後述）</li>
-<li>開発者への認知度がXSSより低く、対策が進んでいない</li>
-</ul>
-<p>とのことで、CSRFも要対策である。</p>
-<h1 id="csrfへの対策">CSRFへの対策</h1>
-<p>「リクエストが利用者の意図通りか」を確認することが、対策として必要である。 意図通りであることの確認は、書籍により以下3つが挙げられている（詳細な解説は書籍参照）。</p>
-<ol>
-<li>秘密情報（トークン）の埋め込み</li>
-<li>パスワード再入力</li>
-<li>Refererのチェック</li>
-</ol>
-<p>いずれの方式を選択するにしても、「どの処理が重要な処理に当たるか」を事前に（設計段階で）検討する必要がある。 その上で、「重要な処理」においてのみ、CSRF対策を施すことが必要となってくる （上で述べたとおり、参照処理などはCSRF対策をしても意味がないため、無駄な工数増加となる）。</p>
-<h2 id="について">1について</h2>
-<p>「重要な処理」の実行画面にて、セッションIDとは別に、セッション変数に格納された秘密情報（乱数で生成されたトークンなど）を <code>&lt;input&gt;</code> タグへ埋め込む （秘密情報が格納されていなければ生成する）。</p>
-<p>実行画面で「重要な処理」が実行されると、秘密情報も一緒にPOSTされる。 ウェブアプリケーション側で、POSTされた秘密情報とセッション変数内の秘密情報を比較し、一致していたときのみ実行を継続する （なお、POSTされた秘密情報が空でないことも、合わせて確認する。セッション変数内の秘密情報が空の場合に、実行が継続されるのを防ぐため）。</p>
-<p>この方法において、秘密情報はサーバ側で保持しており、確認できるタイミングは「重要な処理」の実行画面に遷移したときのみである （クッキーにはセッションIDしか格納されていないため、ここから秘密情報を取り出すのは不可能である）。</p>
-<p>そのため、罠サイトから直接POSTリクエストしても、（秘密情報を知ることができない以上）「重要な処理」の実行は継続されない。</p>
-<p>秘密情報の生成や検証については、ウェブアプリケーションフレームワークなどで提供されていることも多い。 例えば、<a href="https://nablarch.github.io/docs/LATEST/doc/application_framework/application_framework/handlers/web/csrf_token_verification_handler.html">∇Nablarch 5u17</a>においては、「CSRFトークン検証ハンドラ」として、秘密情報の生成・検証を実施している （リクエストパラメータ経由だけでなく、リクエストヘッダに秘密情報を埋め込むこともできる）。</p>
-<p>なお、「重要な処理」の実行画面に秘密情報を埋め込むのは、アプリケーション開発者側で実施する必要がある （秘密情報の埋め込みがされていない場合は、検証時に単にCSRF攻撃だと判定されるだけであり、容易に検出可能である）。</p>
-<h2 id="について-1">2について</h2>
-<p>これまた「重要な処理」の実行画面で、利用者にパスワードの再入力を求める（パスワード変更画面で、現在のパスワードを入力させるのが好例）。 こちらの方法でも、攻撃者が知りえない情報を合わせて送信することで、実行が本人の意図通りであることを確認することができる。</p>
-<p>他にも、共用PCなどで複数の利用者が存在する場合など、本人確認も合わせて必要な場面では、こちらを採用することも検討できる。</p>
-<p>なお、こちらの方法を採用する場合は、パスワード入力をさせるための画面にする必要があるため、開発コストは大きくなる。</p>
-<h2 id="について-2">3について</h2>
-<p>利用者が正規の方法でリクエストを送る場合と、罠サイトを訪れて自動的にリクエストが送信される場合、両者のリクエストヘッダ内Refererフィールドは異なる。 そのため、Refererが実行画面のURLになっているかを確認することで、そのリクエストが正規のものか否かを確認することができる。</p>
-<p>ただし、利用者によってはRefererフィールドの送信を無効にしている場合もある。 その場合は、利用者が当該サイトを使用できなくなってしまうため、Refererフィールドがリクエストヘッダに含まれることが保証される場合は採用できる。</p>
-<h2 id="確認ページを設けること">確認ページを設けること</h2>
-<p>ウェブアプリケーションの中には、「重要な処理」の実行画面にて、実行内容の確認を利用者に求めるものがある（いわゆる確認画面）。 利用者の利便性の確保のためには良いものだが、これだけではCSRF対策にはならない（Javascriptの記載を工夫して、POSTリクエストを時間差で多段に実行できるようにするだけで回避できる）。</p>
-<p>かならず、「重要な処理」の実行画面で、上の対策を実施することが必要である。</p>
-<h2 id="ログインしていない状態でのcsrf攻撃に対する対策">ログインしていない状態でのCSRF攻撃に対する対策</h2>
-<p>ログインしていない状態であっても、ウェブアプリケーションへのPOST処理などが発生する場合は、CSRF攻撃が成立しうる （例えば、<a href="https://ja.wikipedia.org/wiki/%25E3%2583%2591%25E3%2582%25BD%25E3%2582%25B3%25E3%2583%25B3%25E9%2581%25A0%25E9%259A%2594%25E6%2593%258D%25E4%25BD%259C%25E4%25BA%258B%25E4%25BB%25B6">パソコン遠隔操作事件</a>は記憶に新しい）。</p>
-<p>ログインしていないので、対策の1,2については実施できないが、3のRefererチェックについては、引き続き有効な手段となりうる。</p>
-<h2 id="保険的対策">保険的対策</h2>
-<p>上記の対策以外に、保険的対策として以下のことも実施できる。</p>
-<dl>
-<dt>「重要な処理」実行後、利用者宛に通知を送る</dt>
-<dd>処理の実行自体を止めることはできないが、これにより「重要な処理」不正に実行された場合に、利用者が検知できる可能性が高まる。
-</dd>
-</dl>
-<h1 id="まとめ">まとめ</h1>
-<p>CSRFは、「重要な処理」の実行に際し、本人の実行意図を確認しないことで発生しうる攻撃である。 そのため、何らかの方法で、実行が本人の意図通りであることを確認する必要がある。</p>
-<p>上でも書いたが、初学だとXSSとCSRFの違いがよくわからない・・・のだが、攻撃により実現したいことは全く異なるので、この観点で見ていくと、結構整理しやすいかもしれない。 また、XSSとは違って、ある程度インフラ・共通部品的なものでカバーできそうなので、そこはXSSより対策がしやすそうに思える。</p>
+<p>
+            <a href="./2020-09-15_webapp_security_02.html">続きを読む</a>
+          
         </div>
     </div>
 </div>
@@ -223,6 +127,7 @@
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="content">
+          
             <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。 特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
 <p>この記事では、クロスサイト・スクリプティングについて、概要と基本的な対策について記載する。</p>
 <p>なお、今回学習に使用する資料はこちら。</p>
@@ -230,150 +135,9 @@
 <li><a href="https://www.amazon.co.jp/%25E4%25BD%2593%25E7%25B3%25BB%25E7%259A%2584%25E3%2581%25AB%25E5%25AD%25A6%25E3%2581%25B6-%25E5%25AE%2589%25E5%2585%25A8%25E3%2581%25AAWeb%25E3%2582%25A2%25E3%2583%2597%25E3%2583%25AA%25E3%2582%25B1%25E3%2583%25BC%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%25B3%25E3%2581%25AE%25E4%25BD%259C%25E3%2582%258A%25E6%2596%25B9-%25E7%25AC%25AC2%25E7%2589%2588-%25E8%2584%2586%25E5%25BC%25B1%25E6%2580%25A7%25E3%2581%258C%25E7%2594%259F%25E3%2581%25BE%25E3%2582%258C%25E3%2582%258B%25E5%258E%259F%25E7%2590%2586%25E3%2581%25A8%25E5%25AF%25BE%25E7%25AD%2596%25E3%2581%25AE%25E5%25AE%259F%25E8%25B7%25B5-%25E5%25BE%25B3%25E4%25B8%25B8/dp/4797393165/ref=tmm_hrd_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=">体系的に学ぶ 安全なWebアプリケーションの作り方 第2版 脆弱性が生まれる原理と対策の実践</a></li>
 <li><a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> （IPA）</li>
 </ul>
-<h1 id="xssとはなんじゃらほい">XSSとは？なんじゃらほい</h1>
-<p>IPA「<a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> - 1.5 クロスサイト・スクリプティング」は、以下の記載がある。</p>
-<blockquote>
-<p>ウェブアプリケーションにスクリプトを埋め込むことが可能な脆弱性がある場合、これを悪用した攻撃により、利用者のブラウザ上で不正なスクリプトが実行されてしまう可能性があります。</p>
-</blockquote>
-<p>「スクリプトを埋め込むことが可能な脆弱性」がどこにあるかによるが、 大雑把に言えば、脆弱なウェブアプリケーションには、以下のようにしてスクリプトを埋め込むことができる。</p>
-<ol>
-<li>GETリクエストのパラメータ、もしくはPOSTリクエストではフォームを利用して、攻撃用の文字列をウェブアプリケーションに送信する。 攻撃用の文字列は、 <code>&lt;script&gt;</code> タグで囲まれたJavascriptや、偽サイトのHTMLなどである（他にもあると思う）。</li>
-<li>ウェブアプリケーションは、受け取った文字列から動的にHTMLを構築する。 その際、ウェブアプリケーションが受け取った文字列をサニタイズせずに使用した場合、構築したHTMLに攻撃用の文字列が紛れ込むことになってしまう。</li>
-</ol>
-<p>Javascriptが埋め込めてしまうと、ウェブブラウザ上でできることは何でもできてしまうため、例えば</p>
-<ul>
-<li>セッションIDの窃取</li>
-<li>閲覧者の情報を送信</li>
-</ul>
-<p>などは簡単にできてしまう。 また、偽サイトで、本物サイトと同じ見た目のフォームを作成しておけば、攻撃者に対して入力値をPOSTすることもできてしまう。 この攻撃は、閲覧者がJavascriptを無効としていても、なお有効な攻撃となる。</p>
-<p>実際には、脆弱性のあるウェブサイトには任意のJavascriptコードを埋め込むことができるため、まさに「やりたい放題」である。 ページを表示しただけで、即座に攻撃者へ情報を送信してしまうことも可能だ。</p>
-<p>脆弱性のあるウェブサイトへの誘導方法としては、例えば</p>
-<ul>
-<li>罠となるサイトを作成しておいて、SNS等で誘い込む（罠サイトを経由して、脆弱性のあるウェブサイトでJavascriptが生成される）</li>
-<li>脆弱性のある掲示板やSNS、ブログサイトのコメント欄を利用して、サイトにJavascript等を埋め込む</li>
-</ul>
-<p>などが考えられる。</p>
-<h1 id="xssへの対策">XSSへの対策</h1>
-<p>詳細な話は書籍に譲るが、以下の2つが基本的な対策となる。</p>
-<ol>
-<li>レスポンスでの出力内容をエスケープする</li>
-<li>レスポンスでの文字エンコーディングを明示する</li>
-</ol>
-<h2 id="について">1について</h2>
-<p>入力値の中にhtmlの構文で特別な意味を持つ文字が含まれていた場合に、それをそのままレンダリングしてしまうことを防ぐためにhtmlエスケープを行う。 htmlによって解釈される文字と、出力場所の終端文字列について、エスケープが必要になる（引用元：書籍）。</p>
-<table>
-<thead>
-<tr class="header">
-<th>No.</th>
-<th>入力値が出力される場所</th>
-<th>説明</th>
-<th>エスケープ概要</th>
-<th>備考</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>要素内容（通常のテキスト）</td>
-<td>タグ、文字参照が解釈される。終端文字は <code>&lt;</code></td>
-<td><code>&lt;</code> <code>&amp;</code> を文字参照にする</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>属性値</td>
-<td>文字参照が解釈される。終端文字は <code>"</code></td>
-<td>属性値を <code>"</code> で囲み、 <code>"</code> <code>&lt;</code> <code>&amp;</code> を文字参照にする</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>属性値（url）</td>
-<td>同上</td>
-<td>urlの形式を検査（https/http）してから、属性値としてエスケープ</td>
-<td><code>href</code> など</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>イベントハンドラ</td>
-<td>同上</td>
-<td>Javascriptとしてエスケープしてから、属性値としてエスケープ</td>
-<td><code>&lt;body&gt;</code> タグの <code>onload</code> 属性で呼び出す関数のパラメータなど</td>
-</tr>
-<tr class="odd">
-<td>5</td>
-<td>script要素内の文字列リテラル</td>
-<td>タグ、文字参照とも解釈されない。終端文字は <code>&lt;/</code></td>
-<td>Javascriptとしてエスケープ及び <code>&lt;/</code> が出現しないよう考慮する</td>
-<td><code>&lt;script&gt;</code> タグの内容を動的に生成する場合。できれば使わない</td>
-</tr>
-</tbody>
-</table>
-<h2 id="について-1">2について</h2>
-<p>明示的に文字エンコーディングを指定していない場合、ブラウザ側が、レスポンス内容から文字エンコーディングを推測する。 その時、（例えば）UTF-8で見れば問題ない入力内容でも、別のエンコーディングではhtmlに解釈される文字となってしまう場合がある。</p>
-<p>安全なウェブサイトの作り方から例を引用する。以下の文字列</p>
-<pre class="text"><code>+ADw-script+AD4-alert(+ACI-test+ACI-)+ADsAPA-/script+AD4-
-</code></pre>
-<p>がhtml中に現れた場合、一部のブラウザは、エンコーディングをUTF-7と解釈する。 これがUTF-7として画面に表示されると、</p>
-<pre class="text"><code>&lt;script&gt;alert('test');&lt;/script&gt;
-</code></pre>
-<p>として扱われるため、スクリプトが実行される。</p>
-<h2 id="thymeleafの例">Thymeleafの例</h2>
-<p>例として、Thyemleafでコードを記載してみる。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="kw">&lt;html</span><span class="ot"> xmlns:th=</span><span class="st">&quot;http://www.thymeleaf.org&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="kw">&lt;head&gt;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>    <span class="kw">&lt;title&gt;</span>Input your information<span class="kw">&lt;/title&gt;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    <span class="kw">&lt;meta</span><span class="ot"> http-equiv=</span><span class="st">&quot;Content-Type&quot;</span><span class="ot"> content=</span><span class="st">&quot;text/html; charset=UTF-8&quot;</span> <span class="kw">/&gt;</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="kw">&lt;/head&gt;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a><span class="kw">&lt;body&gt;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>    <span class="kw">&lt;form</span><span class="ot"> th:action=</span><span class="st">&quot;@{/confirm}&quot;</span><span class="ot"> method=</span><span class="st">&quot;POST&quot;</span><span class="ot"> th:object=</span><span class="st">&quot;${demoForm}&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>        <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&quot;text&quot;</span><span class="ot"> th:field=</span><span class="st">&quot;*{name}&quot;</span><span class="kw">&gt;&lt;/input&gt;</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>        <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&quot;text&quot;</span><span class="ot"> th:field=</span><span class="st">&quot;*{address}&quot;</span><span class="kw">&gt;&lt;/input&gt;</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>        <span class="kw">&lt;button</span><span class="ot"> type=</span><span class="st">&quot;submit&quot;</span><span class="kw">&gt;</span>送信<span class="kw">&lt;/button&gt;</span>          </span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>    <span class="kw">&lt;/form&gt;</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a><span class="kw">&lt;/body&gt;</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a><span class="kw">&lt;/html&gt;</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="kw">&lt;html</span><span class="ot"> xmlns:th=</span><span class="st">&quot;http://www.thymeleaf.org&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="kw">&lt;head&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>    <span class="kw">&lt;title&gt;</span>Confirm your information<span class="kw">&lt;/title&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>    <span class="kw">&lt;meta</span><span class="ot"> http-equiv=</span><span class="st">&quot;Content-Type&quot;</span><span class="ot"> content=</span><span class="st">&quot;text/html; charset=UTF-8&quot;</span> <span class="kw">/&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a><span class="kw">&lt;/head&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a><span class="kw">&lt;body&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>    <span class="kw">&lt;div</span><span class="ot"> th:object=</span><span class="st">&quot;${demoForm}&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>        <span class="kw">&lt;p</span><span class="ot"> th:text=</span><span class="st">&quot;*{name}&quot;</span><span class="kw">&gt;&lt;/p&gt;</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>        <span class="kw">&lt;p</span><span class="ot"> th:text=</span><span class="st">&quot;*{address}&quot;</span><span class="kw">&gt;&lt;/p&gt;</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a>    <span class="kw">&lt;/div&gt;</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a><span class="kw">&lt;/body&gt;</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a><span class="kw">&lt;/html&gt;</span></span></code></pre></div>
-<p>最初の画面でフォームよりウェブアプリケーションに入力が渡され、アプリケーション内の <code>DemoForm</code> オブジェクトに格納されている。 次の画面では、 <code>DemoForm</code> オブジェクトを出力している。 <code>th:text</code> 属性を使用して値を表示する場合、値はデフォルトでhtmlエスケープされる（具体的には、 <code>&lt;</code> <code>&gt;</code> <code>&amp;</code> <code>"</code> <code>'</code> が文字参照となる）。 そのため、属性値に対するエスケープとしては問題がない。</p>
-<p>一方、 <code>th:text</code> の代わりに <code>th:utext</code> を使用した場合、中身の値はエスケープされないため、問題がある。 例えば、 前画面で <code>name</code> パラメータに以下のような文字列を渡した場合を考える（書籍の記載例参照）。</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="st">&quot;+onmouseover%3d&quot;</span><span class="fu">alert</span>(<span class="bu">document</span><span class="op">.</span><span class="at">cockie</span>)</span></code></pre></div>
-<p><code>th:utext</code> を使用して表示していた場合、該当要素をマウスオーバーすると、ブラウザに保存されているcockieが表示されてしまう。</p>
-<h2 id="保険的対策">保険的対策</h2>
-<p>上記の対策以外に、保険的対策として以下のことも実施できる。</p>
-<dl>
-<dt><code>X-XSS-Protection</code> レスポンスヘッダの追加</dt>
-<dd>XSSフィルタを有効にする（閲覧者側の設定を上書きする）。 ただし、最近のブラウザではContent Security Policy (CSP)への以降を見据え、XSSフィルタを無効化されつつある。
-</dd>
-<dt>入力値検証</dt>
-<dd>予め、不正な入力が紛れ込まないようにする。 ただし、任意の文字列を受け取るような入力もあるため、これだけでセキュリティ対策にはならない。
-</dd>
-<dt>クッキーに <code>HttpOnly</code> 属性を付与</dt>
-<dd>仮にJavascriptを埋め込まれても、Javascriptからはクッキーの読み出しができないようにする。 それ以外の攻撃は、依然として有効。
-</dd>
-</dl>
-<h1 id="まとめ">まとめ</h1>
-<p>XSSは、入力値が「エスケープされないまま」で「HTMLとして出力」される脆弱性により発生する。 そのため、基本的には出力前に値をエスケープしておくことで、脆弱性は潰すことができる。</p>
-<p>とはいえ、基本的にはアプリケーション側での対応になるので、処理一つ一つについてエスケープしているか、 のレビューが必須になってくる（インフラ的な対策や、共通部品みたいなのでなんとかしづらそう）。 こういうアプリケーションセキュリティの有識者って、結構重要な存在なんだなぁ、と思うなどした。</p>
+<p>
+            <a href="./2020-09-14_webapp_security_01.html">続きを読む</a>
+          
         </div>
     </div>
 </div>
@@ -390,6 +154,7 @@
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="content">
+          
             <p>グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、 <a href="https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739">なぜ Haskell ではキューが軽んじられているか？</a>にもあるように、キューは標準では提供されていない。</p>
 <p>そこで、以下を参考にしてキューを実装した。 ここでは、実時間キューを実装した（最悪計算量・償却計算量とも <span class="math inline"><em>O</em>(1)</span> のため）。</p>
 <ol>
@@ -400,89 +165,9 @@
 </ol>
 <p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、 実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。 特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
 <p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
-<h1 id="キューの実装">キューの実装</h1>
-<p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。 そのため、今回はそれらを省いた実装とした。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Queue</span> a <span class="ot">=</span> <span class="dt">Q</span> {<span class="ot"> front ::</span> [a]</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>                 ,<span class="ot"> rear  ::</span> [a]</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                 ,<span class="ot"> thunk ::</span> [a]</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>                 } <span class="kw">deriving</span> (<span class="dt">Eq</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="ot">empty ::</span> <span class="dt">Queue</span> a</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>empty <span class="ot">=</span> <span class="dt">Q</span> [] [] []</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="ot">pushBack ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Queue</span> a</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>pushBack (<span class="dt">Q</span> f r t) e <span class="ot">=</span> check <span class="op">$!</span> <span class="dt">Q</span> f (e<span class="op">:</span>r) t</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="ot">popFront ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> (a, <span class="dt">Queue</span> a)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>popFront (<span class="dt">Q</span> (e<span class="op">:</span>f) r t) <span class="ot">=</span> (e, check <span class="op">$!</span> <span class="dt">Q</span> f r t)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>popFront (<span class="dt">Q</span> [] _ _)    <span class="ot">=</span> <span class="fu">error</span> <span class="st">&quot;empty queue&quot;</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="ot">check ::</span> <span class="dt">Queue</span> a <span class="ot">-&gt;</span> <span class="dt">Queue</span> a</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a>check (<span class="dt">Q</span> f r (_<span class="op">:</span>t)) <span class="ot">=</span> <span class="dt">Q</span> f r t</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>check (<span class="dt">Q</span> f r []) <span class="ot">=</span> <span class="kw">let</span> ff <span class="ot">=</span> rotate f r []</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a>                   <span class="kw">in</span> <span class="dt">Q</span> ff [] ff</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>  <span class="kw">where</span><span class="ot"> rotate ::</span> [a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a>        rotate [] (y<span class="op">:</span>_) zs      <span class="ot">=</span> y<span class="op">:</span>zs</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a>        rotate (x<span class="op">:</span>xs) (y<span class="op">:</span>ys) zs <span class="ot">=</span> x <span class="op">:</span> rotate xs ys (y<span class="op">:</span>zs)</span></code></pre></div>
-<h2 id="ちなみに">ちなみに</h2>
-<p>実際、スライドでは <code>thunk</code> が空かどうかでリストの反転操作をするかどうかを決めており、 キューの管理にリストの長さは使用していない。 「実は <code>fl+1 == rl</code> のときだけこっちに来る」のような記載もある （ <code>fl</code> は <code>front</code> リストの長さ、 <code>rl</code> は <code>rear</code> リストの長さ）。</p>
-<p>では、本当に上記が成り立っているのか、確認しておこう。</p>
-<p>ここで、 <code>(f, r, t)</code> をそれぞれ <code>front</code> リスト、 <code>rear</code> リスト、 <code>thunk</code> リストの長さを表すタプルとする。 <code>r = 0</code> のときの <code>f</code> を <code>g</code> とすると、 <code>check</code> の実装より、 <code>t = g</code> となる （なお、これはキューが空の場合も成り立つ）。</p>
-<p>すると、 <code>pushBack</code> もしくは <code>popFront</code> を合わせて <code>g</code> 回実行したとき、タプルは以下のようになっているはずである。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>(f, r, t) <span class="op">==</span> (g, g, <span class="dv">0</span>)     <span class="co">-- pushBackをg回、popFrontを0回</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>          <span class="fu">or</span> (g<span class="op">-</span><span class="dv">1</span>, g<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>) <span class="co">-- pushBackをg-1回、popFrontを1回</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>          <span class="fu">or</span> (g<span class="op">-</span><span class="dv">2</span>, g<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>) <span class="co">-- pushBackをg-2回、popFrontを2回</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>          <span class="op">...</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>          <span class="fu">or</span> (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)     <span class="co">-- pushBackを0回、popFrontをg回</span></span></code></pre></div>
-<p>よって、次に <code>pushBack</code> を実行したタイミングで必ず <code>fl + 1 == rl</code> が成り立つことがわかり、これはプログラムの不変条件となっている。</p>
-<h1 id="評価の追跡-pushback-2回-popfront-1回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 1回）</h1>
-<p>では実際に、評価を追跡してみる。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>queue0 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>[]) (y<span class="op">:</span>[]) []</span></code></pre></div>
-<p>から初めて、いくつかの操作を行ったときの評価順を見る。 評価済みになったときは、適当に値を補う。</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>queue1 <span class="op">==</span> pushBack queue0 e1</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> _ _ _) e1</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> _ (e1<span class="op">:</span>_) _</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) [] (rotate _ (e1<span class="op">:</span>_) [])</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>queue2 <span class="op">==</span> pushBack queue1 e2</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) [] (rotate _ (e1<span class="op">:</span>_) [])) e2</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ (e1<span class="op">:</span>_) []) (e2<span class="op">:</span>[]) (rotate _ (e1<span class="op">:</span>_) [])</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate (x<span class="op">:</span>_) (e1<span class="op">:</span>_) []) (e2<span class="op">:</span>[]) (rotate (x<span class="op">:</span>_) (e1<span class="op">:</span>_) [])</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[]))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[]))</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>(e3, queue3) <span class="op">==</span> popFront queue2</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>             <span class="op">==</span> popFront <span class="op">$</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[]))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ _ (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate _ _ (e1<span class="op">:</span>[])))</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (rotate [] (y<span class="op">:</span>_) (e1<span class="op">:</span>[])) (e2<span class="op">:</span>[]) (rotate [] (y<span class="op">:</span>_) (e1<span class="op">:</span>[])))</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (y<span class="op">:</span>e1<span class="op">:</span>[]) (e2<span class="op">:</span>[]) (y<span class="op">:</span>e1<span class="op">:</span>[]))</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>             <span class="op">==</span> (x, <span class="dt">Q</span> (y<span class="op">:</span>e1<span class="op">:</span>[]) (e2<span class="op">:</span>[]) (e1<span class="op">:</span>[]))</span></code></pre></div>
-<p>となり、操作のたびに <code>rotate</code> が1つ簡約され、少しずつ <code>reverse</code> 処理が実行されている、というのがわかる。</p>
-<h1 id="評価の追跡-pushback-5回">評価の追跡（ <code>pushBack</code> 5回）</h1>
-<p>次に、 <code>pushBack</code> を連続で実施してみたときの挙動を確認する。</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>queue4 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>y<span class="op">:</span>e1<span class="op">:</span>[]) (e4<span class="op">:</span>e3<span class="op">:</span>e2<span class="op">:</span>[]) []</span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>queue5 <span class="op">==</span> pushBack queue4 e5</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> _ _ _) e5</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> _ (e5<span class="op">:</span>_) _</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) [] (rotate _ (e5<span class="op">:</span>_) [])</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a>queue6 <span class="op">==</span> pushBack queue5 e6</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) [] (rotate _ (e5<span class="op">:</span>_) [])) e6</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate _ (e5<span class="op">:</span>_) []) (e6<span class="op">:</span>[]) (rotate _ (e5<span class="op">:</span>_) [])</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (rotate (x<span class="op">:</span>_) (e5<span class="op">:</span>_) []) (e6<span class="op">:</span>[]) (rotate (x<span class="op">:</span>_) (e5<span class="op">:</span>_) [])</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[])) (e6<span class="op">:</span>[]) (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[]))</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> rotate _ _ (e5<span class="op">:</span>[])) (e6<span class="op">:</span>[]) (rotate _ _ (e5<span class="op">:</span>[]))</span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>queue7 <span class="op">==</span> pushBack queue6 e7</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span> <span class="co">-- queue6 と同じ操作なので省略</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> y <span class="op">:</span> rotate _ _ (e4<span class="op">:</span>e5<span class="op">:</span>[])) (e7<span class="op">:</span>e6<span class="op">:</span>[]) (rotate _ _ (e4<span class="op">:</span>e5<span class="op">:</span>[]))</span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a>queue8 <span class="op">==</span> pushBack queue7 e8</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x <span class="op">:</span> y <span class="op">:</span> e1 <span class="op">:</span> rotate _ _ (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[])) (e8<span class="op">:</span>e7<span class="op">:</span>e6<span class="op">:</span>[]) (rotate _ _ (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[]))</span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>queue9 <span class="op">==</span> pushBack queue8 e9</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x<span class="op">:</span>y<span class="op">:</span>e1<span class="op">:</span>e2<span class="op">:</span>e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[]) (e9<span class="op">:</span>e8<span class="op">:</span>e7<span class="op">:</span>e6<span class="op">:</span>[]) (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[])</span></code></pre></div>
-<p>こちらも、少しずつ <code>reverse</code> 処理が実行されているのがわかる。 トリックは、（2番目の記事で言っている）「停止計算用ストリーム」において、 <code>$!</code> 演算子を介して、 <code>check</code> がパターンマッチにより停止計算を進める（次のWHNFまで評価する）点。 「停止計算用ストリーム」の計算はメモ化されているので、「先頭側ストリーム」も同じ位置まで評価された状態になる （ <code>check</code> でストリームを構成するときに、同じデータを指すようになっている）。</p>
-<h1 id="最後に">最後に</h1>
-<p>実は前も、1番目の資料に挑戦してキューを実装しようとしていたのだが、今回再挑戦してようやく理解できたかな、という感じ。 遅延評価周りはちゃんと考えないと、なんでそうなっているのかが全く追えないので、今回のように1つずつ簡約してみるのは良い手かもしれない。</p>
-<h1 id="追記">追記</h1>
-<p>結局Dequeueが必要だったりして来たので、おとなしく <code>Data.Sequence</code> を使うことにしました・・・残念。</p>
+<p>
+            <a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">続きを読む</a>
+          
         </div>
     </div>
 </div>
@@ -499,6 +184,7 @@
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="content">
+          
             <h1 id="はじめに">はじめに</h1>
 <p><strong>この記事は、はてなブログで公開していた記事を持ってきたものです（一部リンク等を修正しています）</strong></p>
 <h1 id="追記">追記</h1>
@@ -506,98 +192,9 @@
 <h1 id="目的">目的</h1>
 <p>kubernetesを全く触ったことがなく、どんなものか知りたかったので、ちょっと触ってみます。 もともとはEKSで試そうとしましたが、0.20$/hと試してみるには高かったので、ローカル環境でMinikubeを使って構築してみます。</p>
 <p>試した環境はこちら。</p>
-<pre><code>$ cat /etc/centos-release
-CentOS Linux release 7.7.1908 (Core)</code></pre>
-<p>インストール自体は、<a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">公式サイト</a>を参考に実施していきます。</p>
-<p>まず、公式サイトを参考にして、仮想化がサポートされているか確認しておきます。</p>
-<pre><code>$ grep -E --color 'vmx|svm' /proc/cpuinfo 
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d</code></pre>
-<h1 id="kvmのインストール">KVMのインストール</h1>
-<p>Minikubeはローカル環境の仮想マシン上に、Kubernetesをインストールします。そのため、ハイパーバイザをインストールする必要があります。 LinuxだとVirtualboxとKVMが使用できますが、今回はKVMを使ってみることにします。</p>
-<p><a href="https://minikube.sigs.k8s.io/docs/reference/drivers/kvm2/">この辺り</a>を参考にして、KVMをインストールします。</p>
-<pre><code>$ sudo yum install qemu-kvm libvirt libvirt-python libguestfs-tools virt-install
-$ sudo systemctl start libvirtd.service
-$ sudo systemctl enable libvirtd.service
-$ sudo usermod -aG libvirt $(whoami)</code></pre>
-<p>ちゃんとインストールできたか、確認します。</p>
-<pre><code>$ virt-host-validate 
-  QEMU: 確認中 for hardware virtualization                                 : 成功
-  QEMU: 確認中 if device /dev/kvm exists                                   : 成功
-  QEMU: 確認中 if device /dev/kvm is accessible                            : 成功
-  QEMU: 確認中 if device /dev/vhost-net exists                             : 成功
-  QEMU: 確認中 if device /dev/net/tun exists                               : 成功
-  QEMU: 確認中 for cgroup 'memory' controller support                      : 成功
-  QEMU: 確認中 for cgroup 'memory' controller mount-point                  : 成功
-  QEMU: 確認中 for cgroup 'cpu' controller support                         : 成功
-  QEMU: 確認中 for cgroup 'cpu' controller mount-point                     : 成功
-  QEMU: 確認中 for cgroup 'cpuacct' controller support                     : 成功
-  QEMU: 確認中 for cgroup 'cpuacct' controller mount-point                 : 成功
-  QEMU: 確認中 for cgroup 'cpuset' controller support                      : 成功
-  QEMU: 確認中 for cgroup 'cpuset' controller mount-point                  : 成功
-  QEMU: 確認中 for cgroup 'devices' controller support                     : 成功
-  QEMU: 確認中 for cgroup 'devices' controller mount-point                 : 成功
-  QEMU: 確認中 for cgroup 'blkio' controller support                       : 成功
-  QEMU: 確認中 for cgroup 'blkio' controller mount-point                   : 成功
-  QEMU: 確認中 for device assignment IOMMU support                         : 警告 (No ACPI DMAR table found, IOMMU either disabled in BIOS or not supported by this hardware platform)
-   LXC: 確認中 Linux &gt;= 2.6.26 向けです                                : 成功
-   LXC: 確認中 for namespace ipc                                           : 成功
-   LXC: 確認中 for namespace mnt                                           : 成功
-   LXC: 確認中 for namespace pid                                           : 成功
-   LXC: 確認中 for namespace uts                                           : 成功
-   LXC: 確認中 for namespace net                                           : 成功
-   LXC: 確認中 for namespace user                                          : 成功
-   LXC: 確認中 for cgroup 'memory' controller support                      : 成功
-   LXC: 確認中 for cgroup 'memory' controller mount-point                  : 成功
-   LXC: 確認中 for cgroup 'cpu' controller support                         : 成功
-   LXC: 確認中 for cgroup 'cpu' controller mount-point                     : 成功
-   LXC: 確認中 for cgroup 'cpuacct' controller support                     : 成功
-   LXC: 確認中 for cgroup 'cpuacct' controller mount-point                 : 成功
-   LXC: 確認中 for cgroup 'cpuset' controller support                      : 成功
-   LXC: 確認中 for cgroup 'cpuset' controller mount-point                  : 成功
-   LXC: 確認中 for cgroup 'devices' controller support                     : 成功
-   LXC: 確認中 for cgroup 'devices' controller mount-point                 : 成功
-   LXC: 確認中 for cgroup 'blkio' controller support                       : 成功
-   LXC: 確認中 for cgroup 'blkio' controller mount-point                   : 成功
-   LXC: 確認中 if device /sys/fs/fuse/connections exists                   : 失敗 (Load the 'fuse' module to enable /proc/ overrides)</code></pre>
-<pre><code>$ id
-（結果は省略）</code></pre>
-<p><code>/sys/fs/fuse/connections</code>がないよ、って怒られています。 書いてある通り、<code>fuse</code>モジュールをロードします。ついでに、起動時に自動でロードするように設定しておきます。</p>
-<pre><code>$ sudo modprobe fuse
-$ sudo sh -c &quot;echo fuse &gt; /etc/modules-load.d/fuse.conf&quot;</code></pre>
-<h1 id="kubectlおよびminikubeのインストール">kubectlおよびMinikubeのインストール</h1>
-<p>こちらも公式サイト通りに。</p>
-<pre><code>$ curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-$ chmod +x ./kubectl
-$ sudo mv ./kubectl /usr/local/bin/kubectl</code></pre>
-<pre><code>$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-1.6.2.rpm &amp;&amp; sudo rpm -ivh minikube-1.6.2.rpm</code></pre>
-<p>早速クラスタを作ってみます。</p>
-<pre><code>$ minikube start --vm-driver=kvm2
-😄  minikube v1.6.2 on Centos 7.7.1908
-✨  Selecting 'kvm2' driver from user configuration (alternates: [none])
-💾  Downloading driver docker-machine-driver-kvm2:
-    &gt; docker-machine-driver-kvm2.sha256: 65 B / 65 B [-------] 100.00% ? p/s 0s
-    &gt; docker-machine-driver-kvm2: 13.86 MiB / 13.86 MiB  100.00% 2.95 MiB p/s 5
-🔥  Creating kvm2 VM (CPUs=2, Memory=2000MB, Disk=20000MB) ...
-🐳  Preparing Kubernetes v1.17.0 on Docker '19.03.5' ...
-🚜  Pulling images ...
-🚀  Launching Kubernetes ... 
-⌛  Waiting for cluster to come online ...
-🏄  Done! kubectl is now configured to use &quot;minikube&quot;</code></pre>
-<p>ちゃんと作れたか確認してみましょう。</p>
-<pre><code>$ minikube status
-host: Running
-kubelet: Running
-apiserver: Running
-kubeconfig: Configured</code></pre>
-<p>大丈夫そうですね。</p>
-<p>すぐには不要なので、一旦停止しておきます。</p>
-<pre><code>$ minikube stop
-✋  Stopping &quot;minikube&quot; in kvm2 ...
-🛑  &quot;minikube&quot; stopped.</code></pre>
-<p>これで、kubernetesを試す準備ができました。</p>
+<p>
+            <a href="./2020-08-06_construct_k8s_with_minikube.html">続きを読む</a>
+          
         </div>
     </div>
 </div>
@@ -614,6 +211,7 @@ kubeconfig: Configured</code></pre>
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="content">
+          
             <h1 id="はじめに">はじめに</h1>
 <p><strong><strong>この記事は、Gistに書いた記事を持ってきたものです</strong></strong></p>
 <p>Org-habitを使おうとしたときに、躓いたのでメモ。 <a href="https://orgmode.org/manual/Tracking-your-habits.html">公式マニュアル</a>には、以下のような記述がある。</p>
@@ -621,74 +219,9 @@ kubeconfig: Configured</code></pre>
 <p>The TODO has a scheduled date, usually with a ‘.+’ style repeat interval. A ‘++’ style may be appropriate for habits with time constraints, e.g., must be done on weekends, or a ‘+’ style for an unusual habit that can have a backlog, e.g., weekly reports.</p>
 </blockquote>
 <p>英語力が低いだけだと思うが、 <code>.+</code> 、 <code>++</code> 、 <code>+</code> でどう振る舞いが変わるのかがよくわからなかった。 なので、実験してみる。</p>
-<h1 id="doneにする前後での振る舞い">DONEにする前後での振る舞い</h1>
-<p>以下は、2020/05/13(水)に実施した。</p>
-<h2 id="doneにする前">DONEにする前</h2>
-<pre class="org"><code>
-** TODO 習慣タスク-日次1
-   SCHEDULED: &lt;2020-05-01 金 .+1d&gt;
-
-** TODO 習慣タスク-日次2
-   SCHEDULED: &lt;2020-05-01 金 ++1d&gt;
-
-** TODO 習慣タスク-日次3
-   SCHEDULED: &lt;2020-05-01 金 +1d&gt;
-
-** TODO 習慣タスク-週次1
-   SCHEDULED: &lt;2020-05-01 金 .+1w&gt;
-
-** TODO 習慣タスク-週次2
-   SCHEDULED: &lt;2020-05-01 金 ++1w&gt;
-
-** TODO 習慣タスク-週次3
-   SCHEDULED: &lt;2020-05-01 金 +1w&gt;
-
-</code></pre>
-<h2 id="org-agenda経由で-doneにした後">(org-agenda経由で) DONEにした後</h2>
-<pre class="org"><code>
-** TODO 習慣タスク-日次1
-   SCHEDULED: &lt;2020-05-14 木 .+1d&gt;
-
-** TODO 習慣タスク-日次2
-   SCHEDULED: &lt;2020-05-14 木 ++1d&gt;
-
-** TODO 習慣タスク-日次3
-   SCHEDULED: &lt;2020-05-02 土 +1d&gt;
-
-** TODO 習慣タスク-週次1
-   SCHEDULED: &lt;2020-05-20 水 .+1w&gt;
-
-** TODO 習慣タスク-週次2
-   SCHEDULED: &lt;2020-05-15 金 ++1w&gt;
-
-** TODO 習慣タスク-週次3
-   SCHEDULED: &lt;2020-05-08 金 +1w&gt;
-
-</code></pre>
-<h1 id="考察">考察</h1>
-<h2 id="比較">比較</h2>
-<ul>
-<li><code>.+</code> については、DONEにすると、DONEにした日 (2020/05/13 (水)) を起点にして、翌日もしくは翌週がセットされる。</li>
-<li><code>++</code> については以下の振る舞いとなった。
-<ul>
-<li>日次の方は、 <code>.+</code> の場合と同じ。</li>
-<li>週次の方は、 DONEにした日を起点にして、予めセットした日 (2020/05/01 (金)) と同じ曜日の日で直近の日がセットされる。</li>
-</ul></li>
-<li><code>+</code> については、予めセットした日 (2020/05/01 (金)) を起点にして、翌日もしくは翌週がセットされる。</li>
-</ul>
-<h2 id="どう使えばよいか">どう使えばよいか？</h2>
-<p>公式マニュアルの通り、以下のように使えばよい。 なお、予定されたTODOを必ずその日にこなすのであれば (遅延などがないのであれば) 、どれを選んでも差は出ない (はず) 。</p>
-<dl>
-<dt><code>.+</code></dt>
-<dd>とりあえずこれを選んでおけば良い。
-</dd>
-<dt><code>++</code></dt>
-<dd>毎週○曜日に実施する、といった場合。 (日次の場合は効果がない)
-</dd>
-<dt><code>+</code></dt>
-<dd>その日の分、その週の分を実施することが求められる場合。 (週次レポートは、その週に出したら以前のものを出さなくて良い、ということにはならない)
-</dd>
-</dl>
+<p>
+            <a href="./2020-08-06_org_iterating_tasks.html">続きを読む</a>
+          
         </div>
     </div>
 </div>
