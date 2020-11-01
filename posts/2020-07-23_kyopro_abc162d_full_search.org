@@ -4,6 +4,7 @@ published: 2020-07-23 18:06:00
 tags: haskell, 競プロ
 ---
 #+OPTIONS: ^:{}
+#+OPTIONS: \n:t
 
 解いた問題の学びを書いていく。
 

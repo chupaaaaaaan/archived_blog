@@ -3,6 +3,8 @@ title: GitBash（MSYS2）でsshしたときの文字化けを解消する
 published: 2020-07-19 05:06:58
 tags: encoding
 ---
+#+OPTIONS: ^:{}
+#+OPTIONS: \n:t
 
 * はじめに
 

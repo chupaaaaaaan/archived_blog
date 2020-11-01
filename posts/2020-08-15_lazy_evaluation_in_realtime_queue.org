@@ -5,6 +5,7 @@ updated: 2020-08-24 23:06:02
 tags: haskell
 ---
 #+OPTIONS: ^:{}
+#+OPTIONS: \n:t
 
 グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、
 [[https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739][なぜ Haskell ではキューが軽んじられているか？]]にもあるように、キューは標準では提供されていない。

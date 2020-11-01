@@ -5,7 +5,7 @@ updated:
 tags: 
 ---
 #+OPTIONS: ^:{}
-
+#+OPTIONS: \n:t
 
 @@html:<!--more-->@@
 

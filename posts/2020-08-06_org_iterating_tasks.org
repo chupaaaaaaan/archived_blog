@@ -4,6 +4,7 @@ published: 2020-08-06 23:07:07
 tags: org-mode
 ---
 #+OPTIONS: ^:{}
+#+OPTIONS: \n:t
 
 * はじめに
   **この記事は、Gistに書いた記事を持ってきたものです**

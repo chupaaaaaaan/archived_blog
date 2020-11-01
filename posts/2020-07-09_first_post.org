@@ -3,6 +3,8 @@ title: ブログを始めた
 published: 2020-07-09 09:06:16
 tags: haskell, hakyll
 ---
+#+OPTIONS: ^:{}
+#+OPTIONS: \n:t
 
 いろいろ思うところがあり、ブログを運用することにしました。
 

@@ -3,6 +3,8 @@ title: ブログのテーマを変更した
 published: 2020-07-18 23:16:04
 tags: haskell, hakyll
 ---
+#+OPTIONS: ^:{}
+#+OPTIONS: \n:t
 
 * はじめに
 
