@@ -72,7 +72,7 @@ siteCtx :: Context String
 siteCtx =
   boolField "comments" (const False) <>
   constField "site_name" "コーヒーと線香と万年筆" <>
-  constField "site_description" "勉強したことおきば" <>
+  constField "site_description" "自分で調べて試してみるのが、一番自分の力になるんだ" <>
   constField "github" "chupaaaaaaan" <>
   constField "qiita" "chupaaaaaaan" <>
   defaultContext
