@@ -55,12 +55,14 @@
     <div class="row">
         <div class="col-md-3 hidden-xs">
             <div class="sidebar well">
-勉強したことおきば
+自分で調べて試してみるのが、一番自分の力になるんだ
 </div>
 
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
+        
+          <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
         
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
         
           <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
-        
-          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
         
     </ul>
 </div>
@@ -105,14 +105,20 @@
 <ul>
 <li><a href="https://matsubara0507.github.io/posts/2016-10-24-changed-design.html">Hakyll で作った GitHub Pages のデザインを変更してみた</a></li>
 </ul>
-<p>同じく、<a href="http://katychuang.com/hakyll-cssgarden/gallery/">ここ</a>や<a href="https://jaspervdj.be/hakyll/examples.html">このあたり</a>を見てみたが、あまりしっくり来なかったので<a href="http://jekyllthemes.org/">jekyll</a>のテーマから探すことにした。 自分が選択したテーマは<a href="http://jekyllthemes.org/themes/jekyll-clean/">jekyll-clean</a>で、こちらをhakyllで使えるように修正した。</p>
-<p>基本的にはmatsubaraさんの記事をなぞれば変換できる・・・のだが、今回私が選んだテーマではひと工夫が必要だった。 割と嵌ってしまったので、どう解決したか書く。</p>
-<p>なお、今回は「シンタックスハイライト」及び「configファイル」の対応はやってない。 また、元のテーマにはdisqus及びissoによるコメント機能、google analytics、ページネーションなども実装されていたが、 これらも今回は対応していない（コメントアウトした）。 ゆくゆくは対応したい。</p>
+<p>同じく、<a href="http://katychuang.com/hakyll-cssgarden/gallery/">ここ</a>や<a href="https://jaspervdj.be/hakyll/examples.html">このあたり</a>を見てみたが、あまりしっくり来なかったので<a href="http://jekyllthemes.org/">jekyll</a>のテーマから探すことにした。<br />
+自分が選択したテーマは<a href="http://jekyllthemes.org/themes/jekyll-clean/">jekyll-clean</a>で、こちらをhakyllで使えるように修正した。</p>
+<p>基本的にはmatsubaraさんの記事をなぞれば変換できる・・・のだが、今回私が選んだテーマではひと工夫が必要だった。<br />
+割と嵌ってしまったので、どう解決したか書く。</p>
+<p>なお、今回は「シンタックスハイライト」及び「configファイル」の対応はやってない。<br />
+また、元のテーマにはdisqus及びissoによるコメント機能、google analytics、ページネーションなども実装されていたが、<br />
+これらも今回は対応していない（コメントアウトした）。<br />
+ゆくゆくは対応したい。</p>
 <p>今回対応したテーマは<a href="https://github.com/chupaaaaaaan/chupaaaaaaan.github.io">こちら</a>に置いてある。</p>
 <p><!--more--></p>
 <h1 id="サイドバーの対応">サイドバーの対応</h1>
 <p>画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。</p>
-<p>単純には、以下のように実装すれば良さそうである。 （ <code>gsubRoute</code> を使って、ルーティングを変更している。）</p>
+<p>単純には、以下のように実装すれば良さそうである。<br />
+（ <code>gsubRoute</code> を使って、ルーティングを変更している。）</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>    route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
@@ -126,16 +132,21 @@
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <p><code>compile</code> でやっていることを説明すると、</p>
 <ol>
-<li><code>posts/*</code> パターンにマッチするコンテンツを作成日時の降順で <code>recentPosts</code> として取得し、</li>
-<li>（サイドバーで参照する） <code>recent_posts</code> をキーとして、 <code>recentPosts</code> をコンテキストに入れて、</li>
-<li><code>posts/*</code> にマッチするコンテンツを <code>pandocCompiler</code> でコンパイルし、</li>
+<li><code>posts/*</code> パターンにマッチするコンテンツを作成日時の降順で <code>recentPosts</code> として取得し、<br />
+</li>
+<li>（サイドバーで参照する） <code>recent_posts</code> をキーとして、 <code>recentPosts</code> をコンテキストに入れて、<br />
+</li>
+<li><code>posts/*</code> にマッチするコンテンツを <code>pandocCompiler</code> でコンパイルし、<br />
+</li>
 <li>出来上がったものを <code>layouts/post.html</code> に突っ込む（テンプレート内で <code>$body$</code> と記載されている箇所に代入される）</li>
 </ol>
 <p>となる。ところが、これをコンパイルすると、以下のようなエラーが出てしまう。</p>
 <pre><code>[ERROR] Hakyll.Core.Runtime.chase: Dependency cycle detected: posts/2020-07-09_first_post.org depends on posts/2020-07-09_first_post.org
 </code></pre>
-<p>どうやら、循環参照が発生しているというメッセージのようだ。実際、 <code>posts/*</code> をコンパイルする前に <code>recentPosts</code> として取得しようとしている。 取得のためにコンパイルし、その中でさらに取得し・・・とループしてしまう。</p>
-<p>この問題は、stackoverflowの記事（<a href="https://stackoverflow.com/questions/35645525/hakyll-says-dependency-cycle-detected">ここ</a>とか<a href="https://stackoverflow.com/questions/47067851/how-do-i-avoid-a-dependency-cycle-when-generating-a-list-of-recent-posts-on-post">ここ</a>とか）が参考になる。 ざっくり言えば、別バージョンのコンテンツを作成し、 <code>recentPosts</code> として取得するコンテンツはこちらのバージョンを使用する。</p>
+<p>どうやら、循環参照が発生しているというメッセージのようだ。実際、 <code>posts/*</code> をコンパイルする前に <code>recentPosts</code> として取得しようとしている。<br />
+取得のためにコンパイルし、その中でさらに取得し・・・とループしてしまう。</p>
+<p>この問題は、stackoverflowの記事（<a href="https://stackoverflow.com/questions/35645525/hakyll-says-dependency-cycle-detected">ここ</a>とか<a href="https://stackoverflow.com/questions/47067851/how-do-i-avoid-a-dependency-cycle-when-generating-a-list-of-recent-posts-on-post">ここ</a>とか）が参考になる。<br />
+ざっくり言えば、別バージョンのコンテンツを作成し、 <code>recentPosts</code> として取得するコンテンツはこちらのバージョンを使用する。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> version <span class="st">&quot;postContents&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  compile <span class="op">$</span> pandocCompiler <span class="op">&gt;&gt;=</span> relativizeUrls</span>
@@ -151,9 +162,13 @@
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>        pandocCompiler</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/post.html&quot;</span> postsCtx</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
-<p>注意すべきポイントとしては、別バージョンのコンテンツを作成する際に <code>route</code> も正しく設定する必要がある。 <code>route</code> を省略してもコンパイルエラーにはならないが、 <code>recent_posts</code> として参照したコンテンツへのリンクが作成されない （ <code>defaultContext</code> に格納される <code>$url$</code> が空になるっぽい）。</p>
+<p>注意すべきポイントとしては、別バージョンのコンテンツを作成する際に <code>route</code> も正しく設定する必要がある。<br />
+<code>route</code> を省略してもコンパイルエラーにはならないが、 <code>recent_posts</code> として参照したコンテンツへのリンクが作成されない<br />
+（ <code>defaultContext</code> に格納される <code>$url$</code> が空になるっぽい）。</p>
 <h2 id="ちなみに">ちなみに</h2>
-<p>循環参照を解決する手段としては、複数のバージョンのコンテンツを用意する方法の他に、<a href="https://groups.google.com/g/hakyll/c/F2j7iztwKEc/m/axLNmksqCAAJ?pli=1">作者から提案された方法</a>もある。 どうやら、「必要なのはメタデータだけなんだから、それだけ取得すればよくね？」ということみたいなのだが、 どうやればよいのかよくわからなかったので、今回は不採用。</p>
+<p>循環参照を解決する手段としては、複数のバージョンのコンテンツを用意する方法の他に、<a href="https://groups.google.com/g/hakyll/c/F2j7iztwKEc/m/axLNmksqCAAJ?pli=1">作者から提案された方法</a>もある。<br />
+どうやら、「必要なのはメタデータだけなんだから、それだけ取得すればよくね？」ということみたいなのだが、<br />
+どうやればよいのかよくわからなかったので、今回は不採用。</p>
 <p>hakyllに出てくる <code>Context a</code> 、 <code>Item a</code> 、 <code>Compiler a</code> などは重要な概念っぽいのだが、まだよくわかってない・・・。</p>
 <h1 id="コンテンツの表示">コンテンツの表示</h1>
 <p>上記で循環参照のエラーはなくなるが、まだ問題はある。</p>
@@ -161,8 +176,10 @@
 <ul>
 <li>サイドバー
 <ul>
-<li>Description</li>
-<li>Recent Posts</li>
+<li>Description<br />
+</li>
+<li>Recent Posts<br />
+</li>
 <li>Links</li>
 </ul></li>
 <li>メインコンテンツ
@@ -187,13 +204,20 @@
 <p>今回は循環参照にはならないので、 <code>posts &lt;- recentFirst =&lt;&lt; loadAll "posts/*"</code> のように書いてもコンパイルエラーにはならない。</p>
 <p>が、このように書いてしまうと、2つの問題が発生する。</p>
 <ol>
-<li>Recent Postsに、同じコンテンツへのリンクが2つ表示される</li>
+<li>Recent Postsに、同じコンテンツへのリンクが2つ表示される<br />
+</li>
 <li>コンテンツが表示される領域に、（サイドバーを含めて）コンテンツがネストされて表示される（ちょっと説明が難しい・・・）</li>
 </ol>
-<p>ひとつめの問題は、 <code>posts &lt;- recentFirst =&lt;&lt; loadAll "posts/*"</code> のように書いた時に、 <code>posts/*</code> にマッチする全てのコンテンツが取得されてしまうことが原因である。 つまり、バージョン指定なしでコンパイルしたコンテンツと、バージョンを明示したコンテンツのどちらにもマッチしてしまう。 これを防ぐためには、バージョン指定するか、明示的にバージョンが存在しないコンテンツにマッチするように書く必要がある。</p>
+<p>ひとつめの問題は、 <code>posts &lt;- recentFirst =&lt;&lt; loadAll "posts/*"</code> のように書いた時に、<br />
+<code>posts/*</code> にマッチする全てのコンテンツが取得されてしまうことが原因である。<br />
+つまり、バージョン指定なしでコンパイルしたコンテンツと、バージョンを明示したコンテンツのどちらにもマッチしてしまう。<br />
+これを防ぐためには、バージョン指定するか、明示的にバージョンが存在しないコンテンツにマッチするように書く必要がある。</p>
 <p>こんな感じ。</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasNoVersion)</span></code></pre></div>
-<p>ふたつめの問題は、 <code>posts/*</code> （のバージョンなし版）にマッチするコンテンツは、既にサイドバーも含めてコンパイル済みであることから来ている （そのようなコンテンツをテンプレートに埋め込もうとするため、コンテンツがネストされてしまう）。 そのため、テンプレートを適用する前で止めたバージョンのコンテンツ（サイドバーやヘッダーがくっついていない）を取得し、 それを使用してコンパイル・テンプレート埋め込みを実施すればよい。</p>
+<p>ふたつめの問題は、 <code>posts/*</code> （のバージョンなし版）にマッチするコンテンツは、既にサイドバーも含めてコンパイル済みであることから来ている<br />
+（そのようなコンテンツをテンプレートに埋め込もうとするため、コンテンツがネストされてしまう）。<br />
+そのため、テンプレートを適用する前で止めたバージョンのコンテンツ（サイドバーやヘッダーがくっついていない）を取得し、<br />
+それを使用してコンパイル・テンプレート埋め込みを実施すればよい。</p>
 <p>今回で言えば、 <code>postContents</code> のバージョンがテンプレートを適用していないコンテンツであるため、そちらを取得すればよい。</p>
 <p>最終的には、こんな感じ（ <code>hasNoVersion</code> は使用しない）。</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>match (fromList [<span class="st">&quot;index.html&quot;</span>]) <span class="op">$</span> <span class="kw">do</span></span>
@@ -210,7 +234,9 @@
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <h2 id="ちなみにその2">ちなみにその2</h2>
-<p>テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに<a href="https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html">スナップショットを利用する方法</a>もある。 こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、 スナップショット方式は採用していない。</p>
+<p>テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに<a href="https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html">スナップショットを利用する方法</a>もある。<br />
+こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、<br />
+スナップショット方式は採用していない。</p>
 <h1 id="終わりに">終わりに</h1>
 <p>とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。</p>
             </div>

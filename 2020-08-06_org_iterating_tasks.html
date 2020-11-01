@@ -55,12 +55,14 @@
     <div class="row">
         <div class="col-md-3 hidden-xs">
             <div class="sidebar well">
-勉強したことおきば
+自分で調べて試してみるのが、一番自分の力になるんだ
 </div>
 
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
+        
+          <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
         
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
         
           <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
-        
-          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
         
     </ul>
 </div>
@@ -101,11 +101,13 @@
             <div class="post-content">
             <h1 id="はじめに">はじめに</h1>
 <p><strong><strong>この記事は、Gistに書いた記事を持ってきたものです</strong></strong></p>
-<p>Org-habitを使おうとしたときに、躓いたのでメモ。 <a href="https://orgmode.org/manual/Tracking-your-habits.html">公式マニュアル</a>には、以下のような記述がある。</p>
+<p>Org-habitを使おうとしたときに、躓いたのでメモ。<br />
+<a href="https://orgmode.org/manual/Tracking-your-habits.html">公式マニュアル</a>には、以下のような記述がある。</p>
 <blockquote>
 <p>The TODO has a scheduled date, usually with a ‘.+’ style repeat interval. A ‘++’ style may be appropriate for habits with time constraints, e.g., must be done on weekends, or a ‘+’ style for an unusual habit that can have a backlog, e.g., weekly reports.</p>
 </blockquote>
-<p>英語力が低いだけだと思うが、 <code>.+</code> 、 <code>++</code> 、 <code>+</code> でどう振る舞いが変わるのかがよくわからなかった。 なので、実験してみる。</p>
+<p>英語力が低いだけだと思うが、 <code>.+</code> 、 <code>++</code> 、 <code>+</code> でどう振る舞いが変わるのかがよくわからなかった。<br />
+なので、実験してみる。</p>
 <p><!--more--></p>
 <h1 id="doneにする前後での振る舞い">DONEにする前後での振る舞い</h1>
 <p>以下は、2020/05/13(水)に実施した。</p>
@@ -154,22 +156,28 @@
 <h1 id="考察">考察</h1>
 <h2 id="比較">比較</h2>
 <ul>
-<li><code>.+</code> については、DONEにすると、DONEにした日 (2020/05/13 (水)) を起点にして、翌日もしくは翌週がセットされる。</li>
+<li><code>.+</code> については、DONEにすると、DONEにした日 (2020/05/13 (水)) を起点にして、翌日もしくは翌週がセットされる。<br />
+</li>
 <li><code>++</code> については以下の振る舞いとなった。
 <ul>
-<li>日次の方は、 <code>.+</code> の場合と同じ。</li>
-<li>週次の方は、 DONEにした日を起点にして、予めセットした日 (2020/05/01 (金)) と同じ曜日の日で直近の日がセットされる。</li>
+<li>日次の方は、 <code>.+</code> の場合と同じ。<br />
+</li>
+<li>週次の方は、 DONEにした日を起点にして、予めセットした日 (2020/05/01 (金)) と同じ曜日の日で直近の日がセットされる。<br />
+</li>
 </ul></li>
 <li><code>+</code> については、予めセットした日 (2020/05/01 (金)) を起点にして、翌日もしくは翌週がセットされる。</li>
 </ul>
 <h2 id="どう使えばよいか">どう使えばよいか？</h2>
-<p>公式マニュアルの通り、以下のように使えばよい。 なお、予定されたTODOを必ずその日にこなすのであれば (遅延などがないのであれば) 、どれを選んでも差は出ない (はず) 。</p>
+<p>公式マニュアルの通り、以下のように使えばよい。<br />
+なお、予定されたTODOを必ずその日にこなすのであれば (遅延などがないのであれば) 、どれを選んでも差は出ない (はず) 。</p>
 <dl>
 <dt><code>.+</code></dt>
-<dd>とりあえずこれを選んでおけば良い。
+<dd>とりあえずこれを選んでおけば良い。<br />
+
 </dd>
 <dt><code>++</code></dt>
-<dd>毎週○曜日に実施する、といった場合。 (日次の場合は効果がない)
+<dd>毎週○曜日に実施する、といった場合。 (日次の場合は効果がない)<br />
+
 </dd>
 <dt><code>+</code></dt>
 <dd>その日の分、その週の分を実施することが求められる場合。 (週次レポートは、その週に出したら以前のものを出さなくて良い、ということにはならない)

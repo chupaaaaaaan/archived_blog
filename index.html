@@ -55,12 +55,14 @@
     <div class="row">
         <div class="col-md-3 hidden-xs">
             <div class="sidebar well">
-勉強したことおきば
+自分で調べて試してみるのが、一番自分の力になるんだ
 </div>
 
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
+        
+          <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
         
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
         
           <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
-        
-          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
         
     </ul>
 </div>
@@ -90,6 +90,28 @@
             
 <div class="article">
   <div class="well">
+        <h1><a href="./2020-10-31_java-info-collection.html">2020-11-01 (Sun) - 個人的Java情報まとめ</a></h1>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and post.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="content">
+          
+            <p>お仕事でJavaを書いていて、いつもわからん、となってしまうので、勉強を兼ねて、自分用のまとめ記事を作ってみる（と言ってもまだMavenだけ・・・）。<br />
+とりあえず雑多に放り込んで、収拾つかなくなったら別記事にしたり、個別に記事を書くかも。</p>
+<p>
+            <a href="./2020-10-31_java-info-collection.html">続きを読む</a>
+          
+        </div>
+    </div>
+</div>
+
+<div class="article">
+  <div class="well">
         <h1><a href="./2020-10-04_hakyll_teaser.html">2020-10-04 (Sun) - Hakyllでのteaser（続きを読む）の設定</a></h1>
         <!-- コメント機能は別途追加する -->
         <!-- {% if site.comments and post.comments %} -->
@@ -101,7 +123,9 @@
         <!-- {% endif %} -->
         <div class="content">
           
-            <p>このブログも少しずつ記事が増えてきている。 現在トップページには、最新から数えて過去5件の記事まで、すべての内容が表示されるようになっているが、 これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。</p>
+            <p>このブログも少しずつ記事が増えてきている。<br />
+現在トップページには、最新から数えて過去5件の記事まで、すべての内容が表示されるようになっているが、<br />
+これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。</p>
 <p>そこで、今回はトップページに表示される記事はteaserとして表示されるよう、設定を追加した。</p>
 <p>
             <a href="./2020-10-04_hakyll_teaser.html">続きを読む</a>
@@ -123,11 +147,13 @@
         <!-- {% endif %} -->
         <div class="content">
           
-            <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。 特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
+            <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。<br />
+特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
 <p>この記事では、クロスサイト・リクエストフォージェリについて、概要と基本的な対策について記載する。</p>
 <p>なお、今回学習に使用する資料はこちら。</p>
 <ul>
-<li><a href="https://www.amazon.co.jp/%25E4%25BD%2593%25E7%25B3%25BB%25E7%259A%2584%25E3%2581%25AB%25E5%25AD%25A6%25E3%2581%25B6-%25E5%25AE%2589%25E5%2585%25A8%25E3%2581%25AAWeb%25E3%2582%25A2%25E3%2583%2597%25E3%2583%25AA%25E3%2582%25B1%25E3%2583%25BC%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%25B3%25E3%2581%25AE%25E4%25BD%259C%25E3%2582%258A%25E6%2596%25B9-%25E7%25AC%25AC2%25E7%2589%2588-%25E8%2584%2586%25E5%25BC%25B1%25E6%2580%25A7%25E3%2581%258C%25E7%2594%259F%25E3%2581%25BE%25E3%2582%258C%25E3%2582%258B%25E5%258E%259F%25E7%2590%2586%25E3%2581%25A8%25E5%25AF%25BE%25E7%25AD%2596%25E3%2581%25AE%25E5%25AE%259F%25E8%25B7%25B5-%25E5%25BE%25B3%25E4%25B8%25B8/dp/4797393165/ref=tmm_hrd_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=">体系的に学ぶ 安全なWebアプリケーションの作り方 第2版 脆弱性が生まれる原理と対策の実践</a></li>
+<li><a href="https://www.amazon.co.jp/%25E4%25BD%2593%25E7%25B3%25BB%25E7%259A%2584%25E3%2581%25AB%25E5%25AD%25A6%25E3%2581%25B6-%25E5%25AE%2589%25E5%2585%25A8%25E3%2581%25AAWeb%25E3%2582%25A2%25E3%2583%2597%25E3%2583%25AA%25E3%2582%25B1%25E3%2583%25BC%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%25B3%25E3%2581%25AE%25E4%25BD%259C%25E3%2582%258A%25E6%2596%25B9-%25E7%25AC%25AC2%25E7%2589%2588-%25E8%2584%2586%25E5%25BC%25B1%25E6%2580%25A7%25E3%2581%258C%25E7%2594%259F%25E3%2581%25BE%25E3%2582%258C%25E3%2582%258B%25E5%258E%259F%25E7%2590%2586%25E3%2581%25A8%25E5%25AF%25BE%25E7%25AD%2596%25E3%2581%25AE%25E5%25AE%259F%25E8%25B7%25B5-%25E5%25BE%25B3%25E4%25B8%25B8/dp/4797393165/ref=tmm_hrd_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=">体系的に学ぶ 安全なWebアプリケーションの作り方 第2版 脆弱性が生まれる原理と対策の実践</a><br />
+</li>
 <li><a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> （IPA）</li>
 </ul>
 <p>
@@ -150,11 +176,13 @@
         <!-- {% endif %} -->
         <div class="content">
           
-            <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。 特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
+            <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。<br />
+特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
 <p>この記事では、クロスサイト・スクリプティングについて、概要と基本的な対策について記載する。</p>
 <p>なお、今回学習に使用する資料はこちら。</p>
 <ul>
-<li><a href="https://www.amazon.co.jp/%25E4%25BD%2593%25E7%25B3%25BB%25E7%259A%2584%25E3%2581%25AB%25E5%25AD%25A6%25E3%2581%25B6-%25E5%25AE%2589%25E5%2585%25A8%25E3%2581%25AAWeb%25E3%2582%25A2%25E3%2583%2597%25E3%2583%25AA%25E3%2582%25B1%25E3%2583%25BC%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%25B3%25E3%2581%25AE%25E4%25BD%259C%25E3%2582%258A%25E6%2596%25B9-%25E7%25AC%25AC2%25E7%2589%2588-%25E8%2584%2586%25E5%25BC%25B1%25E6%2580%25A7%25E3%2581%258C%25E7%2594%259F%25E3%2581%25BE%25E3%2582%258C%25E3%2582%258B%25E5%258E%259F%25E7%2590%2586%25E3%2581%25A8%25E5%25AF%25BE%25E7%25AD%2596%25E3%2581%25AE%25E5%25AE%259F%25E8%25B7%25B5-%25E5%25BE%25B3%25E4%25B8%25B8/dp/4797393165/ref=tmm_hrd_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=">体系的に学ぶ 安全なWebアプリケーションの作り方 第2版 脆弱性が生まれる原理と対策の実践</a></li>
+<li><a href="https://www.amazon.co.jp/%25E4%25BD%2593%25E7%25B3%25BB%25E7%259A%2584%25E3%2581%25AB%25E5%25AD%25A6%25E3%2581%25B6-%25E5%25AE%2589%25E5%2585%25A8%25E3%2581%25AAWeb%25E3%2582%25A2%25E3%2583%2597%25E3%2583%25AA%25E3%2582%25B1%25E3%2583%25BC%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%25B3%25E3%2581%25AE%25E4%25BD%259C%25E3%2582%258A%25E6%2596%25B9-%25E7%25AC%25AC2%25E7%2589%2588-%25E8%2584%2586%25E5%25BC%25B1%25E6%2580%25A7%25E3%2581%258C%25E7%2594%259F%25E3%2581%25BE%25E3%2582%258C%25E3%2582%258B%25E5%258E%259F%25E7%2590%2586%25E3%2581%25A8%25E5%25AF%25BE%25E7%25AD%2596%25E3%2581%25AE%25E5%25AE%259F%25E8%25B7%25B5-%25E5%25BE%25B3%25E4%25B8%25B8/dp/4797393165/ref=tmm_hrd_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=">体系的に学ぶ 安全なWebアプリケーションの作り方 第2版 脆弱性が生まれる原理と対策の実践</a><br />
+</li>
 <li><a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> （IPA）</li>
 </ul>
 <p>
@@ -177,45 +205,25 @@
         <!-- {% endif %} -->
         <div class="content">
           
-            <p>グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、 <a href="https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739">なぜ Haskell ではキューが軽んじられているか？</a>にもあるように、キューは標準では提供されていない。</p>
-<p>そこで、以下を参考にしてキューを実装した。 ここでは、実時間キューを実装した（最悪計算量・償却計算量とも <span class="math inline"><em>O</em>(1)</span> のため）。</p>
+            <p>グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、<br />
+<a href="https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739">なぜ Haskell ではキューが軽んじられているか？</a>にもあるように、キューは標準では提供されていない。</p>
+<p>そこで、以下を参考にしてキューを実装した。<br />
+ここでは、実時間キューを実装した（最悪計算量・償却計算量とも <span class="math inline"><em>O</em>(1)</span> のため）。</p>
 <ol>
-<li><a href="http://www.kmonos.net/pub/Presen/PFDS.pdf">20分でわかるPurely Functional Data Structures</a></li>
-<li><a href="https://qiita.com/rst76/items/a7dd81b522a09d1b9986">キューの効率的な実装 または私は如何にしてHaskellを止めてF#を愛するようになったか</a></li>
-<li><a href="http://autotaker.hatenablog.com/entry/2017/12/21/125153">永続リアルタイムキューのHaskell実装と計算量解析</a></li>
+<li><a href="http://www.kmonos.net/pub/Presen/PFDS.pdf">20分でわかるPurely Functional Data Structures</a><br />
+</li>
+<li><a href="https://qiita.com/rst76/items/a7dd81b522a09d1b9986">キューの効率的な実装 または私は如何にしてHaskellを止めてF#を愛するようになったか</a><br />
+</li>
+<li><a href="http://autotaker.hatenablog.com/entry/2017/12/21/125153">永続リアルタイムキューのHaskell実装と計算量解析</a><br />
+</li>
 <li><a href="https://rst76.hatenablog.com/entry/20171222/1513963036">Haskell で RealTimeQueue</a></li>
 </ol>
-<p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、 実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。 特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
+<p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、<br />
+実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。<br />
+特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
 <p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
 <p>
             <a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">続きを読む</a>
-          
-        </div>
-    </div>
-</div>
-
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-08-06_construct_k8s_with_minikube.html">2020-08-06 (Thu) - Minikubeを使って、kubernetesを構築する。</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
-          
-            <h1 id="はじめに">はじめに</h1>
-<p><strong>この記事は、はてなブログで公開していた記事を持ってきたものです（一部リンク等を修正しています）</strong></p>
-<h1 id="追記">追記</h1>
-<p><code>libvirt</code> グループに所属させないと、minikubeでkvm仮想マシンを作成する時エラーになるので、手順を追記しました。</p>
-<h1 id="目的">目的</h1>
-<p>kubernetesを全く触ったことがなく、どんなものか知りたかったので、ちょっと触ってみます。 もともとはEKSで試そうとしましたが、0.20$/hと試してみるには高かったので、ローカル環境でMinikubeを使って構築してみます。</p>
-<p>試した環境はこちら。</p>
-
-            <a href="./2020-08-06_construct_k8s_with_minikube.html">続きを読む</a>
           
         </div>
     </div>

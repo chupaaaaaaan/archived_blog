@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>コーヒーと線香と万年筆</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/theme.css" rel="stylesheet" type="text/css">
+    <link href="./css/highlight.css" rel="stylesheet" type="text/css">
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and site.isso != '' %} -->
+<!-- <script data-isso="{{ site.isso }}" src="/js/embed.min.js"></script> -->
+<!-- {% endif %} -->
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./">コーヒーと線香と万年筆</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="./">Home</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
+                    <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./atom.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
+                    
+                    
+                      <li class="active"><a href="https://qiita.com/chupaaaaaaan">Qiita</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+自分で調べて試してみるのが、一番自分の力になるんだ
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
+        
+          <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
+        
+          <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
+        
+          <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
+        
+          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
+        
+    </ul>
+</div>
+
+<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a target="_blank" href="https://hoogle.haskell.org/">Hoogle</a></li>
+  <li><a target="_blank" href="https://www.stackage.org/">Stackage Server</a></li>
+  <li><a target="_blank" href="https://scrapbox.io/haskell-shoen/">Haskell荘園</a></li>
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="./2020-10-31_java-info-collection.html">2020-11-01 (Sun) - 個人的Java情報まとめ</a></h1>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if site.comments and page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            <div class="post-content">
+            <p>お仕事でJavaを書いていて、いつもわからん、となってしまうので、勉強を兼ねて、自分用のまとめ記事を作ってみる（と言ってもまだMavenだけ・・・）。<br />
+とりあえず雑多に放り込んで、収拾つかなくなったら別記事にしたり、個別に記事を書くかも。</p>
+<p><!--more--></p>
+<h1 id="maven">Maven</h1>
+<h2 id="mavenの基本勉強メモ"><a href="https://qiita.com/opengl-8080/items/bb32732f9aa5cb3495d2">Mavenの基本勉強メモ</a></h2>
+<ul>
+<li>Mavenでわからんことがあったら、とりあえずここを読む。</li>
+</ul>
+<h2 id="maven-documentation-index"><a href="https://maven.apache.org/guides/index.html">Maven documentation: Index</a></h2>
+<ul>
+<li>なかなかドキュメントの目次が見つからなかったので</li>
+</ul>
+<h2 id="mavenの公式プラグイン"><a href="https://maven.apache.org/plugins/index.html">Mavenの公式プラグイン</a></h2>
+<ul>
+<li><p>よく使うプラグインもたくさん。</p></li>
+<li><p><a href="https://maven.apache.org/plugins/maven-dependency-plugin/">maven-dependency-plugin</a></p>
+<ul>
+<li>依存関係にあるアーティファクト表示したり、集めたりといろいろなことができる。
+<dl>
+<dt><code>mvn dependency:resolve</code></dt>
+<dd><p>依存関係を一覧表示する（エイリアス: <code>dependency:resolve</code> ）。</p>
+</dd>
+<dt><code>mvn dependency:resolve-plugins</code></dt>
+<dd><p>プラグインの依存関係を一覧表示する。</p>
+</dd>
+<dt><code>mvn dependency:list-repositories</code></dt>
+<dd><p>使用されているリポジトリを一覧表示する。</p>
+</dd>
+<dt><code>mvn dependency:tree</code></dt>
+<dd><p>依存関係をツリー状にして表示する。</p>
+</dd>
+<dt><code>mvn dependency:copy-dependencies</code></dt>
+<dd><p>依存するアーティファクトを、 <code>${project.build.directory}/dependency</code> に収集する。</p>
+</dd>
+<dt><code>mvn dependency:build-classpath</code></dt>
+<dd><p><code>java</code> コマンドの <code>-cp</code> オプションに渡せる形式（クラスパス形式）で、依存するアーティファクトのパスを表示する（ローカルリポジトリ内）。</p>
+</dd>
+<dt><code>mvn dependency:purge-local-repository</code></dt>
+<dd><p>ローカルリポジトリから、依存するアーティファクトを削除し、必要に応じて再解決する。</p>
+</dd>
+</dl></li>
+</ul></li>
+<li><p><a href="https://maven.apache.org/plugins/maven-resources-plugin/copy-resources-mojo.html">maven-resources-plugin</a></p></li>
+<li><p><a href="https://maven.apache.org/plugins/maven-jdeps-plugin/">maven-jdeps-plugin</a></p>
+<ul>
+<li><a href="https://docs.oracle.com/javase/jp/9/tools/jdeps.htm">jdeps</a>をMavenプロジェクトで使用するためのツール。</li>
+</ul></li>
+<li><p>プラグインの自作</p>
+<ul>
+<li><p>割と簡単に作れるっぽい。<br />
+提供されてるプラグインをなんとか組み合わせてがんばる・・・とするくらいなら、必要な処理をするプラグインを作った方が早いかも。</p></li>
+<li><p><a href="https://www.slideshare.net/kawasima/maven-196821326">参考</a></p></li>
+</ul></li>
+</ul>
+<h2 id="pomの構造"><a href="https://maven.apache.org/pom.html">POMの構造</a></h2>
+<ul>
+<li><p><code>pom.xml</code> で、どこにどんなことが書いてあるか（特に依存関係）があまり解ってなかったので、よく使う（よく見る）要素を書いてみる。</p></li>
+<li><p>基本的な設定</p>
+<dl>
+<dt><code>&lt;moduleVersion&gt;</code></dt>
+<dd><p>必須。 <code>4.0.0</code> 固定。</p>
+</dd>
+<dt><code>&lt;groupId&gt;</code> , <code>&lt;artifactId&gt;</code> , <code>&lt;version&gt;</code></dt>
+<dd><p>必須。</p>
+</dd>
+<dt><code>&lt;packaging&gt;</code></dt>
+<dd><p>省略したら <code>jar</code> が設定される。使用するパッケージングにより、 <code>default</code> ライフサイクルの各フェースに紐づけられるゴールが異なる（<a href="https://maven.apache.org/ref/3.6.3/maven-core/default-bindings.html">参考</a>）。</p>
+</dd>
+<dt><code>&lt;dependencies&gt;</code></dt>
+<dd><p>子要素は <code>&lt;dependency&gt;</code> 要素のリストで、ここにプロジェクトの依存関係を記載する。</p>
+</dd>
+<dt><code>&lt;parent&gt;</code></dt>
+<dd><p>POMを継承する場合、親となるPOMの情報を記載する。親POMでは <code>&lt;dependencyManagement&gt;</code> で子プロジェクトが <code>&lt;dependency&gt;</code> として設定するアーティファクトのバージョンを指定したりできる。<a href="https://qiita.com/syogi_wap/items/432bbdbe9892eb05e122">BOM</a>も参照。</p>
+</dd>
+<dt><code>&lt;properties&gt;</code></dt>
+<dd>独自の変数を定義することができる。POM内から、 <code>${hoge.fuga}</code> のように参照できる。システムプロパティで変更することができる。以下は特殊なプロパティ。
+<ul>
+<li><p><code>env.X</code> : 環境変数 <code>X</code> を参照。</p></li>
+<li><p><code>project.x</code> : POM内 <code>&lt;project&gt;</code> 要素からの対応する要素の値を参照。</p></li>
+<li><p><code>settings.x</code> : <code>$HOME/.m2/settings.xml</code> 内の対応する要素の値を参照。</p></li>
+</ul>
+</dd>
+</dl></li>
+<li><p>ビルド用の設定。 <code>&lt;project&gt;</code> 直下の <code>&lt;build&gt;</code> 要素の中に記載する。</p>
+<dl>
+<dt><code>&lt;resources&gt;</code> , <code>&lt;testResources&gt;</code></dt>
+<dd><p>子要素は <code>&lt;resource&gt;</code> 要素/ <code>&lt;testResource&gt;</code> 要素のリストで、process-resourcesフェーズ及びprocess-test-resourcesフェーズでリソースファイルを収集する対象のディレクトリを追加する。<br />
+<code>${basedir}/src/main/resources</code> , <code>${basedir}/src/test/resources</code> はデフォルトの収集対象ディレクトリとなっている。</p>
+</dd>
+<dt><code>&lt;pluginManagement&gt;</code></dt>
+<dd><p>親POMで、この中にプラグインの設定を記載しておく。<br />
+子プロジェクトが親POMを継承すると、使用するプラグインを指定するだけで記載した設定でプラグインを使用できる。<br />
+<code>&lt;dependencyManagement&gt;</code> と同じような使用方法。</p>
+</dd>
+<dt><code>&lt;plugins&gt;</code></dt>
+<dd>子要素は <code>&lt;plugin&gt;</code> 要素のリストで、ビルド時に使用するプラグインの設定を記載する。
+<ul>
+<li><p><code>&lt;configuration&gt;</code> : プラグイン固有の設定を記載する。</p></li>
+<li><p><code>&lt;executions&gt;</code> : 子要素は <code>&lt;execution&gt;</code> 要素のリストで、ビルドライフサイクルのフェーズとプラグインのゴールを紐付ける。紐づけておくと、そのフェーズを実行した時に紐づいたゴールが実行される。</p></li>
+<li><p><code>&lt;dependencies&gt;</code> : 子要素は <code>&lt;dependency&gt;</code> 要素のリストで、プラグインの依存関係を変更する（不要なruntime依存性を削除したり、バージョンを変更したりなど）。</p></li>
+<li><p><code>&lt;extensions&gt;</code> : これはどう使うのかよくわからない・・・</p></li>
+<li><p>ビルド用のソースディレクトリ・アウトプットディレクトリは、親POMもしくはSuper POMから継承されるが、以下で変更することもできる。</p>
+<ul>
+<li><code>&lt;sourceDirectory&gt;</code><br />
+</li>
+<li><code>&lt;testSourceDirectory&gt;</code><br />
+</li>
+<li><code>&lt;outputDirectory&gt;</code><br />
+</li>
+<li><code>&lt;testOutputDirectory&gt;</code></li>
+</ul></li>
+</ul>
+</dd>
+</dl></li>
+<li><p>リポジトリの設定。 <code>&lt;project&gt;</code> 直下の <code>&lt;repositories&gt;</code> 要素に、各リポジトリ設定を記載する。</p></li>
+</ul>
+            </div>
+            <!-- コメント機能は別途追加する -->
+            <!-- {% if page.comments %} -->
+            <!--     {% if site.disqus != '' %} -->
+            <!-- <div id="disqus_thread"> -->
+            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+            <!-- </div> -->
+            <!--     {% elsif site.isso != '' %} -->
+            <!--     <section id="isso-thread"></section> -->
+            <!--     {% endif %} -->
+            <!-- {% endif %} -->
+            </div>
+          </div>
+          <div class="pagination">
+              <!-- ページネーションは別途追加する -->
+              <!-- {% if page.next %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+              <!-- {% endif %} -->
+              <!-- {% if page.previous %} -->
+              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+              <!-- {% endif %} -->
+          </div>
+        </div>
+    </div>
+</div>
+
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
+
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
+
+<!--    (function() { -->
+<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--     })(); -->
+<!--   </script> -->
+<!-- {% endif %} -->
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2020 コーヒーと線香と万年筆. Powered by <a href="https://jaspervdj.be/hakyll/">Hakyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a>, theme adjusted to Hakyll by Takayuki Uchida</p>
+        </div>
+    </div>
+</div>
+
+<!-- コメント機能は別途追加する -->
+<!-- {% if site.comments and site.disqus != '' %} -->
+<!--   <script type="text/javascript"> -->
+<!--     var disqus_shortname = '{{ site.disqus }}'; -->
+
+<!--     var disqus_config = function () { -->
+<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
+<!--     }; -->
+
+<!--    (function () { -->
+<!--      var s = document.createElement('script'); s.async = true; -->
+<!--      s.type = 'text/javascript'; -->
+<!--      s.src = '//' + disqus_shortname + '.disqus.com/count.js'; -->
+<!--      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s); -->
+<!--    }()); -->
+<!--  </script> -->
+<!-- {% endif %} -->
+
+
+
+
+</body>
+</html>
+

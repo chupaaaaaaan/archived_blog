@@ -55,12 +55,14 @@
     <div class="row">
         <div class="col-md-3 hidden-xs">
             <div class="sidebar well">
-勉強したことおきば
+自分で調べて試してみるのが、一番自分の力になるんだ
 </div>
 
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
+        
+          <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
         
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
         
           <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
-        
-          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
         
     </ul>
 </div>
@@ -101,7 +101,8 @@
             <div class="post-content">
             <h1 id="はじめに">はじめに</h1>
 <p>タイトルまんまです。</p>
-<p>やんごとなき理由により、Linuxサーバ（RHEL7）でとあるユーザの文字エンコーディングをUTF-8からEUC-JPに変更する必要があった。 ちゃんと <code>ja_JP.eucjp</code> もインストールされていたので、対象ユーザの <code>~/.bash_profile</code> に以下を設定すれば良い。</p>
+<p>やんごとなき理由により、Linuxサーバ（RHEL7）でとあるユーザの文字エンコーディングをUTF-8からEUC-JPに変更する必要があった。<br />
+ちゃんと <code>ja_JP.eucjp</code> もインストールされていたので、対象ユーザの <code>~/.bash_profile</code> に以下を設定すれば良い。</p>
 <div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>$ <span class="fu">cat</span> ~/.bash_profile <span class="kw">|</span> <span class="fu">grep</span> LANG</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
 <p>設定されているかの確認は以下（ <code>source</code> するか、再ログインしてから確認する） 。</p>
@@ -114,13 +115,17 @@
 <ul>
 <li><a href="https://ja.stackoverflow.com/questions/55304/msys2-%25E3%2581%25AE-ssh-%25E3%2581%25A7euc-jp%25E7%2592%25B0%25E5%25A2%2583%25E3%2581%25AB%25E3%2583%25AA%25E3%2583%25A2%25E3%2583%25BC%25E3%2583%2588%25E6%258E%25A5%25E7%25B6%259A%25E3%2581%2597%25E3%2581%259F%25E5%25A0%25B4%25E5%2590%2588%25E3%2581%25AB%25E6%2596%2587%25E5%25AD%2597%25E5%258C%2596%25E3%2581%2591%25E3%2582%2592%25E5%259B%259E%25E9%2581%25BF%25E3%2581%2599%25E3%2582%258B%25E6%2596%25B9%25E6%25B3%2595">msys2 の ssh でeuc-jp環境にリモート接続した場合に文字化けを回避する方法</a></li>
 </ul>
-<p>GitBash（Git for Windowsに同梱されているシェル環境）は<a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#git-for-windows">MSYS2ベース</a>なので、同じ現象に該当すると思われる。 状況としては、サーバからEUC-JPエンコーディングのバイナリが送られているが、クライアント側で別のエンコーディングのデータとして解釈されており、結果として文字化けが発生しているようだ。</p>
+<p>GitBash（Git for Windowsに同梱されているシェル環境）は<a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#git-for-windows">MSYS2ベース</a>なので、同じ現象に該当すると思われる。<br />
+状況としては、サーバからEUC-JPエンコーディングのバイナリが送られているが、クライアント側で別のエンコーディングのデータとして解釈されており、結果として文字化けが発生しているようだ。</p>
 <h1 id="解決">解決</h1>
-<p>同じページの回答にある、 <code>luit</code> というツールを導入することで解消した。このツールは、プロセスの間に立って受け取るデータのエンコーディングをいい感じに変換してくれるみたい。 <code>luit.exe</code> のバイナリをパスの通ったディレクトリに起き、以下を実行すれば文字化けなく表示される。</p>
+<p>同じページの回答にある、 <code>luit</code> というツールを導入することで解消した。このツールは、プロセスの間に立って受け取るデータのエンコーディングをいい感じに変換してくれるみたい。<br />
+<code>luit.exe</code> のバイナリをパスの通ったディレクトリに起き、以下を実行すれば文字化けなく表示される。</p>
 <div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">luit.exe</span> -encoding eucjp -- ssh <span class="va">${SERVERNAME}</span></span></code></pre></div>
-<p>毎回これをするのはめんどいが、そんなに実行する機会もないはずなので、一旦はこれでOK。 （当初はサーバ側の問題と勘違いし、設定方法を確認したり<a href="https://qiita.com/qiitamatumoto/items/efffc0ef6e6249533201">このあたり</a>やってみたりで半日くらい時間を溶かしてしまったのは秘密。）</p>
+<p>毎回これをするのはめんどいが、そんなに実行する機会もないはずなので、一旦はこれでOK。<br />
+（当初はサーバ側の問題と勘違いし、設定方法を確認したり<a href="https://qiita.com/qiitamatumoto/items/efffc0ef6e6249533201">このあたり</a>やってみたりで半日くらい時間を溶かしてしまったのは秘密。）</p>
 <h2 id="ちなみに">ちなみに</h2>
-<p>同様にクライアントが受け取る文字エンコーディングをいい感じに変換してくれるツールとして、 <a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#cocot">cocot</a>というのもある。 最初自分もこちらを試してみたが、うまく動かせなかった（多分使い方が間違ってる）。</p>
+<p>同様にクライアントが受け取る文字エンコーディングをいい感じに変換してくれるツールとして、 <a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#cocot">cocot</a>というのもある。<br />
+最初自分もこちらを試してみたが、うまく動かせなかった（多分使い方が間違ってる）。</p>
 <h1 id="補記">補記</h1>
 <p>Windowsで使えるシェル環境ってあんまり知らなかったけど、調べている中で面白い記事を発見した。</p>
 <ul>

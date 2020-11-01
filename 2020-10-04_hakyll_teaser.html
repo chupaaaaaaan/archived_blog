@@ -55,12 +55,14 @@
     <div class="row">
         <div class="col-md-3 hidden-xs">
             <div class="sidebar well">
-勉強したことおきば
+自分で調べて試してみるのが、一番自分の力になるんだ
 </div>
 
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
+        
+          <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
         
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
         
           <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
-        
-          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
         
     </ul>
 </div>
@@ -99,7 +99,9 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <p>このブログも少しずつ記事が増えてきている。 現在トップページには、最新から数えて過去5件の記事まで、すべての内容が表示されるようになっているが、 これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。</p>
+            <p>このブログも少しずつ記事が増えてきている。<br />
+現在トップページには、最新から数えて過去5件の記事まで、すべての内容が表示されるようになっているが、<br />
+これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。</p>
 <p>そこで、今回はトップページに表示される記事はteaserとして表示されるよう、設定を追加した。</p>
 <p><!--more--></p>
 <h1 id="設定">設定</h1>
@@ -109,8 +111,10 @@
 </ul>
 <p>設定が必要なのは3点。</p>
 <ol>
-<li>記事を書いた <code>.org</code> ファイルに、teaser用のマーキングを挿入する</li>
-<li>テンプレートでteaserを参照する</li>
+<li>記事を書いた <code>.org</code> ファイルに、teaser用のマーキングを挿入する<br />
+</li>
+<li>テンプレートでteaserを参照する<br />
+</li>
 <li>記事のビルド時にteaserを生成する</li>
 </ol>
 <p>以下でそれぞれ見る。</p>
@@ -118,12 +122,18 @@
 <p>これが一番悩んだ・・・</p>
 <p>hakyllのデフォルトでは、htmlコメントとして以下を記載したとき、記載箇所より上がteaserとなる。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="co">&lt;!--more--&gt;</span></span></code></pre></div>
-<p>自分は、もとの記事を<a href="https://orgmode.org/">Emacs Org mode</a>で記載しているが、記事中にそのまま <code>&lt;!--more--&gt;</code> と書いても、ビルド後の記事はすべてhtmlエスケープされて出力されてしまう。 単にエスケープされるだけならコメントとして処理されないだけなのだが（それはそれで困る）、 Org mode文書からPandocの内部データ型に変換されるときにすでに、 エスケープされた文字列として保持されているようだ。 そのため、 <code>&lt;!--more--&gt;</code> と書いてもhakyll側これをteaser用のマーキングと認識できず、teaserとして表示させることができない。 ちなみにMarkdownであれば、特にエスケープされることないみたい（実際、コメントとしてそのまま残っている）。</p>
+<p>自分は、もとの記事を<a href="https://orgmode.org/">Emacs Org mode</a>で記載しているが、記事中にそのまま <code>&lt;!--more--&gt;</code> と書いても、ビルド後の記事はすべてhtmlエスケープされて出力されてしまう。<br />
+単にエスケープされるだけならコメントとして処理されないだけなのだが（それはそれで困る）、 Org mode文書からPandocの内部データ型に変換されるときにすでに、<br />
+エスケープされた文字列として保持されているようだ。<br />
+そのため、 <code>&lt;!--more--&gt;</code> と書いてもhakyll側これをteaser用のマーキングと認識できず、teaserとして表示させることができない。<br />
+ちなみにMarkdownであれば、特にエスケープされることないみたい（実際、コメントとしてそのまま残っている）。</p>
 <p>要は、変換のときにエスケープされないように制御すればよい。答えは以下にあった。</p>
 <ul>
 <li><a href="https://orgmode.org/manual/Quoting-HTML-tags.html">13.9.5 Quoting HTML tags</a></li>
 </ul>
-<p>代わりに <code>@@html:&lt;!--more--&gt;@@</code> と書けば、ちゃんと意図通りにteaserとして表示できる。 （ここにたどり着く前に、 <code>pandocCompiler</code> 側でなんとかならないか調べてみたが、これは無理そうだった。 Org mode文書をどのようにPandoc内部データ型に変換しているのかはわからないが、エスケープする・しないを制御するパラメータが見つからない・・・）</p>
+<p>代わりに <code>@@html:&lt;!--more--&gt;@@</code> と書けば、ちゃんと意図通りにteaserとして表示できる。<br />
+（ここにたどり着く前に、 <code>pandocCompiler</code> 側でなんとかならないか調べてみたが、これは無理そうだった。<br />
+Org mode文書をどのようにPandoc内部データ型に変換しているのかはわからないが、エスケープする・しないを制御するパラメータが見つからない・・・）</p>
 <h1 id="テンプレートでのteaserの参照">テンプレートでのteaserの参照</h1>
 <p>これはそのまま、書いてあるとおりに記載すれば良い。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="op">&lt;</span><span class="fu">div</span> <span class="kw">class</span><span class="ot">=</span><span class="st">&quot;content&quot;</span><span class="op">&gt;</span></span>
@@ -155,11 +165,16 @@
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
-<p><code>teaserField</code> を使って、teaserを各記事のコンテキストに追加すると、 テンプレートから <code>teaser</code> というキーで、 <code>content</code> スナップショットの内容のうち <code>&lt;!--more--&gt;</code> より前に記載された内容を参照できる。</p>
+<p><code>teaserField</code> を使って、teaserを各記事のコンテキストに追加すると、<br />
+テンプレートから <code>teaser</code> というキーで、 <code>content</code> スナップショットの内容のうち <code>&lt;!--more--&gt;</code> より前に記載された内容を参照できる。</p>
 <h2 id="ちなみに">ちなみに</h2>
-<p>teaser用のマーキング用文字列を任意に指定できる <code>teaserFieldWithSeparator</code> もある。 最初、htmlエスケープの問題が解決できなかったので、マーキング用文字列として <code>#TEASER#</code> みたいなのを設定して使用しようとした。 こちらを使用しても同じようにteaserを挿入することができるのだが、実際の記事を見に行くと、 <code>#TEASER#</code> の文字が表示されている・・・ というわけで、こちらは失敗。きちんとhtmlコメントの形式で文字列を指定しておかないとだめ。</p>
+<p>teaser用のマーキング用文字列を任意に指定できる <code>teaserFieldWithSeparator</code> もある。<br />
+最初、htmlエスケープの問題が解決できなかったので、マーキング用文字列として <code>#TEASER#</code> みたいなのを設定して使用しようとした。<br />
+こちらを使用しても同じようにteaserを挿入することができるのだが、実際の記事を見に行くと、 <code>#TEASER#</code> の文字が表示されている・・・<br />
+というわけで、こちらは失敗。きちんとhtmlコメントの形式で文字列を指定しておかないとだめ。</p>
 <h1 id="終わりに">終わりに</h1>
-<p>これでteaserはなんとかなったので、次はページネーションをなんとかしたい。 （常に最新5件だけ表示、みたいなのから脱却したい・・・）</p>
+<p>これでteaserはなんとかなったので、次はページネーションをなんとかしたい。<br />
+（常に最新5件だけ表示、みたいなのから脱却したい・・・）</p>
             </div>
             <!-- コメント機能は別途追加する -->
             <!-- {% if page.comments %} -->

@@ -55,12 +55,14 @@
     <div class="row">
         <div class="col-md-3 hidden-xs">
             <div class="sidebar well">
-勉強したことおきば
+自分で調べて試してみるのが、一番自分の力になるんだ
 </div>
 
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
+        
+          <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
         
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
         
           <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
-        
-          <li><a href="./2020-08-06_construct_k8s_with_minikube.html">Minikubeを使って、kubernetesを構築する。</a></li>
         
     </ul>
 </div>
@@ -99,19 +99,27 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <p>グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、 <a href="https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739">なぜ Haskell ではキューが軽んじられているか？</a>にもあるように、キューは標準では提供されていない。</p>
-<p>そこで、以下を参考にしてキューを実装した。 ここでは、実時間キューを実装した（最悪計算量・償却計算量とも <span class="math inline"><em>O</em>(1)</span> のため）。</p>
+            <p>グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、<br />
+<a href="https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739">なぜ Haskell ではキューが軽んじられているか？</a>にもあるように、キューは標準では提供されていない。</p>
+<p>そこで、以下を参考にしてキューを実装した。<br />
+ここでは、実時間キューを実装した（最悪計算量・償却計算量とも <span class="math inline"><em>O</em>(1)</span> のため）。</p>
 <ol>
-<li><a href="http://www.kmonos.net/pub/Presen/PFDS.pdf">20分でわかるPurely Functional Data Structures</a></li>
-<li><a href="https://qiita.com/rst76/items/a7dd81b522a09d1b9986">キューの効率的な実装 または私は如何にしてHaskellを止めてF#を愛するようになったか</a></li>
-<li><a href="http://autotaker.hatenablog.com/entry/2017/12/21/125153">永続リアルタイムキューのHaskell実装と計算量解析</a></li>
+<li><a href="http://www.kmonos.net/pub/Presen/PFDS.pdf">20分でわかるPurely Functional Data Structures</a><br />
+</li>
+<li><a href="https://qiita.com/rst76/items/a7dd81b522a09d1b9986">キューの効率的な実装 または私は如何にしてHaskellを止めてF#を愛するようになったか</a><br />
+</li>
+<li><a href="http://autotaker.hatenablog.com/entry/2017/12/21/125153">永続リアルタイムキューのHaskell実装と計算量解析</a><br />
+</li>
 <li><a href="https://rst76.hatenablog.com/entry/20171222/1513963036">Haskell で RealTimeQueue</a></li>
 </ol>
-<p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、 実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。 特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
+<p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、<br />
+実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。<br />
+特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
 <p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
 <p><!--more--></p>
 <h1 id="キューの実装">キューの実装</h1>
-<p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。 そのため、今回はそれらを省いた実装とした。</p>
+<p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。<br />
+そのため、今回はそれらを省いた実装とした。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Queue</span> a <span class="ot">=</span> <span class="dt">Q</span> {<span class="ot"> front ::</span> [a]</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>                 ,<span class="ot"> rear  ::</span> [a]</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                 ,<span class="ot"> thunk ::</span> [a]</span>
@@ -135,9 +143,14 @@
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a>        rotate [] (y<span class="op">:</span>_) zs      <span class="ot">=</span> y<span class="op">:</span>zs</span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a>        rotate (x<span class="op">:</span>xs) (y<span class="op">:</span>ys) zs <span class="ot">=</span> x <span class="op">:</span> rotate xs ys (y<span class="op">:</span>zs)</span></code></pre></div>
 <h2 id="ちなみに">ちなみに</h2>
-<p>実際、スライドでは <code>thunk</code> が空かどうかでリストの反転操作をするかどうかを決めており、 キューの管理にリストの長さは使用していない。 「実は <code>fl+1 == rl</code> のときだけこっちに来る」のような記載もある （ <code>fl</code> は <code>front</code> リストの長さ、 <code>rl</code> は <code>rear</code> リストの長さ）。</p>
+<p>実際、スライドでは <code>thunk</code> が空かどうかでリストの反転操作をするかどうかを決めており、<br />
+キューの管理にリストの長さは使用していない。<br />
+「実は <code>fl+1 == rl</code> のときだけこっちに来る」のような記載もある<br />
+（ <code>fl</code> は <code>front</code> リストの長さ、 <code>rl</code> は <code>rear</code> リストの長さ）。</p>
 <p>では、本当に上記が成り立っているのか、確認しておこう。</p>
-<p>ここで、 <code>(f, r, t)</code> をそれぞれ <code>front</code> リスト、 <code>rear</code> リスト、 <code>thunk</code> リストの長さを表すタプルとする。 <code>r = 0</code> のときの <code>f</code> を <code>g</code> とすると、 <code>check</code> の実装より、 <code>t = g</code> となる （なお、これはキューが空の場合も成り立つ）。</p>
+<p>ここで、 <code>(f, r, t)</code> をそれぞれ <code>front</code> リスト、 <code>rear</code> リスト、 <code>thunk</code> リストの長さを表すタプルとする。<br />
+<code>r = 0</code> のときの <code>f</code> を <code>g</code> とすると、 <code>check</code> の実装より、 <code>t = g</code> となる<br />
+（なお、これはキューが空の場合も成り立つ）。</p>
 <p>すると、 <code>pushBack</code> もしくは <code>popFront</code> を合わせて <code>g</code> 回実行したとき、タプルは以下のようになっているはずである。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>(f, r, t) <span class="op">==</span> (g, g, <span class="dv">0</span>)     <span class="co">-- pushBackをg回、popFrontを0回</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>          <span class="fu">or</span> (g<span class="op">-</span><span class="dv">1</span>, g<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>) <span class="co">-- pushBackをg-1回、popFrontを1回</span></span>
@@ -148,7 +161,8 @@
 <h1 id="評価の追跡-pushback-2回-popfront-1回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 1回）</h1>
 <p>では実際に、評価を追跡してみる。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>queue0 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>[]) (y<span class="op">:</span>[]) []</span></code></pre></div>
-<p>から初めて、いくつかの操作を行ったときの評価順を見る。 評価済みになったときは、適当に値を補う。</p>
+<p>から初めて、いくつかの操作を行ったときの評価順を見る。<br />
+評価済みになったときは、適当に値を補う。</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>queue1 <span class="op">==</span> pushBack queue0 e1</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>       <span class="op">==</span> pushBack (<span class="dt">Q</span> _ _ _) e1</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>       <span class="op">==</span> check <span class="op">$!</span> <span class="dt">Q</span> _ (e1<span class="op">:</span>_) _</span>
@@ -188,9 +202,13 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>queue9 <span class="op">==</span> pushBack queue8 e9</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>       <span class="op">==</span> <span class="op">...</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a>       <span class="op">==</span> <span class="dt">Q</span> (x<span class="op">:</span>y<span class="op">:</span>e1<span class="op">:</span>e2<span class="op">:</span>e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[]) (e9<span class="op">:</span>e8<span class="op">:</span>e7<span class="op">:</span>e6<span class="op">:</span>[]) (e3<span class="op">:</span>e4<span class="op">:</span>e5<span class="op">:</span>[])</span></code></pre></div>
-<p>こちらも、少しずつ <code>reverse</code> 処理が実行されているのがわかる。 トリックは、（2番目の記事で言っている）「停止計算用ストリーム」において、 <code>$!</code> 演算子を介して、 <code>check</code> がパターンマッチにより停止計算を進める（次のWHNFまで評価する）点。 「停止計算用ストリーム」の計算はメモ化されているので、「先頭側ストリーム」も同じ位置まで評価された状態になる （ <code>check</code> でストリームを構成するときに、同じデータを指すようになっている）。</p>
+<p>こちらも、少しずつ <code>reverse</code> 処理が実行されているのがわかる。<br />
+トリックは、（2番目の記事で言っている）「停止計算用ストリーム」において、 <code>$!</code> 演算子を介して、 <code>check</code> がパターンマッチにより停止計算を進める（次のWHNFまで評価する）点。<br />
+「停止計算用ストリーム」の計算はメモ化されているので、「先頭側ストリーム」も同じ位置まで評価された状態になる<br />
+（ <code>check</code> でストリームを構成するときに、同じデータを指すようになっている）。</p>
 <h1 id="最後に">最後に</h1>
-<p>実は前も、1番目の資料に挑戦してキューを実装しようとしていたのだが、今回再挑戦してようやく理解できたかな、という感じ。 遅延評価周りはちゃんと考えないと、なんでそうなっているのかが全く追えないので、今回のように1つずつ簡約してみるのは良い手かもしれない。</p>
+<p>実は前も、1番目の資料に挑戦してキューを実装しようとしていたのだが、今回再挑戦してようやく理解できたかな、という感じ。<br />
+遅延評価周りはちゃんと考えないと、なんでそうなっているのかが全く追えないので、今回のように1つずつ簡約してみるのは良い手かもしれない。</p>
 <h1 id="追記">追記</h1>
 <p>結局Dequeueが必要だったりして来たので、おとなしく <code>Data.Sequence</code> を使うことにしました・・・残念。</p>
             </div>
