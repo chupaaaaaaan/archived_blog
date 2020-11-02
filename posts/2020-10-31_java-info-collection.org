@@ -56,41 +56,49 @@ tags: java
 
    - 各ライフサイクルはいくつかのフェーズから構成されている。
 
-     #+CAPTION:  ~default~ ライフサイクルのフェーズ
-     | Phase                     | Description                                                                                                                                             |
-     |---------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------|
-     | ~validate~                | validate the project is correct and all necessary information is available.                                                                             |
-     | ~initialize~              | initialize build state, e.g. set properties or create directories.                                                                                      |
-     | ~generate-sources~        | generate any source code for inclusion in compilation.                                                                                                  |
-     | ~process-sources~         | process the source code, for example to filter any values.                                                                                              |
-     | ~generate-resources~      | generate resources for inclusion in the package.                                                                                                        |
-     | ~process-resources~       | copy and process the resources into the destination directory, ready for packaging.                                                                     |
-     | ~compile~                 | compile the source code of the project.                                                                                                                 |
-     | ~process-classes~         | post-process the generated files from compilation, for example to do bytecode enhancement on Java classes.                                              |
-     | ~generate-test-sources~   | generate any test source code for inclusion in compilation.                                                                                             |
-     | ~process-test-sources~    | process the test source code, for example to filter any values.                                                                                         |
-     | ~generate-test-resources~ | create resources for testing.                                                                                                                           |
-     | ~process-test-resources~  | copy and process the resources into the test destination directory.                                                                                     |
-     | ~test-compile~            | compile the test source code into the test destination directory                                                                                        |
-     | ~process-test-classes~    | post-process the generated files from test compilation, for example to do bytecode enhancement on Java classes.                                         |
-     | ~test~                    | run tests using a suitable unit testing framework. These tests should not require the code be packaged or deployed.                                     |
-     | ~prepare-package~         | perform any operations necessary to prepare a package before the actual packaging. This often results in an unpacked, processed version of the package. |
-     | ~package~                 | take the compiled code and package it in its distributable format, such as a JAR.                                                                       |
-     | ~pre-integration-test~    | perform actions required before integration tests are executed. This may involve things such as setting up the required environment.                    |
-     | ~integration-test~        | process and deploy the package if necessary into an environment where integration tests can be run.                                                     |
-     | ~post-integration-test~   | perform actions required after integration tests have been executed. This may including cleaning up the environment.                                    |
-     | ~verify~                  | run any checks to verify the package is valid and meets quality criteria.                                                                               |
-     | ~install~                 | install the package into the local repository, for use as a dependency in other projects locally.                                                       |
-     | ~deploy~                  | done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.        |
-     @@html:<br>@@
-
      #+CAPTION: ~clean~ ライフサイクルのフェーズ
-     | Phase        | Description                                                   |
-     |--------------+---------------------------------------------------------------|
-     | ~pre-clean~  | execute processes needed prior to the actual project cleaning |
-     | ~clean~      | remove all files generated by the previous build              |
-     | ~post-clean~ | execute processes needed to finalize the project cleaning     |
-     @@html:<br>@@
+     | Phase        | Description                                                  |
+     |--------------+--------------------------------------------------------------|
+     | ~pre-clean~  | 実際のプロジェクトクリーニングに先立って必要な処理を実行する |
+     | ~clean~      | 過去のビルドにより生成された全てのファイルを削除する         |
+     | ~post-clean~ | プロジェクトクリーニングを終了するために必要な処理を実行する |
+
+
+     #+CAPTION:  ~default~ ライフサイクルのフェーズ
+     | Phase                     | Description                                                                                                                          |
+     |---------------------------+--------------------------------------------------------------------------------------------------------------------------------------|
+     | ~validate~                | プロジェクトが正しく、必要な全ての情報が利用可能であるか確認する                                                                     |
+     | ~initialize~              | ビルド状態を初期化する(プロパティを設定する、ディレクトリを作成する等)                                                               |
+     | ~generate-sources~        | コンパイルに含めるソースコードを生成する                                                                                             |
+     | ~process-sources~         | ソースコードを処理する(値をフィルタする等)                                                                                           |
+     | ~generate-resources~      | パッケージに含めるリソースを生成する                                                                                                 |
+     | ~process-resources~       | リソースを最終的なディレクトリにコピー・処理し、パッケージングの準備をする                                                           |
+     | ~compile~                 | プロジェクトのソースコードをコンパイルする                                                                                           |
+     | ~process-classes~         | コンパイルで生成されたファイルの後処理(Javaクラスのバイトコード拡張等)                                                               |
+     | ~generate-test-sources~   | コンパイルに含めるテストソースコードを生成する                                                                                       |
+     | ~process-test-sources~    | テストソースコードを処理する(値をフィルタする等)                                                                                     |
+     | ~generate-test-resources~ | テスト用のリソースを生成する                                                                                                         |
+     | ~process-test-resources~  | リソースをテスト用の最終的なディレクトリにコピー・処理する                                                                           |
+     | ~test-compile~            | テストソースコードを、テスト用の最終的なディレクトリへコンパイルする                                                                 |
+     | ~process-test-classes~    | コンパイルで生成されたファイルの後処理(Javaクラスのバイトコード拡張等)                                                               |
+     | ~test~                    | 適切なテスティングフレームワークを使用してテストを実行する。これらのテストはコードがパッケージもしくはデプロイされることを要しない   |
+     | ~prepare-package~         | 実際のパッケージング前に、パッケージの準備に必要な操作を行う。それにより屡々、パッケージが、展開され処理されたバージョンのものになる |
+     | ~package~                 | コンパイルされたコードを取得し、配布可能なフォーマット(JARのような)にパッケージングする                                              |
+     | ~pre-integration-test~    | 結合テストが実行される前に必要なアクションが実行される。これは必要な環境のセットアップのようなことに関係するかもしれない             |
+     | ~integration-test~        | 必要であれば、結合テストが実行できる環境へ、パッケージを処理・デプロイする                                                           |
+     | ~post-integration-test~   | 結合テストが実行される前に必要なアクションが実行される。これは環境のクリンナップを含むかもしれない                                   |
+     | ~verify~                  | パッケージが有効であること・品質基準を満たしていることを確認するチェックを実行する                                                   |
+     | ~install~                 | ローカルで他プロジェクトの依存性として使用するため、パッケージをローカルリポジトリにインストールする                                 |
+     | ~deploy~                  | 統合環境やリリース環境で実行された場合、他の開発者やプロジェクトと共有するため、最終的なパッケージをリモートリポジトリへコピーする   |
+
+
+   - フェーズそれ自体は何もしない。 ~mvn compile~ 等でフェーズを実行すると、そのフェーズと、そのフェーズより前に位置する全てのフェーズに紐づけられたプラグインのゴールが、フェーズの順番に実行される。
+     - ややこしいが、 ~mvn clean~ は ~clean~ ライフサイクルの ~clean~ フェーズを実行している。
+
+   - 実行するときは、 ~mvn clean compile~ のようにフェーズを重ねることもできる。
+     - ~clean~ と ~compile~ は別のライフサイクルに属するため、コンパイル前にファイルを削除したいときは明示的に ~clean~ を指定する必要がある。
+
+   - フェーズを指定するだけでなく、ゴールを直接指定することもできる。
 
 ** [[https://maven.apache.org/pom.html][POMの構造]]
    - ~pom.xml~ で、どこにどんなことが書いてあるか（特に依存関係）があまり解ってなかったので、よく使う（よく見る）要素を書いてみる。
