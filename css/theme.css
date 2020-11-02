@@ -52,6 +52,32 @@ body {
     font-size: 1em;
 }
 
+.well p {
+    /* border: dashed 1px #000000; */
+    margin-bottom: 0.1em;
+}
+
+.well li {
+    /* border: solid 1px #000000; */
+    margin-top: 0.2em;
+}
+
+.well ul {
+    /* border: dotted 1px #000000; */
+    margin-bottom: 0.5em;
+}
+
+.well dl {
+    margin-bottom: 0.3em;
+}
+
+.well dt {
+}
+
+.well dd {
+    margin-left: 2em;
+}
+
 .well blockquote {
     font-size: 1em;
 }
@@ -64,48 +90,49 @@ body {
     color: #ee4444;
 }
 
-table {
+.well table {
     display: block;
     overflow: auto;
     white-space: nowrap;
     width: 100%;
     border-collapse: collapse;
     /* border-bottom: solid 1px #999999; */
-    border-bottom: none
+    border-bottom: none;
+    margin-bottom: 1em;
 }
 
-tr:not(:first-child) {
+.well tr:not(:first-child) {
     th, td {
         border-top: solid 1px #aaaaaa;
     }
 }
 
-th {
+.well th {
     text-align: left;
 }
 
-th, td {
+.well th, .well td {
     padding: 0.2em;
 }
 
-thead {
+.well thead {
     border-top: solid 1px #aaaaaa;
     border-bottom: double 1px #999999;
 }
 
-tbody tr{
+.well tbody tr{
     border-bottom: dotted 0.5px #999999;
 }
 
-tbody {
+.well tbody {
     border-bottom: solid 1px #999999;
 }
 
-tbody tr:hover {
+.well tbody tr:hover {
     background: #eeeeee;
 }
 
-table caption {
+.well table caption {
     caption-side: top;
     text-align: start;
 }
