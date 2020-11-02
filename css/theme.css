@@ -91,12 +91,12 @@ body {
 }
 
 .well table {
+    /* border: solid 1px #000000; */
     display: block;
     overflow: auto;
     white-space: nowrap;
     width: 100%;
     border-collapse: collapse;
-    /* border-bottom: solid 1px #999999; */
     border-bottom: none;
     margin-bottom: 1em;
 }
