@@ -63,3 +63,49 @@ body {
 .author a {
     color: #ee4444;
 }
+
+table {
+    display: block;
+    overflow: auto;
+    white-space: nowrap;
+    width: 100%;
+    border-collapse: collapse;
+    /* border-bottom: solid 1px #999999; */
+    border-bottom: none
+}
+
+tr:not(:first-child) {
+    th, td {
+        border-top: solid 1px #aaaaaa;
+    }
+}
+
+th {
+    text-align: left;
+}
+
+th, td {
+    padding: 0.2em;
+}
+
+thead {
+    border-top: solid 1px #aaaaaa;
+    border-bottom: double 1px #999999;
+}
+
+tbody tr{
+    border-bottom: dotted 0.5px #999999;
+}
+
+tbody {
+    border-bottom: solid 1px #999999;
+}
+
+tbody tr:hover {
+    background: #eeeeee;
+}
+
+table caption {
+    caption-side: top;
+    text-align: start;
+}
