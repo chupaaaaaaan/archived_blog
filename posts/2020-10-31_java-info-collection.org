@@ -49,6 +49,16 @@ tags: java
 
       - [[https://www.slideshare.net/kawasima/maven-196821326][参考]]
 
+*** その他のMavenプラグイン
+
+    [[https://www.mojohaus.org/plugins.html][MojoHaus]]に、いっぱいプラグインがある。
+
+    - [[https://www.mojohaus.org/rpm-maven-plugin/index.html][rpm-maven-plugin]]
+      - アーティファクトをRPM形式でアーカイブするためのプラグイン。
+      - ~rpm~ コマンド一発でインストール・アップデート・アンインストールが出来てしまうので楽かなー、と思ったけど、
+        特定の2〜3台のサーバーにデプロイするためだけに導入するのはちょっと大掛かりかなー、という気がする。
+      - 素直に ~maven-assembly-plugin~ でアーティファクトを作って、それをデプロイするスクリプトを添付した方が、
+        後々のメンテでは楽な気がする（情報も多いしね）。
 
 *** [[https://qiita.com/rubytomato@github/items/8b159a9e4376bbe04d0b][ビルドライフサイクルについて]]
     - ~clean~ , ~default~ , ~site~ が、ビルトインなライフサイクル。
