@@ -39,19 +39,19 @@ body {
 
 .well h1 {
     color: #ee4444;
-    font-size: 1.5em;
-    border-bottom: solid 2px #dddddd;
+    font-size: 2em;
 }
 
 .well h2 {
     color: #ee4444;
-    font-size: 1.2em;
-    border-bottom: solid 1px #dddddd;
+    font-size: 1.5em;
+    border-bottom: solid 2px #dddddd;
 }
 
 .well h3 {
     color: #ee4444;
-    font-size: 1em;
+    font-size: 1.2em;
+    border-bottom: solid 1px #dddddd;
 }
 
 .well p {
