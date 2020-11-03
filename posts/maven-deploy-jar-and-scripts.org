@@ -1,0 +1,271 @@
+---
+title: maven-assembly-pluginで配布用アーカイブを作成する
+published: 2020-11-03 22:04:32
+updated: 
+tags: java, maven
+---
+#+OPTIONS: ^:{}
+#+OPTIONS: \n:t
+
+Mavenで、アーティファクトと実行用スクリプト等を含んだアーカイブを作成しようとしたとき、
+真っ先に思いつくのがmaven-assembly-pluginを使用することだと思う。
+
+今回、 (展開するだけでデプロイできるように) 実行可能jarや実行用スクリプトをアーカイブしようとして、
+いくつかハマった箇所があったので、メモしておく。
+
+なお、今回は実行可能jarはuber-jarとはしない (uber-jarとする場合は、maven-shade-pluginが必要になる。)
+
+@@html:<!--more-->@@
+
+** maven-assembly-pluginとは
+   http://maven.apache.org/plugins/maven-assembly-plugin/index.html
+
+   ファイルやディレクトリをかき集めてきて、指定の形式にアーカイブするためのプラグイン。
+   今回は、実行可能jarと実行用スクリプトをtar.gz形式でアーカイブする。
+
+   アーカイブ設定は、[[http://maven.apache.org/plugins/maven-assembly-plugin/descriptor-refs.html][事前定義された設定]]を使用する他に、独自定義を使用することもできる。
+   前者の場合は ~pom.xml~ に設定を記載するだけで良いが、後者の場合は、 [[http://maven.apache.org/plugins/maven-assembly-plugin/assembly.html][Assembly Descriptor Format]]にしたがって
+   設定ファイルを作成する必要がある。
+   今回は、スクリプト等の配置も自由に設定したかったため、後者で実行する。
+   
+** 使用するプロジェクトについて
+
+*** プロジェクト構成
+    今回は、 ~maven-archetype-quickstart~ アーキタイプを元に、以下のようなプロジェクト構成とした (テストは省略) 。
+    
+    #+begin_src sh
+    assemblytest
+    ├── distribution.xml
+    ├── pom.xml
+    └── src
+        ├── main
+        │   └── java
+        │       └── com
+        │           └── myapp
+        │               └── App.java
+        ├── shellscript
+        │   ├── bin
+        │   │   └── test.sh
+        │   ├── conf
+        │   │   └── common.sh
+        │   └── deploy.sh
+        └── test
+            └── java
+                └── com
+                    └── myapp
+                        └── AppTest.java
+    #+end_src
+
+*** アーカイブ構成
+    最終的なアーカイブは、以下のような構成になっているようにする。
+
+    #+begin_src sh
+    deployment/
+    ├── app
+    │   ├── java
+    │   │   ├── assemblytest.jar
+    │   │   └── deplib
+    │   │       ├── logback-classic-1.1.3.jar
+    │   │       ├── logback-core-1.1.3.jar
+    │   │       └── slf4j-api-1.7.7.jar
+    │   └── script
+    │       ├── bin
+    │       │   └── test.sh
+    │       └── conf
+    │           └── common.sh
+    └── deploy.sh
+    #+end_src
+
+    これをデプロイして、 ~test.sh~ を実行すると、 ~common.sh~ を読み込んでから ~assemblytest.jar~ を実行する。
+
+*** POM
+    ~pom.xml~ は以下の通り。
+    #+begin_src text
+    <?xml version="1.0" encoding="UTF-8"?>
+    
+    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+      <modelVersion>4.0.0</modelVersion>
+    
+      <groupId>com.myapp</groupId>
+      <artifactId>assemblytest</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    
+      <name>assemblytest</name>
+      <!-- FIXME change it to the project's website -->
+      <url>http://www.example.com</url>
+    
+      <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+      </properties>
+    
+      <dependencies>
+    
+        <!-- ログ設定 -->
+        <dependency>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+          <version>1.1.3</version>
+        </dependency>
+        
+        <!-- テスト設定 -->
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.11</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    
+      <build>
+        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+          <plugins>
+            <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+            <plugin>
+              <artifactId>maven-clean-plugin</artifactId>
+              <version>3.1.0</version>
+            </plugin>
+            <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+            <plugin>
+              <artifactId>maven-resources-plugin</artifactId>
+              <version>3.0.2</version>
+            </plugin>
+            <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.8.0</version>
+            </plugin>
+            <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>2.22.1</version>
+            </plugin>
+            <plugin>
+              <artifactId>maven-jar-plugin</artifactId>
+              <version>3.0.2</version>
+            </plugin>
+            <plugin>
+              <artifactId>maven-install-plugin</artifactId>
+              <version>2.5.2</version>
+            </plugin>
+            <plugin>
+              <artifactId>maven-deploy-plugin</artifactId>
+              <version>2.8.2</version>
+            </plugin>
+            <plugin>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <version>3.1.0</version>
+            </plugin>
+            <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
+            <plugin>
+              <artifactId>maven-site-plugin</artifactId>
+              <version>3.7.1</version>
+            </plugin>
+            <plugin>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>3.0.0</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+    
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <archive>
+                <manifest>
+                  <addClasspath>true</addClasspath>
+                  <classpathPrefix>lib/</classpathPrefix>
+                  <mainClass>com.myapp.App</mainClass>
+                </manifest>
+              </archive>
+              <excludes>
+                <exclude>*.dicon</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>distribution.xml</descriptor>
+                  </descriptors>
+                  <finalName>myapp-app</finalName>
+                  <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </project>
+    #+end_src
+
+    ここで、 ~maven-archetype-quickstart~ から、以下を変更した。
+    - 実行時に必要な依存関係として、LogBackを追加
+    - プラグインとして、 ~maven-jar-plugin~ 、 ~maven-assembly-plugin~ を追加（後述）
+
+*** アーカイブ設定ファイル
+    ~distribution.xml~ は、独自定義のアーカイブ設定。ファイル名は任意で、プラグイン設定に記載する。
+    #+begin_src text
+    <assembly
+      xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    
+      <id>distribution</id>
+      <formats>
+        <format>tar.gz</format>
+      </formats>
+      <baseDirectory>myjob</baseDirectory>
+      <files>
+        <file>
+          <source>target/${project.build.finalName}.jar</source>
+          <destName>${project.artifactId}.jar</destName>
+          <outputDirectory>java</outputDirectory>
+          <fileMode>644</fileMode>
+        </file>
+      </files>
+      <fileSets>
+        <fileSet>
+          <directory>src/shellscript/conf</directory>
+          <outputDirectory>script/conf</outputDirectory>
+          <includes>
+            <include>*.sh</include>
+          </includes>
+          <fileMode>644</fileMode>
+          <directoryMode>755</directoryMode>
+          <lineEnding>unix</lineEnding>
+        </fileSet>
+        <fileSet>
+          <directory>src/shellscript/bin</directory>
+          <outputDirectory>script/bin</outputDirectory>
+          <includes>
+            <include>*.sh</include>
+          </includes>
+          <fileMode>755</fileMode>
+          <directoryMode>755</directoryMode>
+          <lineEnding>unix</lineEnding>
+        </fileSet>
+      </fileSets>
+      <dependencySets>
+        <dependencySet>
+          <useProjectArtifact>false</useProjectArtifact>
+          <outputDirectory>java/lib</outputDirectory>
+        </dependencySet>
+      </dependencySets>
+    </assembly>
+    #+end_src
+
+
+
+    
+** アーカイブ
