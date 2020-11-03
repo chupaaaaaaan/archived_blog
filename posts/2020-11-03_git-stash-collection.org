@@ -39,7 +39,7 @@ tags: git
 
 ** ファイルを指定してstashしたい
 
-   [[https://qiita.com/yukitaka13-1110/items/935bfa233c6e024f82dc][[Git] ファイル単位でstashする]]
+   [[https://qiita.com/yukitaka13-1110/items/935bfa233c6e024f82dc][ファイル単位でstashする]]
 
    #+begin_src sh
    git stash push -m <stash message> -- path/to/target/file
