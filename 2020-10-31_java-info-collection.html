@@ -103,15 +103,18 @@
 とりあえず雑多に放り込んで、収拾つかなくなったら別記事にしたり、個別に記事を書くかも。</p>
 <p><!--more--></p>
 <h2 id="maven">Maven</h2>
-<h3 id="mavenの基本勉強メモ"><a href="https://qiita.com/opengl-8080/items/bb32732f9aa5cb3495d2">Mavenの基本勉強メモ</a></h3>
+<h3 id="mavenの基本勉強メモ">Mavenの基本勉強メモ</h3>
+<p><a href="https://qiita.com/opengl-8080/items/bb32732f9aa5cb3495d2">https://qiita.com/opengl-8080/items/bb32732f9aa5cb3495d2</a></p>
 <ul>
 <li>Mavenでわからんことがあったら、とりあえずここを読む。</li>
 </ul>
-<h3 id="maven-documentation-index"><a href="https://maven.apache.org/guides/index.html">Maven documentation: Index</a></h3>
+<h3 id="maven-documentation-index">Maven documentation: Index</h3>
+<p><a href="https://maven.apache.org/guides/index.html">https://maven.apache.org/guides/index.html</a></p>
 <ul>
 <li>なかなかドキュメントの目次が見つからなかったので</li>
 </ul>
-<h3 id="mavenの公式プラグイン"><a href="https://maven.apache.org/plugins/index.html">Mavenの公式プラグイン</a></h3>
+<h3 id="mavenの公式プラグイン">Mavenの公式プラグイン</h3>
+<p><a href="https://maven.apache.org/plugins/index.html">https://maven.apache.org/plugins/index.html</a></p>
 <p>よく使うプラグインもたくさんある。</p>
 <ul>
 <li><p><a href="https://maven.apache.org/plugins/maven-dependency-plugin/">maven-dependency-plugin</a></p>
@@ -153,7 +156,22 @@
 <li><p><a href="https://www.slideshare.net/kawasima/maven-196821326">参考</a></p></li>
 </ul></li>
 </ul>
-<h3 id="ビルドライフサイクルについて"><a href="https://qiita.com/rubytomato@github/items/8b159a9e4376bbe04d0b">ビルドライフサイクルについて</a></h3>
+<h3 id="その他のmavenプラグイン">その他のMavenプラグイン</h3>
+<p><a href="https://www.mojohaus.org/plugins.html">MojoHaus</a>に、いっぱいプラグインがある。</p>
+<ul>
+<li><a href="https://www.mojohaus.org/rpm-maven-plugin/index.html">rpm-maven-plugin</a>
+<ul>
+<li>アーティファクトをRPM形式でアーカイブするためのプラグイン。<br />
+</li>
+<li><code>rpm</code> コマンド一発でインストール・アップデート・アンインストールが出来てしまうので楽かなー、と思ったけど、<br />
+特定の2〜3台のサーバーにデプロイするためだけに導入するのはちょっと大掛かりかなー、という気がする。<br />
+</li>
+<li>素直に <code>maven-assembly-plugin</code> でアーティファクトを作って、それをデプロイするスクリプトを添付した方が、<br />
+後々のメンテでは楽な気がする（情報も多いしね）。</li>
+</ul></li>
+</ul>
+<h3 id="ビルドライフサイクルについて">ビルドライフサイクルについて</h3>
+<p><a href="https://qiita.com/rubytomato@github/items/8b159a9e4376bbe04d0b">https://qiita.com/rubytomato@github/items/8b159a9e4376bbe04d0b</a></p>
 <ul>
 <li><p><code>clean</code> , <code>default</code> , <code>site</code> が、ビルトインなライフサイクル。</p>
 <ul>
@@ -299,7 +317,8 @@
 </ul></li>
 <li><p>フェーズを指定するだけでなく、ゴールを直接指定することもできる。</p></li>
 </ul>
-<h3 id="pomの構造"><a href="https://maven.apache.org/pom.html">POMの構造</a></h3>
+<h3 id="pomの構造">POMの構造</h3>
+<p><a href="https://maven.apache.org/pom.html">https://maven.apache.org/pom.html</a></p>
 <p><code>pom.xml</code> で、どこにどんなことが書いてあるか（特に依存関係）があまり解ってなかったので、よく使う（よく見る）要素を書いてみる。</p>
 <ul>
 <li>基本的な設定
