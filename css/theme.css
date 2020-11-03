@@ -40,11 +40,13 @@ body {
 .well h1 {
     color: #ee4444;
     font-size: 1.5em;
+    border-bottom: solid 2px #dddddd;
 }
 
 .well h2 {
     color: #ee4444;
     font-size: 1.2em;
+    border-bottom: solid 1px #dddddd;
 }
 
 .well h3 {
@@ -101,12 +103,6 @@ body {
     margin-bottom: 1em;
 }
 
-.well tr:not(:first-child) {
-    th, td {
-        border-top: solid 1px #aaaaaa;
-    }
-}
-
 .well th {
     text-align: left;
 }
@@ -116,12 +112,12 @@ body {
 }
 
 .well thead {
-    border-top: solid 1px #aaaaaa;
+    border-top: solid 1px #999999;
     border-bottom: double 1px #999999;
 }
 
 .well tbody tr{
-    border-bottom: dotted 0.5px #999999;
+    border-bottom: dotted 0.5px #bbbbbb;
 }
 
 .well tbody {
