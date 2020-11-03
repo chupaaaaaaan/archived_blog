@@ -1,6 +1,6 @@
 ---
 title: 個人的git-stashまとめ
-published: 2020-11-03 11:28:52
+published: 2020-11-03 14:04:00
 updated: 
 tags: git
 ---
@@ -76,3 +76,30 @@ tags: git
    (実際には、[[https://stackoverflow.com/questions/1550378/is-it-possible-to-push-a-git-stash-to-a-remote-repository/5248758#5248758][stashをリモートリポジトリにpushする]]ことも出来そうだけど、普通の使い方ではないと思う)。
 
    そのため、実際にはドラフト1本毎にブランチを切ってあげるのが、なんだかんだで一番管理しやすそうではある。
+
+   こんな感じのスクリプトを作っておくと、新しく作ったドラフトを ~source~ ブランチから個別にブランチを切ることができる。
+
+   #+begin_src sh
+   #!/bin/bash
+   
+   set -eu
+   
+   git checkout source
+   
+   git stash
+   
+   UNTRACKED_LIST=$(git status -s | grep "^?? posts/" | cut -d' ' -f2)
+   
+   for file in $UNTRACKED_LIST
+   do
+       git checkout -b ${file/posts/draft}
+       git add ${file}
+       git commit -m "add draft"
+       git push -u origin ${file/posts/draft}
+       git checkout source
+   done
+   
+   git stash pop || :
+   
+   git branch -vva
+   #+end_src
