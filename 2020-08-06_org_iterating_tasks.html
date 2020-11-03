@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -99,8 +99,7 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <h1 id="はじめに">はじめに</h1>
-<p><strong><strong>この記事は、Gistに書いた記事を持ってきたものです</strong></strong></p>
+            <p><strong><strong>この記事は、Gistに書いた記事を持ってきたものです</strong></strong></p>
 <p>Org-habitを使おうとしたときに、躓いたのでメモ。<br />
 <a href="https://orgmode.org/manual/Tracking-your-habits.html">公式マニュアル</a>には、以下のような記述がある。</p>
 <blockquote>
@@ -109,52 +108,52 @@
 <p>英語力が低いだけだと思うが、 <code>.+</code> 、 <code>++</code> 、 <code>+</code> でどう振る舞いが変わるのかがよくわからなかった。<br />
 なので、実験してみる。</p>
 <p><!--more--></p>
-<h1 id="doneにする前後での振る舞い">DONEにする前後での振る舞い</h1>
+<h2 id="doneにする前後での振る舞い">DONEにする前後での振る舞い</h2>
 <p>以下は、2020/05/13(水)に実施した。</p>
-<h2 id="doneにする前">DONEにする前</h2>
+<h3 id="doneにする前">DONEにする前</h3>
 <pre class="org"><code>
-** TODO 習慣タスク-日次1
-   SCHEDULED: &lt;2020-05-01 金 .+1d&gt;
+*** TODO 習慣タスク-日次1
+    SCHEDULED: &lt;2020-05-01 金 .+1d&gt;
 
-** TODO 習慣タスク-日次2
-   SCHEDULED: &lt;2020-05-01 金 ++1d&gt;
+*** TODO 習慣タスク-日次2
+    SCHEDULED: &lt;2020-05-01 金 ++1d&gt;
 
-** TODO 習慣タスク-日次3
-   SCHEDULED: &lt;2020-05-01 金 +1d&gt;
+*** TODO 習慣タスク-日次3
+    SCHEDULED: &lt;2020-05-01 金 +1d&gt;
 
-** TODO 習慣タスク-週次1
-   SCHEDULED: &lt;2020-05-01 金 .+1w&gt;
+*** TODO 習慣タスク-週次1
+    SCHEDULED: &lt;2020-05-01 金 .+1w&gt;
 
-** TODO 習慣タスク-週次2
-   SCHEDULED: &lt;2020-05-01 金 ++1w&gt;
+*** TODO 習慣タスク-週次2
+    SCHEDULED: &lt;2020-05-01 金 ++1w&gt;
 
-** TODO 習慣タスク-週次3
-   SCHEDULED: &lt;2020-05-01 金 +1w&gt;
+*** TODO 習慣タスク-週次3
+    SCHEDULED: &lt;2020-05-01 金 +1w&gt;
 
 </code></pre>
-<h2 id="org-agenda経由で-doneにした後">(org-agenda経由で) DONEにした後</h2>
+<h3 id="org-agenda経由で-doneにした後">(org-agenda経由で) DONEにした後</h3>
 <pre class="org"><code>
-** TODO 習慣タスク-日次1
-   SCHEDULED: &lt;2020-05-14 木 .+1d&gt;
+*** TODO 習慣タスク-日次1
+    SCHEDULED: &lt;2020-05-14 木 .+1d&gt;
 
-** TODO 習慣タスク-日次2
-   SCHEDULED: &lt;2020-05-14 木 ++1d&gt;
+*** TODO 習慣タスク-日次2
+    SCHEDULED: &lt;2020-05-14 木 ++1d&gt;
 
-** TODO 習慣タスク-日次3
-   SCHEDULED: &lt;2020-05-02 土 +1d&gt;
+*** TODO 習慣タスク-日次3
+    SCHEDULED: &lt;2020-05-02 土 +1d&gt;
 
-** TODO 習慣タスク-週次1
-   SCHEDULED: &lt;2020-05-20 水 .+1w&gt;
+*** TODO 習慣タスク-週次1
+    SCHEDULED: &lt;2020-05-20 水 .+1w&gt;
 
-** TODO 習慣タスク-週次2
-   SCHEDULED: &lt;2020-05-15 金 ++1w&gt;
+*** TODO 習慣タスク-週次2
+    SCHEDULED: &lt;2020-05-15 金 ++1w&gt;
 
-** TODO 習慣タスク-週次3
-   SCHEDULED: &lt;2020-05-08 金 +1w&gt;
+*** TODO 習慣タスク-週次3
+    SCHEDULED: &lt;2020-05-08 金 +1w&gt;
 
 </code></pre>
-<h1 id="考察">考察</h1>
-<h2 id="比較">比較</h2>
+<h2 id="考察">考察</h2>
+<h3 id="比較">比較</h3>
 <ul>
 <li><code>.+</code> については、DONEにすると、DONEにした日 (2020/05/13 (水)) を起点にして、翌日もしくは翌週がセットされる。<br />
 </li>
@@ -167,7 +166,7 @@
 </ul></li>
 <li><code>+</code> については、予めセットした日 (2020/05/01 (金)) を起点にして、翌日もしくは翌週がセットされる。</li>
 </ul>
-<h2 id="どう使えばよいか">どう使えばよいか？</h2>
+<h3 id="どう使えばよいか">どう使えばよいか？</h3>
 <p>公式マニュアルの通り、以下のように使えばよい。<br />
 なお、予定されたTODOを必ずその日にこなすのであれば (遅延などがないのであれば) 、どれを選んでも差は出ない (はず) 。</p>
 <dl>

@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -104,7 +104,7 @@
 これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。</p>
 <p>そこで、今回はトップページに表示される記事はteaserとして表示されるよう、設定を追加した。</p>
 <p><!--more--></p>
-<h1 id="設定">設定</h1>
+<h2 id="設定">設定</h2>
 <p>と言っても、ほとんど以下のページのとおりに設定しただけだ。</p>
 <ul>
 <li><a href="https://jaspervdj.be/hakyll/tutorials/using-teasers-in-hakyll.html">TUTORIAL: USING TEASERS IN HAKYLL</a></li>
@@ -118,7 +118,7 @@
 <li>記事のビルド時にteaserを生成する</li>
 </ol>
 <p>以下でそれぞれ見る。</p>
-<h1 id="teaser用マーキングの挿入">teaser用マーキングの挿入</h1>
+<h2 id="teaser用マーキングの挿入">teaser用マーキングの挿入</h2>
 <p>これが一番悩んだ・・・</p>
 <p>hakyllのデフォルトでは、htmlコメントとして以下を記載したとき、記載箇所より上がteaserとなる。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="co">&lt;!--more--&gt;</span></span></code></pre></div>
@@ -134,7 +134,7 @@
 <p>代わりに <code>@@html:&lt;!--more--&gt;@@</code> と書けば、ちゃんと意図通りにteaserとして表示できる。<br />
 （ここにたどり着く前に、 <code>pandocCompiler</code> 側でなんとかならないか調べてみたが、これは無理そうだった。<br />
 Org mode文書をどのようにPandoc内部データ型に変換しているのかはわからないが、エスケープする・しないを制御するパラメータが見つからない・・・）</p>
-<h1 id="テンプレートでのteaserの参照">テンプレートでのteaserの参照</h1>
+<h2 id="テンプレートでのteaserの参照">テンプレートでのteaserの参照</h2>
 <p>これはそのまま、書いてあるとおりに記載すれば良い。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="op">&lt;</span><span class="fu">div</span> <span class="kw">class</span><span class="ot">=</span><span class="st">&quot;content&quot;</span><span class="op">&gt;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="op">$</span>if(teaser)<span class="op">$</span></span>
@@ -144,7 +144,7 @@ Org mode文書をどのようにPandoc内部データ型に変換しているの
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>    <span class="op">$</span>body<span class="op">$</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>  <span class="op">$</span>endif<span class="op">$</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="op">&lt;/</span><span class="fu">div</span><span class="op">&gt;</span></span></code></pre></div>
-<h1 id="teaserの生成">teaserの生成</h1>
+<h2 id="teaserの生成">teaserの生成</h2>
 <p>自分のサイトの実装とチュートリアルのコードが少し違っているが、基本的な考え方は同じ。</p>
 <p>最初に、teaserとして表示するコンテンツ（余計なcssやjavascriptを含まない、記事のみ）を、snapshotとして保持しておく。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> version <span class="st">&quot;postContents&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
@@ -167,12 +167,12 @@ Org mode文書をどのようにPandoc内部データ型に変換しているの
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <p><code>teaserField</code> を使って、teaserを各記事のコンテキストに追加すると、<br />
 テンプレートから <code>teaser</code> というキーで、 <code>content</code> スナップショットの内容のうち <code>&lt;!--more--&gt;</code> より前に記載された内容を参照できる。</p>
-<h2 id="ちなみに">ちなみに</h2>
+<h3 id="ちなみに">ちなみに</h3>
 <p>teaser用のマーキング用文字列を任意に指定できる <code>teaserFieldWithSeparator</code> もある。<br />
 最初、htmlエスケープの問題が解決できなかったので、マーキング用文字列として <code>#TEASER#</code> みたいなのを設定して使用しようとした。<br />
 こちらを使用しても同じようにteaserを挿入することができるのだが、実際の記事を見に行くと、 <code>#TEASER#</code> の文字が表示されている・・・<br />
 というわけで、こちらは失敗。きちんとhtmlコメントの形式で文字列を指定しておかないとだめ。</p>
-<h1 id="終わりに">終わりに</h1>
+<h2 id="終わりに">終わりに</h2>
 <p>これでteaserはなんとかなったので、次はページネーションをなんとかしたい。<br />
 （常に最新5件だけ表示、みたいなのから脱却したい・・・）</p>
             </div>

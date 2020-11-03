@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -100,13 +100,12 @@
             <!-- {% endif %} -->
             <div class="post-content">
             <p>いろいろ思うところがあり、ブログを運用することにしました。</p>
-<h1 id="はじめに">はじめに</h1>
 <p>もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、<br />
 なんとなく愛着がわかないなー、と思っていた。</p>
 <p>そんな中で、GitHub Pagesというものがあるのを知ったり（正確には前から知っていたが見えてなかった）、<br />
 Haskellでブログ書いてるー、みたいな記事をいくつか見つけたので、ちょっとやってみっか、と一念発起。</p>
 <p><!--more--></p>
-<h1 id="hakyllのセットアップ">Hakyllのセットアップ</h1>
+<h2 id="hakyllのセットアップ">Hakyllのセットアップ</h2>
 <p>今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。<br />
 Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。<br />
 （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）</p>
@@ -133,7 +132,7 @@ $ stack exec hakyll-init my_site
 出来上がった <code>site.hs</code> やhackageを見つつ、どんな処理してるのかを確認する。</p>
 <p><code>stack exec site build</code> すると、デフォルトでは、 <code>_site</code> 配下にビルドされた静的コンテンツが、 <code>_cache</code> 配下に何らかのキャッシュが作成される。<br />
 これらは <code>.gitignore</code> で管理対象外にしておく（ついでに <code>.stack-work</code> も）。</p>
-<h1 id="github-pagesへのデプロイ">GitHub Pagesへのデプロイ</h1>
+<h2 id="github-pagesへのデプロイ">GitHub Pagesへのデプロイ</h2>
 <p>ほとんどこれ。</p>
 <ul>
 <li><a href="https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html">TUTORIAL: USING HAKYLL WITH GITHUB PAGES</a></li>
@@ -143,7 +142,7 @@ $ stack exec hakyll-init my_site
 <code>_site</code> をGit管理対象外にしておくことで、このディレクトリを通じて、 <code>master</code> ブランチがコンテンツのみ持っている、という状況を作り出せる。<br />
 （こういう使い方をするのは初めて見たが、参考になる。）</p>
 <p>ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。</p>
-<h2 id="ちなみに">ちなみに</h2>
+<h3 id="ちなみに">ちなみに</h3>
 <p>最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。</p>
 <dl>
 <dt>ユーザー/Organizationページ</dt>
@@ -160,7 +159,7 @@ $ stack exec hakyll-init my_site
 こうすると、わざわざ <code>source</code> ブランチと <code>master</code> ブランチを分けなくて楽だなー、と思っていたが、<br />
 パスの先頭に <code>&lt;repository&gt;</code> をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。<br />
 （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）</p>
-<h1 id="そのうち直したいなーなど">そのうち直したいなー、など</h1>
+<h2 id="そのうち直したいなーなど">そのうち直したいなー、など</h2>
 <p>スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。<br />
 他にやっておきたいことは以下かなー。</p>
 <dl>
@@ -172,7 +171,7 @@ $ stack exec hakyll-init my_site
 <dd>これはまあ、特になくてもいいかも。あると便利、くらい。
 </dd>
 </dl>
-<h1 id="追記-2020-07-09">追記 (2020-07-09)</h1>
+<h2 id="追記-2020-07-09">追記 (2020-07-09)</h2>
 <p>hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。<br />
 メタ情報として <code>published: yyyy-mm-dd</code> とかくと、記事にタイムスタンプをつけることができる。<br />
 タイムスタンプは、 <code>recentFirst</code> で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。<br />

@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -88,6 +88,21 @@
         </div>
         <div class="col-md-9">
             <div class="well">
+
+    <!-- 年ごとに分類するのは別途追加 -->
+    <!-- {% unless post.next %} -->
+    <!--     <h1>2020</h1> -->
+    <!--     <ul> -->
+    <!-- {% else %} -->
+    <!--     {% capture year %}{{ post.date | date: '%Y' }}{% endcapture %} -->
+    <!--     {% capture nyear %}{{ post.next.date | date: '%Y' }}{% endcapture %} -->
+    <!--     {% if year != nyear %} -->
+    <!--         </ul> -->
+    <!--         <h1>2020</h1> -->
+    <!--         <ul> -->
+    <!--     {% endif %} -->
+    <!-- {% endunless %} -->
+    <li><a href="./git-stash-collection.html">2020-11-03 (Tue) - 個人的git-stashまとめ</a></li>
 
     <!-- 年ごとに分類するのは別途追加 -->
     <!-- {% unless post.next %} -->

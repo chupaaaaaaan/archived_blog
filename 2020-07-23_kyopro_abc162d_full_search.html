@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -102,7 +102,7 @@
             <p>解いた問題の学びを書いていく。</p>
 <p>今回の問題は<a href="https://atcoder.jp/contests/abc162/tasks/abc162_d">これ</a>。テーマは全探索。</p>
 <p><!--more--></p>
-<h1 id="最初に振り返り">最初に振り返り</h1>
+<h2 id="最初に振り返り">最初に振り返り</h2>
 <ul>
 <li>全探索するときは、制約にもよるが、3重ループになってたらちょっとくさい、と思えると良いのかな？
 <ul>
@@ -115,7 +115,7 @@
 <li>超いい本なので、みんなも買って読もう！</li>
 </ul></li>
 </ul>
-<h1 id="素朴な全探索">素朴な全探索</h1>
+<h2 id="素朴な全探索">素朴な全探索</h2>
 <p>今回の問題は、添字が3つあって、 <code>i&lt;j&lt;k</code> 以外は条件は対称っぽい。<br />
 多重のforループをぐるぐる回す全探索かな？とあたりをつける。</p>
 <p>そういうループっぽい探索をHaskellで書くときは、リスト内包表記を使うとそれっぽくかける。</p>
@@ -133,7 +133,7 @@
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>                  y<span class="op">/=</span>z,</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a>                  z<span class="op">/=</span>x]</span></code></pre></div>
 <p>ただ、これだとTLEしてしまう。</p>
-<h1 id="内側のループを外す">内側のループを外す</h1>
+<h2 id="内側のループを外す">内側のループを外す</h2>
 <p>ごちゃごちゃいじってみたが改善できなかったので解説を確認し、再度提出した版がこちら。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
@@ -156,7 +156,7 @@
 こうすると、最初の版では3重ループになっていたのが2重ループになり、計算量は小さくなるはず・・・</p>
 <p>なのだが、またしてもTLE。<br />
 原因は、guard節で <code>!!</code> を使ってリストの要素を参照しているためで、リストの長さに応じた時間がかかってしまう。</p>
-<h1 id="vector-化"><code>Vector</code> 化</h1>
+<h2 id="vector-化"><code>Vector</code> 化</h2>
 <p>今度は、文字列をリストではなく、 <code>Data.Vector.Unboxed.Vector</code> で持つようにする。<br />
 そうした最終版がこちら。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
@@ -178,7 +178,7 @@
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a></span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a>  <span class="fu">print</span> <span class="op">$</span> r <span class="op">*</span> g <span class="op">*</span> b <span class="op">-</span> l  </span></code></pre></div>
 <p><code>VU.toList</code> でリストに変換するところが <span class="math inline"><em>O</em>(<em>n</em>)</span> かかってしまうが、それでもリストを生で扱うよりは全然早い。</p>
-<h2 id="ちなみに">ちなみに</h2>
+<h3 id="ちなみに">ちなみに</h3>
 <p><code>Vector</code> で読み込むところはこんな感じで書いている。</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ot">unconsChar ::</span> <span class="dt">StateT</span> <span class="dt">BS.ByteString</span> <span class="dt">Maybe</span> <span class="dt">Char</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>unconsChar <span class="ot">=</span> <span class="dt">StateT</span> BS.uncons</span>

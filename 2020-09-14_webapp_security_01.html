@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -109,7 +109,7 @@
 <li><a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> （IPA）</li>
 </ul>
 <p><!--more--></p>
-<h1 id="xssとはなんじゃらほい">XSSとは？なんじゃらほい</h1>
+<h2 id="xssとはなんじゃらほい">XSSとは？なんじゃらほい</h2>
 <p>IPA「<a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> - 1.5 クロスサイト・スクリプティング」は、以下の記載がある。</p>
 <blockquote>
 <p>ウェブアプリケーションにスクリプトを埋め込むことが可能な脆弱性がある場合、これを悪用した攻撃により、利用者のブラウザ上で不正なスクリプトが実行されてしまう可能性があります。</p>
@@ -141,14 +141,14 @@
 <li>脆弱性のある掲示板やSNS、ブログサイトのコメント欄を利用して、サイトにJavascript等を埋め込む</li>
 </ul>
 <p>などが考えられる。</p>
-<h1 id="xssへの対策">XSSへの対策</h1>
+<h2 id="xssへの対策">XSSへの対策</h2>
 <p>詳細な話は書籍に譲るが、以下の2つが基本的な対策となる。</p>
 <ol>
 <li>レスポンスでの出力内容をエスケープする<br />
 </li>
 <li>レスポンスでの文字エンコーディングを明示する</li>
 </ol>
-<h2 id="について">1について</h2>
+<h3 id="について">1について</h3>
 <p>入力値の中にhtmlの構文で特別な意味を持つ文字が含まれていた場合に、それをそのままレンダリングしてしまうことを防ぐためにhtmlエスケープを行う。<br />
 htmlによって解釈される文字と、出力場所の終端文字列について、エスケープが必要になる（引用元：書籍）。</p>
 <table>
@@ -199,7 +199,7 @@ htmlによって解釈される文字と、出力場所の終端文字列につ�
 </tr>
 </tbody>
 </table>
-<h2 id="について-1">2について</h2>
+<h3 id="について-1">2について</h3>
 <p>明示的に文字エンコーディングを指定していない場合、ブラウザ側が、レスポンス内容から文字エンコーディングを推測する。<br />
 その時、（例えば）UTF-8で見れば問題ない入力内容でも、別のエンコーディングではhtmlに解釈される文字となってしまう場合がある。</p>
 <p>安全なウェブサイトの作り方から例を引用する。以下の文字列</p>
@@ -210,7 +210,7 @@ htmlによって解釈される文字と、出力場所の終端文字列につ�
 <pre class="text"><code>&lt;script&gt;alert('test');&lt;/script&gt;
 </code></pre>
 <p>として扱われるため、スクリプトが実行される。</p>
-<h2 id="thymeleafの例">Thymeleafの例</h2>
+<h3 id="thymeleafの例">Thymeleafの例</h3>
 <p>例として、Thyemleafでコードを記載してみる。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
@@ -254,7 +254,7 @@ htmlによって解釈される文字と、出力場所の終端文字列につ�
 例えば、 前画面で <code>name</code> パラメータに以下のような文字列を渡した場合を考える（書籍の記載例参照）。</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="st">&quot;+onmouseover%3d&quot;</span><span class="fu">alert</span>(<span class="bu">document</span><span class="op">.</span><span class="at">cockie</span>)</span></code></pre></div>
 <p><code>th:utext</code> を使用して表示していた場合、該当要素をマウスオーバーすると、ブラウザに保存されているcockieが表示されてしまう。</p>
-<h2 id="保険的対策">保険的対策</h2>
+<h3 id="保険的対策">保険的対策</h3>
 <p>上記の対策以外に、保険的対策として以下のことも実施できる。</p>
 <dl>
 <dt><code>X-XSS-Protection</code> レスポンスヘッダの追加</dt>
@@ -272,7 +272,7 @@ htmlによって解釈される文字と、出力場所の終端文字列につ�
 それ以外の攻撃は、依然として有効。
 </dd>
 </dl>
-<h1 id="まとめ">まとめ</h1>
+<h2 id="まとめ">まとめ</h2>
 <p>XSSは、入力値が「エスケープされないまま」で「HTMLとして出力」される脆弱性により発生する。<br />
 そのため、基本的には出力前に値をエスケープしておくことで、脆弱性は潰すことができる。</p>
 <p>とはいえ、基本的にはアプリケーション側での対応になるので、処理一つ一つについてエスケープしているか、<br />

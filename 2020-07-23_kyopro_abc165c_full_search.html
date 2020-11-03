@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -102,7 +102,7 @@
             <p>解いた問題の学びを書いていく（復習も兼ねて）。</p>
 <p>今回の問題は<a href="https://atcoder.jp/contests/abc165/tasks/abc165_c">これ</a>。テーマはまたしても全探索だが、どっちかというと再帰をちゃんと使おう、のほうが近いかも。</p>
 <p><!--more--></p>
-<h1 id="最初に振り返り">最初に振り返り</h1>
+<h2 id="最初に振り返り">最初に振り返り</h2>
 <ul>
 <li><p>今回は方針が全く立たなかった。制約を見つつ、値が小さいときは何らかの全列挙（全探索）が使えないか見てみるのが良さそう。</p></li>
 <li><p>何かを全列挙する、としたときに、再帰的に構成することを頭に思い浮かべられるとよい。</p>
@@ -112,7 +112,7 @@
 <li>全探索というと、どうしてもまだループ的な発想が出てしまうなぁ・・・</li>
 </ul></li>
 </ul>
-<h1 id="解いてみる">解いてみる</h1>
+<h2 id="解いてみる">解いてみる</h2>
 <p>最初制約見ずにうんうん唸っていたが、かなり値が小さいのに気づく。<br />
 とはいえ、何をすればよいかちょっと方針が立たなかったので、解説を見る。</p>
 <p>（最初、与えられた <span class="math inline"><em>Q</em></span> 個の4つ組から適当な数列 <span class="math inline"><em>A</em></span> が構成できるんかなーと思って、<br />
@@ -127,7 +127,7 @@
 <p><code>abcds</code> は <span class="math inline"><em>Q</em></span> 個の4つ組、 <code>seqA</code> は適当な数列 <span class="math inline"><em>A</em></span> 。<br />
 問題文のとおりに、すべての4つ組について得点の合計を計算する。（今思えば <code>map</code> して <code>sum</code> でも良かったな・・・）</p>
 <p>残りは数列 <span class="math inline"><em>A</em></span> の全列挙だが、こちらがなかなかうまく行かなかった・・・</p>
-<h1 id="数列の全探索">数列の全探索</h1>
+<h2 id="数列の全探索">数列の全探索</h2>
 <p>結論から言えば、<a href="https://atcoder.jp/contests/abc165/submissions/12627062">この提出</a>を参考にさせていただいた。</p>
 <p>キモは、数列を再帰的に構成してあげることだ（この考え方がなかなか身につかない・・・）。</p>
 <p>実装は以下の通り。</p>
@@ -146,7 +146,7 @@
 <p>だ。</p>
 </blockquote>
 <p>今回で言えば、CDRは長さが1短い数列で、その要素の最小値はCAR未満になることがない、という事実から実装を導くことができる。</p>
-<h1 id="最後に">最後に</h1>
+<h2 id="最後に">最後に</h2>
 <p>この記事を見ている人はいないと思うが、もし見ている人がいたら<a href="https://github.com/kazu-yamamoto/recursion-drill/blob/master/README.md">再帰ドリル</a>を是非やってみてください。<br />
 再帰のこころを身につけるために、とても良いコンテンツです。</p>
             </div>

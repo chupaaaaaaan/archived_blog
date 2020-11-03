@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -99,11 +99,11 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <h1 id="はじめに">はじめに</h1>
+            <h2 id="はじめに">はじめに</h2>
 <p><strong>この記事は、はてなブログで公開していた記事を持ってきたものです（一部リンク等を修正しています）</strong></p>
-<h1 id="追記">追記</h1>
+<h2 id="追記">追記</h2>
 <p><code>libvirt</code> グループに所属させないと、minikubeでkvm仮想マシンを作成する時エラーになるので、手順を追記しました。</p>
-<h1 id="目的">目的</h1>
+<h2 id="目的">目的</h2>
 <p>kubernetesを全く触ったことがなく、どんなものか知りたかったので、ちょっと触ってみます。 もともとはEKSで試そうとしましたが、0.20$/hと試してみるには高かったので、ローカル環境でMinikubeを使って構築してみます。</p>
 <p>試した環境はこちら。</p>
 <!--more-->
@@ -116,7 +116,7 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
 flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
 flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
 flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d</code></pre>
-<h1 id="kvmのインストール">KVMのインストール</h1>
+<h2 id="kvmのインストール">KVMのインストール</h2>
 <p>Minikubeはローカル環境の仮想マシン上に、Kubernetesをインストールします。そのため、ハイパーバイザをインストールする必要があります。 LinuxだとVirtualboxとKVMが使用できますが、今回はKVMを使ってみることにします。</p>
 <p><a href="https://minikube.sigs.k8s.io/docs/reference/drivers/kvm2/">この辺り</a>を参考にして、KVMをインストールします。</p>
 <pre><code>$ sudo yum install qemu-kvm libvirt libvirt-python libguestfs-tools virt-install
@@ -168,7 +168,7 @@ $ sudo usermod -aG libvirt $(whoami)</code></pre>
 <p><code>/sys/fs/fuse/connections</code>がないよ、って怒られています。 書いてある通り、<code>fuse</code>モジュールをロードします。ついでに、起動時に自動でロードするように設定しておきます。</p>
 <pre><code>$ sudo modprobe fuse
 $ sudo sh -c &quot;echo fuse &gt; /etc/modules-load.d/fuse.conf&quot;</code></pre>
-<h1 id="kubectlおよびminikubeのインストール">kubectlおよびMinikubeのインストール</h1>
+<h2 id="kubectlおよびminikubeのインストール">kubectlおよびMinikubeのインストール</h2>
 <p>こちらも公式サイト通りに。</p>
 <pre><code>$ curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
 $ chmod +x ./kubectl

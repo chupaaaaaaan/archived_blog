@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -99,8 +99,7 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <h1 id="はじめに">はじめに</h1>
-<p>hakyllのデフォルトのブログテーマではちょっと味気なかったので、別のブログテーマに変更した。</p>
+            <p>hakyllのデフォルトのブログテーマではちょっと味気なかったので、別のブログテーマに変更した。</p>
 <p>参考にしたのはこちら。</p>
 <ul>
 <li><a href="https://matsubara0507.github.io/posts/2016-10-24-changed-design.html">Hakyll で作った GitHub Pages のデザインを変更してみた</a></li>
@@ -115,7 +114,7 @@
 ゆくゆくは対応したい。</p>
 <p>今回対応したテーマは<a href="https://github.com/chupaaaaaaan/chupaaaaaaan.github.io">こちら</a>に置いてある。</p>
 <p><!--more--></p>
-<h1 id="サイドバーの対応">サイドバーの対応</h1>
+<h2 id="サイドバーの対応">サイドバーの対応</h2>
 <p>画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。</p>
 <p>単純には、以下のように実装すれば良さそうである。<br />
 （ <code>gsubRoute</code> を使って、ルーティングを変更している。）</p>
@@ -165,12 +164,12 @@
 <p>注意すべきポイントとしては、別バージョンのコンテンツを作成する際に <code>route</code> も正しく設定する必要がある。<br />
 <code>route</code> を省略してもコンパイルエラーにはならないが、 <code>recent_posts</code> として参照したコンテンツへのリンクが作成されない<br />
 （ <code>defaultContext</code> に格納される <code>$url$</code> が空になるっぽい）。</p>
-<h2 id="ちなみに">ちなみに</h2>
+<h3 id="ちなみに">ちなみに</h3>
 <p>循環参照を解決する手段としては、複数のバージョンのコンテンツを用意する方法の他に、<a href="https://groups.google.com/g/hakyll/c/F2j7iztwKEc/m/axLNmksqCAAJ?pli=1">作者から提案された方法</a>もある。<br />
 どうやら、「必要なのはメタデータだけなんだから、それだけ取得すればよくね？」ということみたいなのだが、<br />
 どうやればよいのかよくわからなかったので、今回は不採用。</p>
 <p>hakyllに出てくる <code>Context a</code> 、 <code>Item a</code> 、 <code>Compiler a</code> などは重要な概念っぽいのだが、まだよくわかってない・・・。</p>
-<h1 id="コンテンツの表示">コンテンツの表示</h1>
+<h2 id="コンテンツの表示">コンテンツの表示</h2>
 <p>上記で循環参照のエラーはなくなるが、まだ問題はある。</p>
 <p>ドキュメントルート（ <code>index.html</code> ）では、以下のコンテンツが表示される。</p>
 <ul>
@@ -233,11 +232,11 @@
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
-<h2 id="ちなみにその2">ちなみにその2</h2>
+<h3 id="ちなみにその2">ちなみにその2</h3>
 <p>テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに<a href="https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html">スナップショットを利用する方法</a>もある。<br />
 こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、<br />
 スナップショット方式は採用していない。</p>
-<h1 id="終わりに">終わりに</h1>
+<h2 id="終わりに">終わりに</h2>
 <p>とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。</p>
             </div>
             <!-- コメント機能は別途追加する -->

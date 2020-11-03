@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -117,7 +117,7 @@
 特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
 <p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
 <p><!--more--></p>
-<h1 id="キューの実装">キューの実装</h1>
+<h2 id="キューの実装">キューの実装</h2>
 <p>スライドのとおりに実装する。ただし、記載の通りに実装すると、リストの長さを管理するパラメータが不要になる。<br />
 そのため、今回はそれらを省いた実装とした。</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Queue</span> a <span class="ot">=</span> <span class="dt">Q</span> {<span class="ot"> front ::</span> [a]</span>
@@ -142,7 +142,7 @@
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>  <span class="kw">where</span><span class="ot"> rotate ::</span> [a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]</span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a>        rotate [] (y<span class="op">:</span>_) zs      <span class="ot">=</span> y<span class="op">:</span>zs</span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a>        rotate (x<span class="op">:</span>xs) (y<span class="op">:</span>ys) zs <span class="ot">=</span> x <span class="op">:</span> rotate xs ys (y<span class="op">:</span>zs)</span></code></pre></div>
-<h2 id="ちなみに">ちなみに</h2>
+<h3 id="ちなみに">ちなみに</h3>
 <p>実際、スライドでは <code>thunk</code> が空かどうかでリストの反転操作をするかどうかを決めており、<br />
 キューの管理にリストの長さは使用していない。<br />
 「実は <code>fl+1 == rl</code> のときだけこっちに来る」のような記載もある<br />
@@ -158,7 +158,7 @@
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>          <span class="op">...</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>          <span class="fu">or</span> (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)     <span class="co">-- pushBackを0回、popFrontをg回</span></span></code></pre></div>
 <p>よって、次に <code>pushBack</code> を実行したタイミングで必ず <code>fl + 1 == rl</code> が成り立つことがわかり、これはプログラムの不変条件となっている。</p>
-<h1 id="評価の追跡-pushback-2回-popfront-1回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 1回）</h1>
+<h2 id="評価の追跡-pushback-2回-popfront-1回">評価の追跡（ <code>pushBack</code> 2回→ <code>popFront</code> 1回）</h2>
 <p>では実際に、評価を追跡してみる。</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>queue0 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>[]) (y<span class="op">:</span>[]) []</span></code></pre></div>
 <p>から初めて、いくつかの操作を行ったときの評価順を見る。<br />
@@ -180,7 +180,7 @@
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>             <span class="op">==</span> (x, check <span class="op">$!</span> <span class="dt">Q</span> (y<span class="op">:</span>e1<span class="op">:</span>[]) (e2<span class="op">:</span>[]) (y<span class="op">:</span>e1<span class="op">:</span>[]))</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>             <span class="op">==</span> (x, <span class="dt">Q</span> (y<span class="op">:</span>e1<span class="op">:</span>[]) (e2<span class="op">:</span>[]) (e1<span class="op">:</span>[]))</span></code></pre></div>
 <p>となり、操作のたびに <code>rotate</code> が1つ簡約され、少しずつ <code>reverse</code> 処理が実行されている、というのがわかる。</p>
-<h1 id="評価の追跡-pushback-5回">評価の追跡（ <code>pushBack</code> 5回）</h1>
+<h2 id="評価の追跡-pushback-5回">評価の追跡（ <code>pushBack</code> 5回）</h2>
 <p>次に、 <code>pushBack</code> を連続で実施してみたときの挙動を確認する。</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>queue4 <span class="ot">=</span> <span class="dt">Q</span> (x<span class="op">:</span>y<span class="op">:</span>e1<span class="op">:</span>[]) (e4<span class="op">:</span>e3<span class="op">:</span>e2<span class="op">:</span>[]) []</span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>queue5 <span class="op">==</span> pushBack queue4 e5</span>
@@ -206,10 +206,10 @@
 トリックは、（2番目の記事で言っている）「停止計算用ストリーム」において、 <code>$!</code> 演算子を介して、 <code>check</code> がパターンマッチにより停止計算を進める（次のWHNFまで評価する）点。<br />
 「停止計算用ストリーム」の計算はメモ化されているので、「先頭側ストリーム」も同じ位置まで評価された状態になる<br />
 （ <code>check</code> でストリームを構成するときに、同じデータを指すようになっている）。</p>
-<h1 id="最後に">最後に</h1>
+<h2 id="最後に">最後に</h2>
 <p>実は前も、1番目の資料に挑戦してキューを実装しようとしていたのだが、今回再挑戦してようやく理解できたかな、という感じ。<br />
 遅延評価周りはちゃんと考えないと、なんでそうなっているのかが全く追えないので、今回のように1つずつ簡約してみるのは良い手かもしれない。</p>
-<h1 id="追記">追記</h1>
+<h2 id="追記">追記</h2>
 <p>結局Dequeueが必要だったりして来たので、おとなしく <code>Data.Sequence</code> を使うことにしました・・・残念。</p>
             </div>
             <!-- コメント機能は別途追加する -->

@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./git-stash-collection.html">個人的git-stashまとめ</a></li>
+        
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
         
           <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
-        
-          <li><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">実時間キューの挙動を追ってみる</a></li>
         
     </ul>
 </div>
@@ -88,6 +88,34 @@
         </div>
         <div class="col-md-9">
             
+<div class="article">
+  <div class="well">
+        <h1><a href="./git-stash-collection.html">2020-11-03 (Tue) - 個人的git-stashまとめ</a></h1>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and post.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="content">
+          
+            <p><code>git stash</code> って、非常によく使うコマンドなんだけど、実は普段は以下のことしかしてない。</p>
+<ul>
+<li><code>git stash</code> で、現在の変更を退避して、別ブランチで作業<br />
+</li>
+<li>元のブランチに戻ってから <code>git stash pop</code> して、変更を回復</li>
+</ul>
+<p>別ブランチで作業するために変更を退避するならこれで十分だけれども、<br />
+ドラフト記事を管理するためにもうちょっと凝ったことをしたかったので、 <code>git-stash</code> の使い方をまとめてみる。</p>
+<p>
+            <a href="./git-stash-collection.html">続きを読む</a>
+          
+        </div>
+    </div>
+</div>
+
 <div class="article">
   <div class="well">
         <h1><a href="./2020-10-31_java-info-collection.html">2020-11-01 (Sun) - 個人的Java情報まとめ</a></h1>
@@ -187,43 +215,6 @@
 </ul>
 <p>
             <a href="./2020-09-14_webapp_security_01.html">続きを読む</a>
-          
-        </div>
-    </div>
-</div>
-
-<div class="article">
-  <div class="well">
-        <h1><a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">2020-08-16 (Sun) - 実時間キューの挙動を追ってみる</a></h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
-          
-            <p>グラフ上のBFSを実装するにあたって、単純なキューがほしい・・・んだけど、<br />
-<a href="https://kazu-yamamoto.hatenablog.jp/entry/20121107/1352259739">なぜ Haskell ではキューが軽んじられているか？</a>にもあるように、キューは標準では提供されていない。</p>
-<p>そこで、以下を参考にしてキューを実装した。<br />
-ここでは、実時間キューを実装した（最悪計算量・償却計算量とも <span class="math inline"><em>O</em>(1)</span> のため）。</p>
-<ol>
-<li><a href="http://www.kmonos.net/pub/Presen/PFDS.pdf">20分でわかるPurely Functional Data Structures</a><br />
-</li>
-<li><a href="https://qiita.com/rst76/items/a7dd81b522a09d1b9986">キューの効率的な実装 または私は如何にしてHaskellを止めてF#を愛するようになったか</a><br />
-</li>
-<li><a href="http://autotaker.hatenablog.com/entry/2017/12/21/125153">永続リアルタイムキューのHaskell実装と計算量解析</a><br />
-</li>
-<li><a href="https://rst76.hatenablog.com/entry/20171222/1513963036">Haskell で RealTimeQueue</a></li>
-</ol>
-<p>ところで、2リストキューや銀行家キューは、（1番目のスライドを読む限りでは）評価の様子は割とわかりやすいのだが、<br />
-実時間キューについては、正確評価と遅延評価が入り混じっており、どういう挙動をするのかが分かりづらい。<br />
-特に、「少しずつ <code>reverse</code> 処理を進める」といったところ。</p>
-<p>ここでは、実時間キューの評価を順に進めていって、その様子を確認してみることにする。</p>
-<p>
-            <a href="./2020-08-15_lazy_evaluation_in_realtime_queue.html">続きを読む</a>
           
         </div>
     </div>
