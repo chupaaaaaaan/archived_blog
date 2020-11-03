@@ -37,50 +37,50 @@ body {
     margin: 0;
 }
 
-.well h1 {
+.main h1 {
     color: #ee4444;
     font-size: 2em;
 }
 
-.well h2 {
+.main h2 {
     color: #ee4444;
     font-size: 1.5em;
     border-bottom: solid 2px #dddddd;
 }
 
-.well h3 {
+.main h3 {
     color: #ee4444;
     font-size: 1.2em;
     border-bottom: solid 1px #dddddd;
 }
 
-.well p {
+.main p {
     /* border: dashed 1px #000000; */
     margin-bottom: 0.1em;
 }
 
-.well li {
+.main li {
     /* border: solid 1px #000000; */
     margin-top: 0.2em;
 }
 
-.well ul {
+.main ul {
     /* border: dotted 1px #000000; */
     margin-bottom: 0.5em;
 }
 
-.well dl {
+.main dl {
     margin-bottom: 0.3em;
 }
 
-.well dt {
+.main dt {
 }
 
-.well dd {
+.main dd {
     margin-left: 2em;
 }
 
-.well blockquote {
+.main blockquote {
     font-size: 1em;
 }
 
@@ -92,7 +92,7 @@ body {
     color: #ee4444;
 }
 
-.well table {
+.main table {
     /* border: solid 1px #000000; */
     display: block;
     overflow: auto;
@@ -103,32 +103,32 @@ body {
     margin-bottom: 1em;
 }
 
-.well th {
+.main th {
     text-align: left;
 }
 
-.well th, .well td {
+.main th, .main td {
     padding: 0.2em;
 }
 
-.well thead {
+.main thead {
     border-top: solid 1px #999999;
     border-bottom: double 1px #999999;
 }
 
-.well tbody tr{
+.main tbody tr{
     border-bottom: dotted 0.5px #bbbbbb;
 }
 
-.well tbody {
+.main tbody {
     border-bottom: solid 1px #999999;
 }
 
-.well tbody tr:hover {
+.main tbody tr:hover {
     background: #eeeeee;
 }
 
-.well table caption {
+.main table caption {
     caption-side: top;
     text-align: start;
 }
