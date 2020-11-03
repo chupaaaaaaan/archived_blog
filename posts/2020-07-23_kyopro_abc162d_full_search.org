@@ -56,7 +56,7 @@ tags: haskell, 競プロ
    main = do
      n <- read <$> getLine :: IO Int
      s <- getLine
-   
+
      let r = length $ filter (=='R') s
          g = length $ filter (=='G') s
          b = length $ filter (=='B') s
@@ -67,7 +67,7 @@ tags: haskell, 競プロ
                      n > 2*j-i-1,
                      x/=(s!!(2*j-i-1)),
                      y/=(s!!(2*j-i-1))]
-   
+
      print $ r * g * b - l
    #+END_SRC
 
@@ -87,7 +87,7 @@ tags: haskell, 競プロ
    main = do
      n <- read <$> getLine :: IO Int
      s <- readLnAsVecNWith n unconsChar
-   
+
      let r = VU.length $ VU.filter (=='R') s
          g = VU.length $ VU.filter (=='G') s
          b = VU.length $ VU.filter (=='B') s
@@ -99,7 +99,7 @@ tags: haskell, 競プロ
                      0 <= 2*j-i-1,
                      x/=(s VU.! (2*j-i-1)),
                      y/=(s VU.! (2*j-i-1))]
-   
+
      print $ r * g * b - l  
    #+END_SRC
 
@@ -111,7 +111,7 @@ tags: haskell, 競プロ
     #+BEGIN_SRC haskell
     unconsChar :: StateT BS.ByteString Maybe Char
     unconsChar = StateT BS.uncons
-   
+
     readLnAsVecNWith :: VU.Unbox a => Int -> StateT BS.ByteString Maybe a -> IO (Vector a)
     readLnAsVecNWith n st = VU.unfoldrN n (runStateT st) <$> BS.getLine
     #+END_SRC

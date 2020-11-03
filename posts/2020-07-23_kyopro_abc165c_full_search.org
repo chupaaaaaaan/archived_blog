@@ -37,7 +37,7 @@ tags: haskell, 競プロ
                                              then x + d
                                              else x) 0 abcds
    #+END_SRC
-  
+
    ~abcds~ は $Q$ 個の4つ組、 ~seqA~ は適当な数列 $A$ 。
    問題文のとおりに、すべての4つ組について得点の合計を計算する。（今思えば ~map~ して ~sum~ でも良かったな・・・）
 

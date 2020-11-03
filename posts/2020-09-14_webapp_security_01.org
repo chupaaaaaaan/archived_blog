@@ -22,7 +22,7 @@ tags: security
    #+begin_quote
    ウェブアプリケーションにスクリプトを埋め込むことが可能な脆弱性がある場合、これを悪用した攻撃により、利用者のブラウザ上で不正なスクリプトが実行されてしまう可能性があります。
    #+end_quote
-  
+
    「スクリプトを埋め込むことが可能な脆弱性」がどこにあるかによるが、
    大雑把に言えば、脆弱なウェブアプリケーションには、以下のようにしてスクリプトを埋め込むことができる。
 
@@ -33,11 +33,11 @@ tags: security
 
 
    Javascriptが埋め込めてしまうと、ウェブブラウザ上でできることは何でもできてしまうため、例えば
-  
+
    - セッションIDの窃取
    - 閲覧者の情報を送信
-    
-    
+
+
    などは簡単にできてしまう。
    また、偽サイトで、本物サイトと同じ見た目のフォームを作成しておけば、攻撃者に対して入力値をPOSTすることもできてしまう。
    この攻撃は、閲覧者がJavascriptを無効としていても、なお有効な攻撃となる。
@@ -62,7 +62,7 @@ tags: security
 *** 1について
     入力値の中にhtmlの構文で特別な意味を持つ文字が含まれていた場合に、それをそのままレンダリングしてしまうことを防ぐためにhtmlエスケープを行う。
     htmlによって解釈される文字と、出力場所の終端文字列について、エスケープが必要になる（引用元：書籍）。
-   
+
     | No. | 入力値が出力される場所       | 説明                                            | エスケープ概要                                                | 備考                                                        |
     |-----+------------------------------+-------------------------------------------------+---------------------------------------------------------------+-------------------------------------------------------------|
     |   1 | 要素内容（通常のテキスト）   | タグ、文字参照が解釈される。終端文字は ~<~      | ~<~ ~&~ を文字参照にする                                      |                                                             |
@@ -74,20 +74,20 @@ tags: security
 *** 2について  
     明示的に文字エンコーディングを指定していない場合、ブラウザ側が、レスポンス内容から文字エンコーディングを推測する。
     その時、（例えば）UTF-8で見れば問題ない入力内容でも、別のエンコーディングではhtmlに解釈される文字となってしまう場合がある。
-   
+
     安全なウェブサイトの作り方から例を引用する。以下の文字列
-   
+
     #+BEGIN_SRC text
     +ADw-script+AD4-alert(+ACI-test+ACI-)+ADsAPA-/script+AD4-
     #+END_SRC
-   
+
     がhtml中に現れた場合、一部のブラウザは、エンコーディングをUTF-7と解釈する。
     これがUTF-7として画面に表示されると、
-   
+
     #+BEGIN_SRC text
     <script>alert('test');</script>
     #+END_SRC
-   
+
     として扱われるため、スクリプトが実行される。
 
 *** Thymeleafの例
@@ -95,14 +95,14 @@ tags: security
 
    #+BEGIN_SRC html
    <!DOCTYPE html>
-  
+
    <html xmlns:th="http://www.thymeleaf.org">
-  
+
    <head>
        <title>Input your information</title>
        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    </head>
-  
+
    <body>
        <form th:action="@{/confirm}" method="POST" th:object="${demoForm}">
            <input type="text" th:field="*{name}"></input>
@@ -111,19 +111,19 @@ tags: security
        </form>
    </body>
    </html>
-  
+
    #+END_SRC
 
    #+BEGIN_SRC html
    <!DOCTYPE html>
-  
+
    <html xmlns:th="http://www.thymeleaf.org">
-  
+
    <head>
        <title>Confirm your information</title>
        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    </head>
-  
+
    <body>
        <div th:object="${demoForm}">
            <p th:text="*{name}"></p>

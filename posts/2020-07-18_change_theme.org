@@ -29,7 +29,7 @@ tags: haskell, hakyll
 
 ** サイドバーの対応
    画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。
-  
+
    単純には、以下のように実装すれば良さそうである。
    （ ~gsubRoute~ を使って、ルーティングを変更している。）
 
@@ -41,7 +41,7 @@ tags: haskell, hakyll
              let postsCtx =
                      listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
                      postCtx `mappend` siteCtx
-          
+
              pandocCompiler
                >>= loadAndApplyTemplate "layouts/post.html" postsCtx
                >>= relativizeUrls
@@ -53,13 +53,13 @@ tags: haskell, hakyll
    2. （サイドバーで参照する） ~recent_posts~ をキーとして、 ~recentPosts~ をコンテキストに入れて、
    3. ~posts/*~ にマッチするコンテンツを ~pandocCompiler~ でコンパイルし、
    4. 出来上がったものを ~layouts/post.html~ に突っ込む（テンプレート内で ~$body$~ と記載されている箇所に代入される）
-    
-    
+
+
    となる。ところが、これをコンパイルすると、以下のようなエラーが出てしまう。
    #+BEGIN_SRC 
    [ERROR] Hakyll.Core.Runtime.chase: Dependency cycle detected: posts/2020-07-09_first_post.org depends on posts/2020-07-09_first_post.org
    #+END_SRC
-  
+
    どうやら、循環参照が発生しているというメッセージのようだ。実際、 ~posts/*~ をコンパイルする前に ~recentPosts~ として取得しようとしている。
    取得のためにコンパイルし、その中でさらに取得し・・・とループしてしまう。
 
@@ -78,12 +78,12 @@ tags: haskell, hakyll
              let postsCtx =
                      listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
                      postCtx `mappend` siteCtx
-          
+
              pandocCompiler
                >>= loadAndApplyTemplate "layouts/post.html" postsCtx
                >>= relativizeUrls
    #+END_SRC
-  
+
    注意すべきポイントとしては、別バージョンのコンテンツを作成する際に ~route~ も正しく設定する必要がある。
    ~route~ を省略してもコンパイルエラーにはならないが、 ~recent_posts~ として参照したコンテンツへのリンクが作成されない
    （ ~defaultContext~ に格納される ~$url$~ が空になるっぽい）。
@@ -126,7 +126,7 @@ tags: haskell, hakyll
                  >>= loadAndApplyTemplate "layouts/default.html" postsCtx
                  >>= relativizeUrls
    #+END_SRC
-      
+
    今回は循環参照にはならないので、 ~posts <- recentFirst =<< loadAll "posts/*"~ のように書いてもコンパイルエラーにはならない。
 
    が、このように書いてしまうと、2つの問題が発生する。
@@ -141,11 +141,11 @@ tags: haskell, hakyll
    これを防ぐためには、バージョン指定するか、明示的にバージョンが存在しないコンテンツにマッチするように書く必要がある。
 
    こんな感じ。
-  
+
    #+BEGIN_SRC haskell
    posts <- recentFirst =<< loadAll ("posts/*" .&&. hasNoVersion)
    #+END_SRC
-  
+
    ふたつめの問題は、 ~posts/*~ （のバージョンなし版）にマッチするコンテンツは、既にサイドバーも含めてコンパイル済みであることから来ている
    （そのようなコンテンツをテンプレートに埋め込もうとするため、コンテンツがネストされてしまう）。
    そのため、テンプレートを適用する前で止めたバージョンのコンテンツ（サイドバーやヘッダーがくっついていない）を取得し、
@@ -170,7 +170,7 @@ tags: haskell, hakyll
                  >>= loadAndApplyTemplate "layouts/default.html" postsCtx
                  >>= relativizeUrls
    #+END_SRC
-  
+
 *** ちなみにその2
     テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに[[https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html][スナップショットを利用する方法]]もある。
     こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、

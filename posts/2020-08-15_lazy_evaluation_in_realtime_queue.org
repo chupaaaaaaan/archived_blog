@@ -36,17 +36,17 @@ tags: haskell
                     , rear  :: [a]
                     , thunk :: [a]
                     } deriving (Eq)
-  
+
    empty :: Queue a
    empty = Q [] [] []
-  
+
    pushBack :: Queue a -> a -> Queue a
    pushBack (Q f r t) e = check $! Q f (e:r) t
-  
+
    popFront :: Queue a -> (a, Queue a)
    popFront (Q (e:f) r t) = (e, check $! Q f r t)
    popFront (Q [] _ _)    = error "empty queue"
-  
+
    check :: Queue a -> Queue a
    check (Q f r (_:t)) = Q f r t
    check (Q f r []) = let ff = rotate f r []
