@@ -103,3 +103,30 @@ tags: git
    
    git branch -vva
    #+end_src
+
+   あとは、ドラフトを ~source~ ブランチにマージするためのスクリプト。処理を書き並べただけだけど・・・
+
+   #+begin_src sh
+   #!/bin/bash
+   
+   set -eu
+   
+   git checkout source
+   
+   git pull
+   
+   TARGET_BRANCH="$(git branch | grep "draft/" | cut -c3- | peco)"
+   
+   git checkout $TARGET_BRANCH
+   
+   git add .
+   
+   [ -z "$(git status -s | cut -d' ' -f2 | grep '^posts/')" ] && git commit -m "add draft"
+   
+   git merge develop
+   
+   git checkout source
+   
+   git merge $TARGET_BRANCH
+   #+end_src
+
