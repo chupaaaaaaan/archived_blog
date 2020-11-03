@@ -4,13 +4,13 @@ published: 2020-08-06 23:11:42
 tags: kubernetes, minikube
 ---
 
-# はじめに
+## はじめに
 **この記事は、はてなブログで公開していた記事を持ってきたものです（一部リンク等を修正しています）**
 
-# 追記
+## 追記
 `libvirt` グループに所属させないと、minikubeでkvm仮想マシンを作成する時エラーになるので、手順を追記しました。
 
-# 目的
+## 目的
 kubernetesを全く触ったことがなく、どんなものか知りたかったので、ちょっと触ってみます。
 もともとはEKSで試そうとしましたが、0.20$/hと試してみるには高かったので、ローカル環境でMinikubeを使って構築してみます。
 
@@ -36,7 +36,7 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
 flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm ida arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
 ```
 
-# KVMのインストール
+## KVMのインストール
 Minikubeはローカル環境の仮想マシン上に、Kubernetesをインストールします。そのため、ハイパーバイザをインストールする必要があります。
 LinuxだとVirtualboxとKVMが使用できますが、今回はKVMを使ってみることにします。
 
@@ -106,7 +106,7 @@ $ sudo modprobe fuse
 $ sudo sh -c "echo fuse > /etc/modules-load.d/fuse.conf"
 ```
 
-# kubectlおよびMinikubeのインストール
+## kubectlおよびMinikubeのインストール
 こちらも公式サイト通りに。
 
 ```

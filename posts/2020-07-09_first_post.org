@@ -8,8 +8,6 @@ tags: haskell, hakyll
 
 いろいろ思うところがあり、ブログを運用することにしました。
 
-* はじめに
-
 もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、
 なんとなく愛着がわかないなー、と思っていた。
 
@@ -18,76 +16,76 @@ Haskellでブログ書いてるー、みたいな記事をいくつか見つけ�
 
 @@html:<!--more-->@@
 
-* Hakyllのセットアップ
+** Hakyllのセットアップ
   
-  今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。
-  Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。
-  （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）
+   今回は、単にhaskellを使いたいのと、記事はorg-modeで書きたいので、Hakyllを使うことにした。
+   Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換してくれる。
+   （実はpandocをほとんど使ったことがないので、どのくらいちゃんと変換できるか、とかは知らない）
 
-  セットアップに当たっては以下を参考にした。（matsubaraさんのが特に参考になった。結構まねてる。）
+   セットアップに当たっては以下を参考にした。（matsubaraさんのが特に参考になった。結構まねてる。）
 
-  - [[https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html][GitHub Paghes はじめました]]
-  - [[https://myuon.github.io/posts/hakyll-blog/][HakyllでBlogを作る]]
-  - [[https://hackage.haskell.org/package/hakyll][hakyll: A static website compiler library]]
-  - [[https://jaspervdj.be/hakyll/tutorials.html][TUTORIALS ABOUT HAKYLL]]
+   - [[https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html][GitHub Paghes はじめました]]
+   - [[https://myuon.github.io/posts/hakyll-blog/][HakyllでBlogを作る]]
+   - [[https://hackage.haskell.org/package/hakyll][hakyll: A static website compiler library]]
+   - [[https://jaspervdj.be/hakyll/tutorials.html][TUTORIALS ABOUT HAKYLL]]
 
-  インストール〜プロジェクト作成は、
+   インストール〜プロジェクト作成は、
 
-  #+BEGIN_SRC shell
-  $ stack install hakyll
-  $ stack exec hakyll-init my_site
-  #+END_SRC
+   #+BEGIN_SRC shell
+   $ stack install hakyll
+   $ stack exec hakyll-init my_site
+   #+END_SRC
 
-  とするだけ。プロジェクトを作成したら、 ~stack.yaml~ を作っておく。
+   とするだけ。プロジェクトを作成したら、 ~stack.yaml~ を作っておく。
 
-  #+BEGIN_SRC yaml
-  resolver: lts-16.3
-  packages:
-  - .
-  #+END_SRC
+   #+BEGIN_SRC yaml
+   resolver: lts-16.3
+   packages:
+   - .
+   #+END_SRC
 
-  プロジェクトを作成したばかりでも、 ~stack build && stack exec site build && stack exec site watch~ でサンプルサイトが立ち上がる
-  （http://localhost:8000 から見ることができる）。
-  出来上がった ~site.hs~ やhackageを見つつ、どんな処理してるのかを確認する。
+   プロジェクトを作成したばかりでも、 ~stack build && stack exec site build && stack exec site watch~ でサンプルサイトが立ち上がる
+   （http://localhost:8000 から見ることができる）。
+   出来上がった ~site.hs~ やhackageを見つつ、どんな処理してるのかを確認する。
 
-  ~stack exec site build~ すると、デフォルトでは、 ~_site~ 配下にビルドされた静的コンテンツが、 ~_cache~ 配下に何らかのキャッシュが作成される。
-  これらは ~.gitignore~ で管理対象外にしておく（ついでに ~.stack-work~ も）。
+   ~stack exec site build~ すると、デフォルトでは、 ~_site~ 配下にビルドされた静的コンテンツが、 ~_cache~ 配下に何らかのキャッシュが作成される。
+   これらは ~.gitignore~ で管理対象外にしておく（ついでに ~.stack-work~ も）。
   
-* GitHub Pagesへのデプロイ
-  ほとんどこれ。
+** GitHub Pagesへのデプロイ
+   ほとんどこれ。
 
-  - [[https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html][TUTORIAL: USING HAKYLL WITH GITHUB PAGES]]
+   - [[https://jaspervdj.be/hakyll/tutorials/github-pages-tutorial.html][TUTORIAL: USING HAKYLL WITH GITHUB PAGES]]
 
-  ~source~ ブランチで記事を書き、ビルドしたコンテンツを ~master~ ブランチに反映させる。
-  ポイントは、 ~source~ ブランチはもとの記事やビルド用資材のみ、 ~master~ ブランチはコンテンツのみ持っているということだ。
-  ~_site~ をGit管理対象外にしておくことで、このディレクトリを通じて、 ~master~ ブランチがコンテンツのみ持っている、という状況を作り出せる。
-  （こういう使い方をするのは初めて見たが、参考になる。）
+   ~source~ ブランチで記事を書き、ビルドしたコンテンツを ~master~ ブランチに反映させる。
+   ポイントは、 ~source~ ブランチはもとの記事やビルド用資材のみ、 ~master~ ブランチはコンテンツのみ持っているということだ。
+   ~_site~ をGit管理対象外にしておくことで、このディレクトリを通じて、 ~master~ ブランチがコンテンツのみ持っている、という状況を作り出せる。
+   （こういう使い方をするのは初めて見たが、参考になる。）
 
-  ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。
+   ビルドとデプロイが手軽にできるよう、手順を簡単なスクリプトにしておいた。
 
-** ちなみに
-   最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。
+*** ちなみに
+    最初勘違いしていたが、GitHub Pagesでは、大きく分けて2つの公開方法がある。
 
-   - ユーザー/Organizationページ :: <user/organization name>.github.io/
-   - プロジェクトページ :: <username>.github.io/<repository>/
+    - ユーザー/Organizationページ :: <user/organization name>.github.io/
+    - プロジェクトページ :: <username>.github.io/<repository>/
 
-   （参考：[[https://docs.github.com/ja/github/working-with-github-pages/about-github-pages][GitHub Pages について]]）
+    （参考：[[https://docs.github.com/ja/github/working-with-github-pages/about-github-pages][GitHub Pages について]]）
 
-   当初はプロジェクトページとして作成していた。
-   この場合は、公開対象が ~master~ ブランチ直下以外に、 ~master~ ブランチ直下の ~docs/~ ディレクトリも選択することができる。
-   こうすると、わざわざ ~source~ ブランチと ~master~ ブランチを分けなくて楽だなー、と思っていたが、
-   パスの先頭に ~<repository>~ をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。
-   （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）
+    当初はプロジェクトページとして作成していた。
+    この場合は、公開対象が ~master~ ブランチ直下以外に、 ~master~ ブランチ直下の ~docs/~ ディレクトリも選択することができる。
+    こうすると、わざわざ ~source~ ブランチと ~master~ ブランチを分けなくて楽だなー、と思っていたが、
+    パスの先頭に ~<repository>~ をつけないとだめで、そのままビルドしてもGitHub Pagesでは閲覧できない。
+    （ちゃんと作り込めばいいんだろうけど、そこまでするのはめんどくさい。）
 
-* そのうち直したいなー、など
-  スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。
-  他にやっておきたいことは以下かなー。
+** そのうち直したいなー、など
+   スタイルとかは何も考えずに作ったので、デフォルトのままでちょっとださい。これは近いうちに修正しようと思う。
+   他にやっておきたいことは以下かなー。
 
-  - タグ機能 :: まだ記事が少ないからいいけど、記事が多くなったら分類できるようにしたい。
-  - ページネーション :: これはまあ、特になくてもいいかも。あると便利、くらい。
+   - タグ機能 :: まだ記事が少ないからいいけど、記事が多くなったら分類できるようにしたい。
+   - ページネーション :: これはまあ、特になくてもいいかも。あると便利、くらい。
 
-* 追記 (2020-07-09)
-  hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。
-  メタ情報として ~published: yyyy-mm-dd~ とかくと、記事にタイムスタンプをつけることができる。
-  タイムスタンプは、 ~recentFirst~ で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。
-  （[[https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html]] の ~dateField~ あたりに書いてある）
+** 追記 (2020-07-09)
+   hakyllでは、記事の頭にタイトルなどのメタ情報を埋め込むことができる。
+   メタ情報として ~published: yyyy-mm-dd~ とかくと、記事にタイムスタンプをつけることができる。
+   タイムスタンプは、 ~recentFirst~ で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。
+   （[[https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html]] の ~dateField~ あたりに書いてある）

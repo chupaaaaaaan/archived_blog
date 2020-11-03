@@ -12,139 +12,139 @@ tags: java
 
 @@html:<!--more-->@@
 
-* Maven
-** [[https://qiita.com/opengl-8080/items/bb32732f9aa5cb3495d2][Mavenの基本勉強メモ]]
-   - Mavenでわからんことがあったら、とりあえずここを読む。
+** Maven
+*** [[https://qiita.com/opengl-8080/items/bb32732f9aa5cb3495d2][Mavenの基本勉強メモ]]
+    - Mavenでわからんことがあったら、とりあえずここを読む。
 
-** [[https://maven.apache.org/guides/index.html][Maven documentation: Index]]
-   - なかなかドキュメントの目次が見つからなかったので
+*** [[https://maven.apache.org/guides/index.html][Maven documentation: Index]]
+    - なかなかドキュメントの目次が見つからなかったので
 
-** [[https://maven.apache.org/plugins/index.html][Mavenの公式プラグイン]]
-   よく使うプラグインもたくさんある。
+*** [[https://maven.apache.org/plugins/index.html][Mavenの公式プラグイン]]
+    よく使うプラグインもたくさんある。
 
-   - [[https://maven.apache.org/plugins/maven-dependency-plugin/][maven-dependency-plugin]]
-     - 依存関係にあるアーティファクト表示したり、集めたりといろいろなことができる。
-       - ~mvn dependency:resolve~ :: 依存関係を一覧表示する（エイリアス: ~dependency:resolve~ ）。
+    - [[https://maven.apache.org/plugins/maven-dependency-plugin/][maven-dependency-plugin]]
+      - 依存関係にあるアーティファクト表示したり、集めたりといろいろなことができる。
+        - ~mvn dependency:resolve~ :: 依存関係を一覧表示する（エイリアス: ~dependency:resolve~ ）。
 
-       - ~mvn dependency:resolve-plugins~ :: プラグインの依存関係を一覧表示する。
+        - ~mvn dependency:resolve-plugins~ :: プラグインの依存関係を一覧表示する。
 
-       - ~mvn dependency:list-repositories~ :: 使用されているリポジトリを一覧表示する。
+        - ~mvn dependency:list-repositories~ :: 使用されているリポジトリを一覧表示する。
 
-       - ~mvn dependency:tree~ :: 依存関係をツリー状にして表示する。
+        - ~mvn dependency:tree~ :: 依存関係をツリー状にして表示する。
 
-       - ~mvn dependency:copy-dependencies~ :: 依存するアーティファクトを、 ~${project.build.directory}/dependency~ に収集する。
+        - ~mvn dependency:copy-dependencies~ :: 依存するアーティファクトを、 ~${project.build.directory}/dependency~ に収集する。
 
-       - ~mvn dependency:build-classpath~ ::  ~java~ コマンドの ~-cp~ オプションに渡せる形式（クラスパス形式）で、依存するアーティファクトのパスを表示する（ローカルリポジトリ内）。
+        - ~mvn dependency:build-classpath~ ::  ~java~ コマンドの ~-cp~ オプションに渡せる形式（クラスパス形式）で、依存するアーティファクトのパスを表示する（ローカルリポジトリ内）。
 
-       - ~mvn dependency:purge-local-repository~ :: ローカルリポジトリから、依存するアーティファクトを削除し、必要に応じて再解決する。
+        - ~mvn dependency:purge-local-repository~ :: ローカルリポジトリから、依存するアーティファクトを削除し、必要に応じて再解決する。
 
-   - [[https://maven.apache.org/plugins/maven-resources-plugin/copy-resources-mojo.html][maven-resources-plugin]]
+    - [[https://maven.apache.org/plugins/maven-resources-plugin/copy-resources-mojo.html][maven-resources-plugin]]
 
-   - [[https://maven.apache.org/plugins/maven-jdeps-plugin/][maven-jdeps-plugin]]
-     - [[https://docs.oracle.com/javase/jp/9/tools/jdeps.htm][jdeps]]をMavenプロジェクトで使用するためのツール。
+    - [[https://maven.apache.org/plugins/maven-jdeps-plugin/][maven-jdeps-plugin]]
+      - [[https://docs.oracle.com/javase/jp/9/tools/jdeps.htm][jdeps]]をMavenプロジェクトで使用するためのツール。
 
-   - プラグインの自作
-     - 割と簡単に作れるっぽい。
-       提供されてるプラグインをなんとか組み合わせてがんばる・・・とするくらいなら、必要な処理をするプラグインを作った方が早いかも。
+    - プラグインの自作
+      - 割と簡単に作れるっぽい。
+        提供されてるプラグインをなんとか組み合わせてがんばる・・・とするくらいなら、必要な処理をするプラグインを作った方が早いかも。
 
-     - [[https://www.slideshare.net/kawasima/maven-196821326][参考]]
-
-
-** [[https://qiita.com/rubytomato@github/items/8b159a9e4376bbe04d0b][ビルドライフサイクルについて]]
-   - ~clean~ , ~default~ , ~site~ が、ビルトインなライフサイクル。
-     - ~site~ は使われてるの見たことない・・・
-
-   - 各ライフサイクルはいくつかのフェーズから構成されている。
-
-     #+CAPTION: ~clean~ ライフサイクルのフェーズ
-     | Phase        | Description                                                  |
-     |--------------+--------------------------------------------------------------|
-     | ~pre-clean~  | 実際のプロジェクトクリーニングに先立って必要な処理を実行する |
-     | ~clean~      | 過去のビルドにより生成された全てのファイルを削除する         |
-     | ~post-clean~ | プロジェクトクリーニングを終了するために必要な処理を実行する |
+      - [[https://www.slideshare.net/kawasima/maven-196821326][参考]]
 
 
-     #+CAPTION:  ~default~ ライフサイクルのフェーズ
-     | Phase                     | Description                                                                                                                          |
-     |---------------------------+--------------------------------------------------------------------------------------------------------------------------------------|
-     | ~validate~                | プロジェクトが正しく、必要な全ての情報が利用可能であるか確認する                                                                     |
-     | ~initialize~              | ビルド状態を初期化する(プロパティを設定する、ディレクトリを作成する等)                                                               |
-     | ~generate-sources~        | コンパイルに含めるソースコードを生成する                                                                                             |
-     | ~process-sources~         | ソースコードを処理する(値をフィルタする等)                                                                                           |
-     | ~generate-resources~      | パッケージに含めるリソースを生成する                                                                                                 |
-     | ~process-resources~       | リソースを最終的なディレクトリにコピー・処理し、パッケージングの準備をする                                                           |
-     | ~compile~                 | プロジェクトのソースコードをコンパイルする                                                                                           |
-     | ~process-classes~         | コンパイルで生成されたファイルの後処理(Javaクラスのバイトコード拡張等)                                                               |
-     | ~generate-test-sources~   | コンパイルに含めるテストソースコードを生成する                                                                                       |
-     | ~process-test-sources~    | テストソースコードを処理する(値をフィルタする等)                                                                                     |
-     | ~generate-test-resources~ | テスト用のリソースを生成する                                                                                                         |
-     | ~process-test-resources~  | リソースをテスト用の最終的なディレクトリにコピー・処理する                                                                           |
-     | ~test-compile~            | テストソースコードを、テスト用の最終的なディレクトリへコンパイルする                                                                 |
-     | ~process-test-classes~    | コンパイルで生成されたファイルの後処理(Javaクラスのバイトコード拡張等)                                                               |
-     | ~test~                    | 適切なテスティングフレームワークを使用してテストを実行する。これらのテストはコードがパッケージもしくはデプロイされることを要しない   |
-     | ~prepare-package~         | 実際のパッケージング前に、パッケージの準備に必要な操作を行う。それにより屡々、パッケージが、展開され処理されたバージョンのものになる |
-     | ~package~                 | コンパイルされたコードを取得し、配布可能なフォーマット(JARのような)にパッケージングする                                              |
-     | ~pre-integration-test~    | 結合テストが実行される前に必要なアクションが実行される。これは必要な環境のセットアップのようなことに関係するかもしれない             |
-     | ~integration-test~        | 必要であれば、結合テストが実行できる環境へ、パッケージを処理・デプロイする                                                           |
-     | ~post-integration-test~   | 結合テストが実行される前に必要なアクションが実行される。これは環境のクリンナップを含むかもしれない                                   |
-     | ~verify~                  | パッケージが有効であること・品質基準を満たしていることを確認するチェックを実行する                                                   |
-     | ~install~                 | ローカルで他プロジェクトの依存性として使用するため、パッケージをローカルリポジトリにインストールする                                 |
-     | ~deploy~                  | 統合環境やリリース環境で実行された場合、他の開発者やプロジェクトと共有するため、最終的なパッケージをリモートリポジトリへコピーする   |
+*** [[https://qiita.com/rubytomato@github/items/8b159a9e4376bbe04d0b][ビルドライフサイクルについて]]
+    - ~clean~ , ~default~ , ~site~ が、ビルトインなライフサイクル。
+      - ~site~ は使われてるの見たことない・・・
+
+    - 各ライフサイクルはいくつかのフェーズから構成されている。
+
+      #+CAPTION: ~clean~ ライフサイクルのフェーズ
+      | Phase        | Description                                                  |
+      |--------------+--------------------------------------------------------------|
+      | ~pre-clean~  | 実際のプロジェクトクリーニングに先立って必要な処理を実行する |
+      | ~clean~      | 過去のビルドにより生成された全てのファイルを削除する         |
+      | ~post-clean~ | プロジェクトクリーニングを終了するために必要な処理を実行する |
 
 
-   - フェーズそれ自体は何もしない。 ~mvn compile~ 等でフェーズを実行すると、そのフェーズと、
-     そのフェーズより前に位置する全てのフェーズに紐づけられたプラグインのゴールが、フェーズの順番に実行される。
-     - ややこしいが、 ~mvn clean~ は ~clean~ ライフサイクルの ~clean~ フェーズを実行している。
+      #+CAPTION:  ~default~ ライフサイクルのフェーズ
+      | Phase                     | Description                                                                                                                          |
+      |---------------------------+--------------------------------------------------------------------------------------------------------------------------------------|
+      | ~validate~                | プロジェクトが正しく、必要な全ての情報が利用可能であるか確認する                                                                     |
+      | ~initialize~              | ビルド状態を初期化する(プロパティを設定する、ディレクトリを作成する等)                                                               |
+      | ~generate-sources~        | コンパイルに含めるソースコードを生成する                                                                                             |
+      | ~process-sources~         | ソースコードを処理する(値をフィルタする等)                                                                                           |
+      | ~generate-resources~      | パッケージに含めるリソースを生成する                                                                                                 |
+      | ~process-resources~       | リソースを最終的なディレクトリにコピー・処理し、パッケージングの準備をする                                                           |
+      | ~compile~                 | プロジェクトのソースコードをコンパイルする                                                                                           |
+      | ~process-classes~         | コンパイルで生成されたファイルの後処理(Javaクラスのバイトコード拡張等)                                                               |
+      | ~generate-test-sources~   | コンパイルに含めるテストソースコードを生成する                                                                                       |
+      | ~process-test-sources~    | テストソースコードを処理する(値をフィルタする等)                                                                                     |
+      | ~generate-test-resources~ | テスト用のリソースを生成する                                                                                                         |
+      | ~process-test-resources~  | リソースをテスト用の最終的なディレクトリにコピー・処理する                                                                           |
+      | ~test-compile~            | テストソースコードを、テスト用の最終的なディレクトリへコンパイルする                                                                 |
+      | ~process-test-classes~    | コンパイルで生成されたファイルの後処理(Javaクラスのバイトコード拡張等)                                                               |
+      | ~test~                    | 適切なテスティングフレームワークを使用してテストを実行する。これらのテストはコードがパッケージもしくはデプロイされることを要しない   |
+      | ~prepare-package~         | 実際のパッケージング前に、パッケージの準備に必要な操作を行う。それにより屡々、パッケージが、展開され処理されたバージョンのものになる |
+      | ~package~                 | コンパイルされたコードを取得し、配布可能なフォーマット(JARのような)にパッケージングする                                              |
+      | ~pre-integration-test~    | 結合テストが実行される前に必要なアクションが実行される。これは必要な環境のセットアップのようなことに関係するかもしれない             |
+      | ~integration-test~        | 必要であれば、結合テストが実行できる環境へ、パッケージを処理・デプロイする                                                           |
+      | ~post-integration-test~   | 結合テストが実行される前に必要なアクションが実行される。これは環境のクリンナップを含むかもしれない                                   |
+      | ~verify~                  | パッケージが有効であること・品質基準を満たしていることを確認するチェックを実行する                                                   |
+      | ~install~                 | ローカルで他プロジェクトの依存性として使用するため、パッケージをローカルリポジトリにインストールする                                 |
+      | ~deploy~                  | 統合環境やリリース環境で実行された場合、他の開発者やプロジェクトと共有するため、最終的なパッケージをリモートリポジトリへコピーする   |
 
-   - 実行するときは、 ~mvn clean compile~ のようにフェーズを重ねることもできる。
-     - ~clean~ と ~compile~ は別のライフサイクルに属するため、コンパイル前にファイルを削除したいときは明示的に ~clean~ を指定する必要がある。
 
-   - フェーズを指定するだけでなく、ゴールを直接指定することもできる。
+    - フェーズそれ自体は何もしない。 ~mvn compile~ 等でフェーズを実行すると、そのフェーズと、
+      そのフェーズより前に位置する全てのフェーズに紐づけられたプラグインのゴールが、フェーズの順番に実行される。
+      - ややこしいが、 ~mvn clean~ は ~clean~ ライフサイクルの ~clean~ フェーズを実行している。
 
-** [[https://maven.apache.org/pom.html][POMの構造]]
-   ~pom.xml~ で、どこにどんなことが書いてあるか（特に依存関係）があまり解ってなかったので、よく使う（よく見る）要素を書いてみる。
+    - 実行するときは、 ~mvn clean compile~ のようにフェーズを重ねることもできる。
+      - ~clean~ と ~compile~ は別のライフサイクルに属するため、コンパイル前にファイルを削除したいときは明示的に ~clean~ を指定する必要がある。
+
+    - フェーズを指定するだけでなく、ゴールを直接指定することもできる。
+
+*** [[https://maven.apache.org/pom.html][POMの構造]]
+    ~pom.xml~ で、どこにどんなことが書いてあるか（特に依存関係）があまり解ってなかったので、よく使う（よく見る）要素を書いてみる。
    
-*** 基本的な設定
-    - ~<moduleVersion>~  :: 必須。 ~4.0.0~ 固定。
+    - 基本的な設定
+      - ~<moduleVersion>~  :: 必須。 ~4.0.0~ 固定。
+      
+      - ~<groupId>~ , ~<artifactId>~ , ~<version>~  :: 必須。
+      
+      - ~<packaging>~ :: 省略したら ~jar~ が設定される。使用するパッケージングにより、 ~default~ ライフサイクルの各フェースに紐づけられるゴールが異なる（[[https://maven.apache.org/ref/3.6.3/maven-core/default-bindings.html][参考]]）。
+      
+      - ~<dependencies>~  :: 子要素は ~<dependency>~ 要素のリストで、ここにプロジェクトの依存関係を記載する。
+      
+      - ~<parent>~  :: POMを継承する場合、親となるPOMの情報を記載する。親POMでは ~<dependencyManagement>~ で子プロジェクトが ~<dependency>~ として設定するアーティファクトのバージョンを指定したりできる。[[https://qiita.com/syogi_wap/items/432bbdbe9892eb05e122][BOM]]も参照。
+      
+      - ~<properties>~  :: 独自の変数を定義することができる。POM内から、 ~${hoge.fuga}~ のように参照できる。システムプロパティで変更することができる。以下は特殊なプロパティ。
+        - ~env.X~ : 環境変数 ~X~ を参照。
+      
+        - ~project.x~ : POM内 ~<project>~ 要素からの対応する要素の値を参照。
+      
+        - ~settings.x~ : ~$HOME/.m2/settings.xml~ 内の対応する要素の値を参照。
 
-    - ~<groupId>~ , ~<artifactId>~ , ~<version>~  :: 必須。
+    - ビルド用の設定
+      ~<project>~ 直下の ~<build>~ 要素の中に記載する。
+      - ~<resources>~ , ~<testResources>~  :: 子要素は ~<resource>~ 要素/ ~<testResource>~ 要素のリストで、process-resourcesフェーズ及びprocess-test-resourcesフェーズでリソースファイルを収集する対象のディレクトリを追加する。
+        ~${basedir}/src/main/resources~ , ~${basedir}/src/test/resources~ はデフォルトの収集対象ディレクトリとなっている。
+      
+      - ~<pluginManagement>~  :: 親POMで、この中にプラグインの設定を記載しておく。
+        子プロジェクトが親POMを継承すると、使用するプラグインを指定するだけで記載した設定でプラグインを使用できる。
+        ~<dependencyManagement>~ と同じような使用方法。
+      
+      - ~<plugins>~  :: 子要素は ~<plugin>~ 要素のリストで、ビルド時に使用するプラグインの設定を記載する。
+        - ~<configuration>~ : プラグイン固有の設定を記載する。
+      
+        - ~<executions>~ : 子要素は ~<execution>~ 要素のリストで、ビルドライフサイクルのフェーズとプラグインのゴールを紐付ける。紐づけておくと、そのフェーズを実行した時に紐づいたゴールが実行される。
+      
+        - ~<dependencies>~ : 子要素は ~<dependency>~ 要素のリストで、プラグインの依存関係を変更する（不要なruntime依存性を削除したり、バージョンを変更したりなど）。
+      
+        - ~<extensions>~ : これはどう使うのかよくわからない・・・
+      
+        - ビルド用のソースディレクトリ・アウトプットディレクトリは、親POMもしくはSuper POMから継承されるが、以下で変更することもできる。
+          - ~<sourceDirectory>~
+          - ~<testSourceDirectory>~
+          - ~<outputDirectory>~
+          - ~<testOutputDirectory>~
 
-    - ~<packaging>~ :: 省略したら ~jar~ が設定される。使用するパッケージングにより、 ~default~ ライフサイクルの各フェースに紐づけられるゴールが異なる（[[https://maven.apache.org/ref/3.6.3/maven-core/default-bindings.html][参考]]）。
-
-    - ~<dependencies>~  :: 子要素は ~<dependency>~ 要素のリストで、ここにプロジェクトの依存関係を記載する。
-
-    - ~<parent>~  :: POMを継承する場合、親となるPOMの情報を記載する。親POMでは ~<dependencyManagement>~ で子プロジェクトが ~<dependency>~ として設定するアーティファクトのバージョンを指定したりできる。[[https://qiita.com/syogi_wap/items/432bbdbe9892eb05e122][BOM]]も参照。
-
-    - ~<properties>~  :: 独自の変数を定義することができる。POM内から、 ~${hoge.fuga}~ のように参照できる。システムプロパティで変更することができる。以下は特殊なプロパティ。
-      - ~env.X~ : 環境変数 ~X~ を参照。
-
-      - ~project.x~ : POM内 ~<project>~ 要素からの対応する要素の値を参照。
-
-      - ~settings.x~ : ~$HOME/.m2/settings.xml~ 内の対応する要素の値を参照。
-
-*** ビルド用の設定
-    ~<project>~ 直下の ~<build>~ 要素の中に記載する。
-    - ~<resources>~ , ~<testResources>~  :: 子要素は ~<resource>~ 要素/ ~<testResource>~ 要素のリストで、process-resourcesフェーズ及びprocess-test-resourcesフェーズでリソースファイルを収集する対象のディレクトリを追加する。
-      ~${basedir}/src/main/resources~ , ~${basedir}/src/test/resources~ はデフォルトの収集対象ディレクトリとなっている。
-
-    - ~<pluginManagement>~  :: 親POMで、この中にプラグインの設定を記載しておく。
-      子プロジェクトが親POMを継承すると、使用するプラグインを指定するだけで記載した設定でプラグインを使用できる。
-      ~<dependencyManagement>~ と同じような使用方法。
-
-    - ~<plugins>~  :: 子要素は ~<plugin>~ 要素のリストで、ビルド時に使用するプラグインの設定を記載する。
-      - ~<configuration>~ : プラグイン固有の設定を記載する。
-
-      - ~<executions>~ : 子要素は ~<execution>~ 要素のリストで、ビルドライフサイクルのフェーズとプラグインのゴールを紐付ける。紐づけておくと、そのフェーズを実行した時に紐づいたゴールが実行される。
-
-      - ~<dependencies>~ : 子要素は ~<dependency>~ 要素のリストで、プラグインの依存関係を変更する（不要なruntime依存性を削除したり、バージョンを変更したりなど）。
-
-      - ~<extensions>~ : これはどう使うのかよくわからない・・・
-
-      - ビルド用のソースディレクトリ・アウトプットディレクトリは、親POMもしくはSuper POMから継承されるが、以下で変更することもできる。
-        - ~<sourceDirectory>~
-        - ~<testSourceDirectory>~
-        - ~<outputDirectory>~
-        - ~<testOutputDirectory>~
-
-*** リポジトリの設定
-    ~<project>~ 直下の ~<repositories>~ 要素に、各リポジトリ設定を記載する。
+    - リポジトリの設定
+      ~<project>~ 直下の ~<repositories>~ 要素に、各リポジトリ設定を記載する。

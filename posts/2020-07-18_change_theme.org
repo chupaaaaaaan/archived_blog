@@ -6,8 +6,6 @@ tags: haskell, hakyll
 #+OPTIONS: ^:{}
 #+OPTIONS: \n:t
 
-* はじめに
-
   hakyllのデフォルトのブログテーマではちょっと味気なかったので、別のブログテーマに変更した。
 
   参考にしたのはこちら。
@@ -29,155 +27,154 @@ tags: haskell, hakyll
 
 @@html:<!--more-->@@
 
-* サイドバーの対応
-  画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。
+** サイドバーの対応
+   画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。
   
-  単純には、以下のように実装すれば良さそうである。
-  （ ~gsubRoute~ を使って、ルーティングを変更している。）
+   単純には、以下のように実装すれば良さそうである。
+   （ ~gsubRoute~ を使って、ルーティングを変更している。）
 
-  #+BEGIN_SRC haskell
-    match "posts/*" $ do
-        route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
-        compile $ do
-            recentPosts <- recentFirst =<< loadAll "posts/*"
-            let postsCtx =
-                    listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
-                    postCtx `mappend` siteCtx
+   #+BEGIN_SRC haskell
+     match "posts/*" $ do
+         route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+         compile $ do
+             recentPosts <- recentFirst =<< loadAll "posts/*"
+             let postsCtx =
+                     listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
+                     postCtx `mappend` siteCtx
           
-            pandocCompiler
-              >>= loadAndApplyTemplate "layouts/post.html" postsCtx
-              >>= relativizeUrls
-  #+END_SRC
+             pandocCompiler
+               >>= loadAndApplyTemplate "layouts/post.html" postsCtx
+               >>= relativizeUrls
+   #+END_SRC
 
-  ~compile~ でやっていることを説明すると、
+   ~compile~ でやっていることを説明すると、
 
-  1. ~posts/*~ パターンにマッチするコンテンツを作成日時の降順で ~recentPosts~ として取得し、
-  2. （サイドバーで参照する） ~recent_posts~ をキーとして、 ~recentPosts~ をコンテキストに入れて、
-  3. ~posts/*~ にマッチするコンテンツを ~pandocCompiler~ でコンパイルし、
-  4. 出来上がったものを ~layouts/post.html~ に突っ込む（テンプレート内で ~$body$~ と記載されている箇所に代入される）
+   1. ~posts/*~ パターンにマッチするコンテンツを作成日時の降順で ~recentPosts~ として取得し、
+   2. （サイドバーで参照する） ~recent_posts~ をキーとして、 ~recentPosts~ をコンテキストに入れて、
+   3. ~posts/*~ にマッチするコンテンツを ~pandocCompiler~ でコンパイルし、
+   4. 出来上がったものを ~layouts/post.html~ に突っ込む（テンプレート内で ~$body$~ と記載されている箇所に代入される）
     
     
-  となる。ところが、これをコンパイルすると、以下のようなエラーが出てしまう。
-  #+BEGIN_SRC 
-  [ERROR] Hakyll.Core.Runtime.chase: Dependency cycle detected: posts/2020-07-09_first_post.org depends on posts/2020-07-09_first_post.org
-  #+END_SRC
+   となる。ところが、これをコンパイルすると、以下のようなエラーが出てしまう。
+   #+BEGIN_SRC 
+   [ERROR] Hakyll.Core.Runtime.chase: Dependency cycle detected: posts/2020-07-09_first_post.org depends on posts/2020-07-09_first_post.org
+   #+END_SRC
   
-  どうやら、循環参照が発生しているというメッセージのようだ。実際、 ~posts/*~ をコンパイルする前に ~recentPosts~ として取得しようとしている。
-  取得のためにコンパイルし、その中でさらに取得し・・・とループしてしまう。
+   どうやら、循環参照が発生しているというメッセージのようだ。実際、 ~posts/*~ をコンパイルする前に ~recentPosts~ として取得しようとしている。
+   取得のためにコンパイルし、その中でさらに取得し・・・とループしてしまう。
 
-  この問題は、stackoverflowの記事（[[https://stackoverflow.com/questions/35645525/hakyll-says-dependency-cycle-detected][ここ]]とか[[https://stackoverflow.com/questions/47067851/how-do-i-avoid-a-dependency-cycle-when-generating-a-list-of-recent-posts-on-post][ここ]]とか）が参考になる。
-  ざっくり言えば、別バージョンのコンテンツを作成し、 ~recentPosts~ として取得するコンテンツはこちらのバージョンを使用する。
+   この問題は、stackoverflowの記事（[[https://stackoverflow.com/questions/35645525/hakyll-says-dependency-cycle-detected][ここ]]とか[[https://stackoverflow.com/questions/47067851/how-do-i-avoid-a-dependency-cycle-when-generating-a-list-of-recent-posts-on-post][ここ]]とか）が参考になる。
+   ざっくり言えば、別バージョンのコンテンツを作成し、 ~recentPosts~ として取得するコンテンツはこちらのバージョンを使用する。
 
-  #+BEGIN_SRC haskell
-    match "posts/*" $ version "postContents" $ do
-      route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
-      compile $ pandocCompiler >>= relativizeUrls
+   #+BEGIN_SRC haskell
+     match "posts/*" $ version "postContents" $ do
+       route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+       compile $ pandocCompiler >>= relativizeUrls
 
-    match "posts/*" $ do
-        route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
-        compile $ do
-            recentPosts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
-            let postsCtx =
-                    listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
-                    postCtx `mappend` siteCtx
+     match "posts/*" $ do
+         route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+         compile $ do
+             recentPosts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
+             let postsCtx =
+                     listField "recent_posts" postCtx (return $ take 5 recentPosts) `mappend`
+                     postCtx `mappend` siteCtx
           
-            pandocCompiler
-              >>= loadAndApplyTemplate "layouts/post.html" postsCtx
-              >>= relativizeUrls
-  #+END_SRC
+             pandocCompiler
+               >>= loadAndApplyTemplate "layouts/post.html" postsCtx
+               >>= relativizeUrls
+   #+END_SRC
   
-  注意すべきポイントとしては、別バージョンのコンテンツを作成する際に ~route~ も正しく設定する必要がある。
-  ~route~ を省略してもコンパイルエラーにはならないが、 ~recent_posts~ として参照したコンテンツへのリンクが作成されない
-  （ ~defaultContext~ に格納される ~$url$~ が空になるっぽい）。
+   注意すべきポイントとしては、別バージョンのコンテンツを作成する際に ~route~ も正しく設定する必要がある。
+   ~route~ を省略してもコンパイルエラーにはならないが、 ~recent_posts~ として参照したコンテンツへのリンクが作成されない
+   （ ~defaultContext~ に格納される ~$url$~ が空になるっぽい）。
 
-** ちなみに
-   循環参照を解決する手段としては、複数のバージョンのコンテンツを用意する方法の他に、[[https://groups.google.com/g/hakyll/c/F2j7iztwKEc/m/axLNmksqCAAJ?pli=1][作者から提案された方法]]もある。
-   どうやら、「必要なのはメタデータだけなんだから、それだけ取得すればよくね？」ということみたいなのだが、
-   どうやればよいのかよくわからなかったので、今回は不採用。
+*** ちなみに
+    循環参照を解決する手段としては、複数のバージョンのコンテンツを用意する方法の他に、[[https://groups.google.com/g/hakyll/c/F2j7iztwKEc/m/axLNmksqCAAJ?pli=1][作者から提案された方法]]もある。
+    どうやら、「必要なのはメタデータだけなんだから、それだけ取得すればよくね？」ということみたいなのだが、
+    どうやればよいのかよくわからなかったので、今回は不採用。
 
-   hakyllに出てくる ~Context a~ 、 ~Item a~ 、 ~Compiler a~ などは重要な概念っぽいのだが、まだよくわかってない・・・。
+    hakyllに出てくる ~Context a~ 、 ~Item a~ 、 ~Compiler a~ などは重要な概念っぽいのだが、まだよくわかってない・・・。
+
+** コンテンツの表示
+   上記で循環参照のエラーはなくなるが、まだ問題はある。
+
+   ドキュメントルート（ ~index.html~ ）では、以下のコンテンツが表示される。
+
+   - サイドバー
+     - Description
+     - Recent Posts
+     - Links
+
+   - メインコンテンツ
+     - 最新のコンテンツから順に表示
 
 
-* コンテンツの表示
-  上記で循環参照のエラーはなくなるが、まだ問題はある。
+   最初、以下のように実装していた。
 
-  ドキュメントルート（ ~index.html~ ）では、以下のコンテンツが表示される。
+   #+BEGIN_SRC haskell
+     match (fromList ["archive.html", "about.html", "index.html", "links.html"]) $ do
+         route idRoute
+         compile $ do
+             posts <- recentFirst =<< loadAll "posts/*"
+             let postsCtx =
+                     listField "recent_posts" postCtx (return $ take 5 posts) `mappend`
+                     listField "posts" postCtx (return posts) `mappend`
+                     siteCtx
 
-  - サイドバー
-    - Description
-    - Recent Posts
-    - Links
-
-  - メインコンテンツ
-    - 最新のコンテンツから順に表示
-
-
-  最初、以下のように実装していた。
-
-  #+BEGIN_SRC haskell
-    match (fromList ["archive.html", "about.html", "index.html", "links.html"]) $ do
-        route idRoute
-        compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
-            let postsCtx =
-                    listField "recent_posts" postCtx (return $ take 5 posts) `mappend`
-                    listField "posts" postCtx (return posts) `mappend`
-                    siteCtx
-
-            getResourceBody
-                >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" postsCtx
-                >>= relativizeUrls
-  #+END_SRC
+             getResourceBody
+                 >>= applyAsTemplate postsCtx
+                 >>= loadAndApplyTemplate "layouts/default.html" postsCtx
+                 >>= relativizeUrls
+   #+END_SRC
       
-  今回は循環参照にはならないので、 ~posts <- recentFirst =<< loadAll "posts/*"~ のように書いてもコンパイルエラーにはならない。
+   今回は循環参照にはならないので、 ~posts <- recentFirst =<< loadAll "posts/*"~ のように書いてもコンパイルエラーにはならない。
 
-  が、このように書いてしまうと、2つの問題が発生する。
+   が、このように書いてしまうと、2つの問題が発生する。
 
-  1. Recent Postsに、同じコンテンツへのリンクが2つ表示される
-  2. コンテンツが表示される領域に、（サイドバーを含めて）コンテンツがネストされて表示される（ちょっと説明が難しい・・・）
+   1. Recent Postsに、同じコンテンツへのリンクが2つ表示される
+   2. コンテンツが表示される領域に、（サイドバーを含めて）コンテンツがネストされて表示される（ちょっと説明が難しい・・・）
 
 
-  ひとつめの問題は、 ~posts <- recentFirst =<< loadAll "posts/*"~ のように書いた時に、
-  ~posts/*~ にマッチする全てのコンテンツが取得されてしまうことが原因である。
-  つまり、バージョン指定なしでコンパイルしたコンテンツと、バージョンを明示したコンテンツのどちらにもマッチしてしまう。
-  これを防ぐためには、バージョン指定するか、明示的にバージョンが存在しないコンテンツにマッチするように書く必要がある。
+   ひとつめの問題は、 ~posts <- recentFirst =<< loadAll "posts/*"~ のように書いた時に、
+   ~posts/*~ にマッチする全てのコンテンツが取得されてしまうことが原因である。
+   つまり、バージョン指定なしでコンパイルしたコンテンツと、バージョンを明示したコンテンツのどちらにもマッチしてしまう。
+   これを防ぐためには、バージョン指定するか、明示的にバージョンが存在しないコンテンツにマッチするように書く必要がある。
 
-  こんな感じ。
+   こんな感じ。
   
-  #+BEGIN_SRC haskell
-  posts <- recentFirst =<< loadAll ("posts/*" .&&. hasNoVersion)
-  #+END_SRC
+   #+BEGIN_SRC haskell
+   posts <- recentFirst =<< loadAll ("posts/*" .&&. hasNoVersion)
+   #+END_SRC
   
-  ふたつめの問題は、 ~posts/*~ （のバージョンなし版）にマッチするコンテンツは、既にサイドバーも含めてコンパイル済みであることから来ている
-  （そのようなコンテンツをテンプレートに埋め込もうとするため、コンテンツがネストされてしまう）。
-  そのため、テンプレートを適用する前で止めたバージョンのコンテンツ（サイドバーやヘッダーがくっついていない）を取得し、
-  それを使用してコンパイル・テンプレート埋め込みを実施すればよい。
+   ふたつめの問題は、 ~posts/*~ （のバージョンなし版）にマッチするコンテンツは、既にサイドバーも含めてコンパイル済みであることから来ている
+   （そのようなコンテンツをテンプレートに埋め込もうとするため、コンテンツがネストされてしまう）。
+   そのため、テンプレートを適用する前で止めたバージョンのコンテンツ（サイドバーやヘッダーがくっついていない）を取得し、
+   それを使用してコンパイル・テンプレート埋め込みを実施すればよい。
 
-  今回で言えば、 ~postContents~ のバージョンがテンプレートを適用していないコンテンツであるため、そちらを取得すればよい。
+   今回で言えば、 ~postContents~ のバージョンがテンプレートを適用していないコンテンツであるため、そちらを取得すればよい。
 
-  最終的には、こんな感じ（ ~hasNoVersion~ は使用しない）。
+   最終的には、こんな感じ（ ~hasNoVersion~ は使用しない）。
 
-  #+BEGIN_SRC haskell
-    match (fromList ["index.html"]) $ do
-        route idRoute
-        compile $ do
-            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
-            let postsCtx =
-                    listField "recent_posts" postCtx (return $ take 5 posts) `mappend`
-                    listField "posts" postCtx (return posts) `mappend`
-                    siteCtx
+   #+BEGIN_SRC haskell
+     match (fromList ["index.html"]) $ do
+         route idRoute
+         compile $ do
+             posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
+             let postsCtx =
+                     listField "recent_posts" postCtx (return $ take 5 posts) `mappend`
+                     listField "posts" postCtx (return posts) `mappend`
+                     siteCtx
 
-            getResourceBody
-                >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" postsCtx
-                >>= relativizeUrls
-  #+END_SRC
+             getResourceBody
+                 >>= applyAsTemplate postsCtx
+                 >>= loadAndApplyTemplate "layouts/default.html" postsCtx
+                 >>= relativizeUrls
+   #+END_SRC
   
-** ちなみにその2
-   テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに[[https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html][スナップショットを利用する方法]]もある。
-   こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、
-   スナップショット方式は採用していない。
+*** ちなみにその2
+    テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに[[https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html][スナップショットを利用する方法]]もある。
+    こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、
+    スナップショット方式は採用していない。
 
-* 終わりに
-  とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。
+** 終わりに
+   とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。
