@@ -30,4 +30,6 @@ Mavenで作った資材をデプロイするには、どうやったら運用が
 
 ** 使い方
 
-
+   [[https://www.mojohaus.org/rpm-maven-plugin/usage.html][Usage Scenarios]]
+   
+   今回は、上記ページにある
