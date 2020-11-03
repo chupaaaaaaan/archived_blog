@@ -1,0 +1,12 @@
+---
+title: maven-assembly-plugin使い方メモ
+published: 2020-11-01 02:10:46
+updated: 
+tags: java, maven
+---
+#+OPTIONS: ^:{}
+#+OPTIONS: \n:t
+
+
+@@html:<!--more-->@@
+
