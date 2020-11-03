@@ -6,11 +6,11 @@ cd $(dirname $0)
 
 git checkout source
 
+git stash
+
 git pull
 
 ./build.sh no-watch
-
-git add . && git commit -m "publish" && git push
 
 git checkout master
 
@@ -21,3 +21,5 @@ git pull
 git add . && git commit -m "publish" && git push
 
 git checkout source
+
+git stash pop
