@@ -13,13 +13,19 @@ tags: java
 @@html:<!--more-->@@
 
 ** Maven
-*** [[https://qiita.com/opengl-8080/items/bb32732f9aa5cb3495d2][Mavenの基本勉強メモ]]
+*** Mavenの基本勉強メモ
+    https://qiita.com/opengl-8080/items/bb32732f9aa5cb3495d2
+
     - Mavenでわからんことがあったら、とりあえずここを読む。
 
-*** [[https://maven.apache.org/guides/index.html][Maven documentation: Index]]
+*** Maven documentation: Index
+    https://maven.apache.org/guides/index.html
+
     - なかなかドキュメントの目次が見つからなかったので
 
-*** [[https://maven.apache.org/plugins/index.html][Mavenの公式プラグイン]]
+*** Mavenの公式プラグイン
+    https://maven.apache.org/plugins/index.html
+    
     よく使うプラグインもたくさんある。
 
     - [[https://maven.apache.org/plugins/maven-dependency-plugin/][maven-dependency-plugin]]
@@ -60,7 +66,9 @@ tags: java
       - 素直に ~maven-assembly-plugin~ でアーティファクトを作って、それをデプロイするスクリプトを添付した方が、
         後々のメンテでは楽な気がする（情報も多いしね）。
 
-*** [[https://qiita.com/rubytomato@github/items/8b159a9e4376bbe04d0b][ビルドライフサイクルについて]]
+*** ビルドライフサイクルについて
+    https://qiita.com/rubytomato@github/items/8b159a9e4376bbe04d0b
+
     - ~clean~ , ~default~ , ~site~ が、ビルトインなライフサイクル。
       - ~site~ は使われてるの見たことない・・・
 
@@ -111,7 +119,9 @@ tags: java
 
     - フェーズを指定するだけでなく、ゴールを直接指定することもできる。
 
-*** [[https://maven.apache.org/pom.html][POMの構造]]
+*** POMの構造
+    https://maven.apache.org/pom.html
+
     ~pom.xml~ で、どこにどんなことが書いてあるか（特に依存関係）があまり解ってなかったので、よく使う（よく見る）要素を書いてみる。
 
     - 基本的な設定
