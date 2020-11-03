@@ -1,0 +1,78 @@
+---
+title: 個人的git-stashまとめ
+published: 2020-11-03 11:28:52
+updated: 
+tags: git
+---
+#+OPTIONS: ^:{}
+#+OPTIONS: \n:t
+
+
+~git stash~ って、非常によく使うコマンドなんだけど、実は普段は以下のことしかしてない。
+- ~git stash~ で、現在の変更を退避して、別ブランチで作業
+- 元のブランチに戻ってから ~git stash pop~ して、変更を回復
+
+別ブランチで作業するために変更を退避するならこれで十分だけれども、
+ドラフト記事を管理するためにもうちょっと凝ったことをしたかったので、 ~git-stash~ の使い方をまとめてみる。
+
+@@html:<!--more-->@@
+
+** Untrackedなファイルもstashしたい
+
+   [[https://qiita.com/muran001/items/f5746c518bf663f86a79][gitで未追跡（untracked)なファイルもまとめて退避(stash)する]]
+
+   #+begin_src sh
+   git stash -u
+   #+end_src
+   もしくは
+   #+begin_src sh
+   git stash --include-untracked
+   #+end_src
+
+   上記で、untrackedなファイルも合わせてstashできる。
+
+   ちなみに、似たようなオプションで ~-a/--all~ というのがあるが、これは ~.gitignore~ に記載されたファイルもまとめてstashするもの。
+   (これはあまり出番がないかも。ブランチ毎に ~.gitignore~ が異なるような場合に使う？)
+
+   これにより、記事のドラフト版を別ブランチに切り出さず、publish時だけ個別に退避しておく、ということができるようになる。
+   (実はこれが一番やりたかったこと。)
+
+** ファイルを指定してstashしたい
+
+   [[https://qiita.com/yukitaka13-1110/items/935bfa233c6e024f82dc][[Git] ファイル単位でstashする]]
+
+   #+begin_src sh
+   git stash push -m <stash message> -- path/to/target/file
+   #+end_src
+
+   上記で、ファイル単位でstashできる (メッセージは省略可) 。
+   ~git stash~ コマンド自体は ~git stash push~ の省略形で、ワーキングディレクトリのスナップショットを素早く取得するためのもの。
+   (変更の退避がスタックに積まれている、と考えると、 ~git stash pop~ もわかりやすい)
+
+   ~-u/--include-untracked~ オプションと合わせて使用すると、こんな感じ。
+
+   #+begin_src sh
+   git stash push -u -m <stash message> -- path/to/target/file
+   #+end_src
+
+   ちなみに、メッセージを省略すると、HEADのコミットメッセージが付与されるだけなので、わかりやすくファイル名等をメッセージに入れておきたい。
+
+** 複数のstashから、特定のstashだけを回復したい
+
+   記事を書いていると、ドラフトが溜まってくる。
+   ドラフト記事は個別にstashしているので、特定の記事だけ持ってきたい、というとき。
+
+   #+begin_src sh
+   git stash pop <stash name>
+   #+end_src
+
+   上記のように、stash名を指定してやれば、特定のstashが現在のワーキングディレクトリに回復される。
+   stash名は ~git stash list~ で確認することができて、 ~stash@{<revision>}~ ( ~<revision>~ はスタック内の順番) である。
+   注意として、stashはスタックに積まれているので、特定のstashと ~<revision>~ を紐づけることはできない。
+
+** 終わりに
+
+   ここまで書いておいてなんだけど、この方法だとドラフトがローカルにのみ存在している状態となり、あまり良い手ではなさそう
+   (実際には、[[https://stackoverflow.com/questions/1550378/is-it-possible-to-push-a-git-stash-to-a-remote-repository/5248758#5248758][stashをリモートリポジトリにpushする]]ことも出来そうだけど、普通の使い方ではないと思う)。
+
+   そのため、実際にはドラフト1本毎にブランチを切ってあげるのが、なんだかんだで一番管理しやすそうではある。
