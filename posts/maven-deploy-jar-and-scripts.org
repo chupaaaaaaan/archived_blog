@@ -87,7 +87,7 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
 *** POM
     ~pom.xml~ は以下を参照。
 
-    #+TODO: ここにpom.xmlへのリンクを貼る
+    https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml
 
     ここで、 ~maven-archetype-quickstart~ から、以下を変更した。
     - 実行時に必要な依存関係として、LogBackを追加 (依存関係が存在するjarでの確認をしたいため)
@@ -97,7 +97,4 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
     ~distribution.xml~ は、独自定義のアーカイブ設定。ファイル名は任意で、プラグイン設定に記載する。
     ファイルの内容は以下を参照。
 
-    #+TODO: ここにdistribution.xmlへのリンクを貼る
-
-    
-** アーカイブ
+    https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml
