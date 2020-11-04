@@ -62,6 +62,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="./2020-11-04_maven-deploy-jar-and-scripts.html">maven-assembly-pluginで配布用アーカイブを作成する</a></li>
+        
           <li><a href="./2020-11-03_git-stash-collection.html">個人的git-stashまとめ</a></li>
         
           <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
@@ -69,8 +71,6 @@
           <li><a href="./2020-10-04_hakyll_teaser.html">Hakyllでのteaser（続きを読む）の設定</a></li>
         
           <li><a href="./2020-09-15_webapp_security_02.html">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</a></li>
-        
-          <li><a href="./2020-09-14_webapp_security_01.html">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</a></li>
         
     </ul>
 </div>
@@ -88,6 +88,31 @@
         </div>
         <div class="col-md-9">
             
+<div class="article">
+  <div class="well main">
+        <h1>maven-assembly-pluginで配布用アーカイブを作成する</h1>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and post.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="content">
+          
+            <p>Mavenで、アーティファクトと実行用スクリプト等を含んだアーカイブを作成しようとしたとき、<br />
+真っ先に思いつくのがmaven-assembly-pluginを使用することだと思う。</p>
+<p>今回、 (展開するだけでデプロイできるように) 実行可能jarや実行用スクリプトをアーカイブしようとして、<br />
+いくつかハマった箇所があったので、メモしておく。</p>
+<p>なお、今回は実行可能jarはuber-jarとはしない (uber-jarとする場合は、maven-shade-pluginが必要になる) 。</p>
+<p>
+            <a href="./2020-11-04_maven-deploy-jar-and-scripts.html">続きを読む</a>
+          
+        </div>
+    </div>
+</div>
+
 <div class="article">
   <div class="well main">
         <h1>個人的git-stashまとめ</h1>
@@ -186,35 +211,6 @@
 </ul>
 <p>
             <a href="./2020-09-15_webapp_security_02.html">続きを読む</a>
-          
-        </div>
-    </div>
-</div>
-
-<div class="article">
-  <div class="well main">
-        <h1>Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</h1>
-        <!-- コメント機能は別途追加する -->
-        <!-- {% if site.comments and post.comments %} -->
-        <!--     {% if site.disqus != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}/#disqus_thread" data-disqus-identifier="{{ post.url | slugify }}">Comments</a></p> -->
-        <!--     {% elsif site.isso != '' %} -->
-        <!--     <p class="author"><a href="{{ site.baseurl }}{{ post.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-        <!--     {% endif %} -->
-        <!-- {% endif %} -->
-        <div class="content">
-          
-            <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。<br />
-特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
-<p>この記事では、クロスサイト・スクリプティングについて、概要と基本的な対策について記載する。</p>
-<p>なお、今回学習に使用する資料はこちら。</p>
-<ul>
-<li><a href="https://www.amazon.co.jp/%25E4%25BD%2593%25E7%25B3%25BB%25E7%259A%2584%25E3%2581%25AB%25E5%25AD%25A6%25E3%2581%25B6-%25E5%25AE%2589%25E5%2585%25A8%25E3%2581%25AAWeb%25E3%2582%25A2%25E3%2583%2597%25E3%2583%25AA%25E3%2582%25B1%25E3%2583%25BC%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%25B3%25E3%2581%25AE%25E4%25BD%259C%25E3%2582%258A%25E6%2596%25B9-%25E7%25AC%25AC2%25E7%2589%2588-%25E8%2584%2586%25E5%25BC%25B1%25E6%2580%25A7%25E3%2581%258C%25E7%2594%259F%25E3%2581%25BE%25E3%2582%258C%25E3%2582%258B%25E5%258E%259F%25E7%2590%2586%25E3%2581%25A8%25E5%25AF%25BE%25E7%25AD%2596%25E3%2581%25AE%25E5%25AE%259F%25E8%25B7%25B5-%25E5%25BE%25B3%25E4%25B8%25B8/dp/4797393165/ref=tmm_hrd_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=">体系的に学ぶ 安全なWebアプリケーションの作り方 第2版 脆弱性が生まれる原理と対策の実践</a><br />
-</li>
-<li><a href="https://www.ipa.go.jp/files/000017316.pdf">安全なウェブサイトの作り方</a> （IPA）</li>
-</ul>
-<p>
-            <a href="./2020-09-14_webapp_security_01.html">続きを読む</a>
           
         </div>
     </div>
