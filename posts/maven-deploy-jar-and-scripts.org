@@ -13,7 +13,7 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
 今回、 (展開するだけでデプロイできるように) 実行可能jarや実行用スクリプトをアーカイブしようとして、
 いくつかハマった箇所があったので、メモしておく。
 
-なお、今回は実行可能jarはuber-jarとはしない (uber-jarとする場合は、maven-shade-pluginが必要になる。)
+なお、今回は実行可能jarはuber-jarとはしない (uber-jarとする場合は、maven-shade-pluginが必要になる) 。
 
 @@html:<!--more-->@@
 
@@ -60,7 +60,7 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
     最終的なアーカイブは、以下のような構成になっているようにする。
 
     #+begin_src sh
-    deployment/
+    deployment.tar.gz
     ├── app
     │   ├── java
     │   │   ├── assemblytest.jar
@@ -76,196 +76,28 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
     └── deploy.sh
     #+end_src
 
-    これをデプロイして、 ~test.sh~ を実行すると、 ~common.sh~ を読み込んでから ~assemblytest.jar~ を実行する。
+    ~assemblytest.jar~ 内の ~META-INF/MANIFEST.MF~ ファイルにて ~deplib~ 配下のjarにクラスパスを通すことで、
+    ~assemblytest.jar~ が実行可能jarとなる。
+
+    デプロイ時は、 ~deploy.sh~ を実行する。そうすると、 ~app/~ がデプロイ先に配置されるようにする。
+
+    デプロイ後、 ~test.sh~ を実行すると、 ~common.sh~ を読み込んでから ~assemblytest.jar~ を実行する。
+    (ここではシェルスクリプトやアプリケーションコードの中は見ない)
 
 *** POM
-    ~pom.xml~ は以下の通り。
-    #+begin_src text
-    <?xml version="1.0" encoding="UTF-8"?>
-    
-    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-      <modelVersion>4.0.0</modelVersion>
-    
-      <groupId>com.myapp</groupId>
-      <artifactId>assemblytest</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    
-      <name>assemblytest</name>
-      <!-- FIXME change it to the project's website -->
-      <url>http://www.example.com</url>
-    
-      <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-      </properties>
-    
-      <dependencies>
-    
-        <!-- ログ設定 -->
-        <dependency>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-          <version>1.1.3</version>
-        </dependency>
-        
-        <!-- テスト設定 -->
-        <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.11</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    
-      <build>
-        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-          <plugins>
-            <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
-            <plugin>
-              <artifactId>maven-clean-plugin</artifactId>
-              <version>3.1.0</version>
-            </plugin>
-            <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
-            <plugin>
-              <artifactId>maven-resources-plugin</artifactId>
-              <version>3.0.2</version>
-            </plugin>
-            <plugin>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <version>3.8.0</version>
-            </plugin>
-            <plugin>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <version>2.22.1</version>
-            </plugin>
-            <plugin>
-              <artifactId>maven-jar-plugin</artifactId>
-              <version>3.0.2</version>
-            </plugin>
-            <plugin>
-              <artifactId>maven-install-plugin</artifactId>
-              <version>2.5.2</version>
-            </plugin>
-            <plugin>
-              <artifactId>maven-deploy-plugin</artifactId>
-              <version>2.8.2</version>
-            </plugin>
-            <plugin>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <version>3.1.0</version>
-            </plugin>
-            <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-            <plugin>
-              <artifactId>maven-site-plugin</artifactId>
-              <version>3.7.1</version>
-            </plugin>
-            <plugin>
-              <artifactId>maven-project-info-reports-plugin</artifactId>
-              <version>3.0.0</version>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-    
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <configuration>
-              <archive>
-                <manifest>
-                  <addClasspath>true</addClasspath>
-                  <classpathPrefix>lib/</classpathPrefix>
-                  <mainClass>com.myapp.App</mainClass>
-                </manifest>
-              </archive>
-              <excludes>
-                <exclude>*.dicon</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>distribution.xml</descriptor>
-                  </descriptors>
-                  <finalName>myapp-app</finalName>
-                  <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </project>
-    #+end_src
+    ~pom.xml~ は以下を参照。
+
+    #+TODO: ここにpom.xmlへのリンクを貼る
 
     ここで、 ~maven-archetype-quickstart~ から、以下を変更した。
-    - 実行時に必要な依存関係として、LogBackを追加
-    - プラグインとして、 ~maven-jar-plugin~ 、 ~maven-assembly-plugin~ を追加（後述）
+    - 実行時に必要な依存関係として、LogBackを追加 (依存関係が存在するjarでの確認をしたいため)
+    - プラグインとして、 ~maven-jar-plugin~ 、 ~maven-assembly-plugin~ を追加 (後述)
 
 *** アーカイブ設定ファイル
     ~distribution.xml~ は、独自定義のアーカイブ設定。ファイル名は任意で、プラグイン設定に記載する。
-    #+begin_src text
-    <assembly
-      xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-    
-      <id>distribution</id>
-      <formats>
-        <format>tar.gz</format>
-      </formats>
-      <baseDirectory>myjob</baseDirectory>
-      <files>
-        <file>
-          <source>target/${project.build.finalName}.jar</source>
-          <destName>${project.artifactId}.jar</destName>
-          <outputDirectory>java</outputDirectory>
-          <fileMode>644</fileMode>
-        </file>
-      </files>
-      <fileSets>
-        <fileSet>
-          <directory>src/shellscript/conf</directory>
-          <outputDirectory>script/conf</outputDirectory>
-          <includes>
-            <include>*.sh</include>
-          </includes>
-          <fileMode>644</fileMode>
-          <directoryMode>755</directoryMode>
-          <lineEnding>unix</lineEnding>
-        </fileSet>
-        <fileSet>
-          <directory>src/shellscript/bin</directory>
-          <outputDirectory>script/bin</outputDirectory>
-          <includes>
-            <include>*.sh</include>
-          </includes>
-          <fileMode>755</fileMode>
-          <directoryMode>755</directoryMode>
-          <lineEnding>unix</lineEnding>
-        </fileSet>
-      </fileSets>
-      <dependencySets>
-        <dependencySet>
-          <useProjectArtifact>false</useProjectArtifact>
-          <outputDirectory>java/lib</outputDirectory>
-        </dependencySet>
-      </dependencySets>
-    </assembly>
-    #+end_src
+    ファイルの内容は以下を参照。
 
-
+    #+TODO: ここにdistribution.xmlへのリンクを貼る
 
     
 ** アーカイブ
