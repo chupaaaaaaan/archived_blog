@@ -1,5 +1,5 @@
 ---
-title: maven-assembly-pluginで配布用アーカイブを作成する
+title: maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法
 published: 2020-11-03 22:04:32
 updated: 
 tags: java, maven
@@ -13,7 +13,12 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
 今回、 (展開するだけでデプロイできるように) 実行可能jarや実行用スクリプトをアーカイブしようとして、
 いくつかハマった箇所があったので、メモしておく。
 
-なお、今回は実行可能jarはuber-jarとはしない (uber-jarとする場合は、maven-shade-pluginが必要になる) 。
+今回は、実行可能jarを
+- 単体のjarとする場合
+- uber-jarとして用意する場合 (maven-assembly-pluginを使用)
+- uber-jarとして用意する場合 (maven-shade-pluginを使用)
+
+の3パターンで作成してみる。
 
 @@html:<!--more-->@@
 
@@ -26,75 +31,171 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
    アーカイブ設定は、[[http://maven.apache.org/plugins/maven-assembly-plugin/descriptor-refs.html][事前定義された設定]]を使用する他に、独自定義を使用することもできる。
    前者の場合は ~pom.xml~ に設定を記載するだけで良いが、後者の場合は、 [[http://maven.apache.org/plugins/maven-assembly-plugin/assembly.html][Assembly Descriptor Format]]にしたがって
    設定ファイルを作成する必要がある。
-   今回は、スクリプト等の配置も自由に設定したかったため、後者で実行する。
    
-** 使用するプロジェクトについて
-
-*** プロジェクト構成
-    今回は、 ~maven-archetype-quickstart~ アーキタイプを元に、以下のようなプロジェクト構成とした (テストは省略) 。
+** プロジェクト構成
+   今回は、 ~maven-archetype-quickstart~ アーキタイプを元に、以下のようなプロジェクト構成とした (テストは省略) 。
+   なお、依存関係が存在するjarでの確認をしたいため、実行時に必要な依存関係として、LogBackを追加している。
     
-    #+begin_src sh
-    assemblytest
-    ├── distribution.xml
-    ├── pom.xml
-    └── src
-        ├── main
-        │   └── java
-        │       └── com
-        │           └── myapp
-        │               └── App.java
-        ├── shellscript
-        │   ├── bin
-        │   │   └── test.sh
-        │   ├── conf
-        │   │   └── common.sh
-        │   └── deploy.sh
-        └── test
-            └── java
-                └── com
-                    └── myapp
-                        └── AppTest.java
+   #+begin_src sh
+   assemblytest
+   ├── distribution.xml
+   ├── pom.xml
+   └── src
+       ├── main
+       │   └── java
+       │       └── com
+       │           └── myapp
+       │               └── App.java
+       ├── shellscript
+       │   ├── bin
+       │   │   └── test.sh
+       │   ├── conf
+       │   │   └── common.sh
+       │   └── deploy.sh
+       └── test
+           └── java
+               └── com
+                   └── myapp
+                       └── AppTest.java
+   #+end_src
+
+   - ~distribution.xml~ は、独自定義のアーカイブ設定。ファイル名は任意で、プラグイン設定に記載する。
+    
+   ~deploy.sh~ を実行すると、 ~app/~ がデプロイ先に配置されるようにする。
+
+   デプロイ後、 ~test.sh~ を実行すると、 ~common.sh~ を読み込んでから ~assemblytest.jar~ を実行する。
+   (ここではシェルスクリプトやアプリケーションコードの中は見ない)
+
+** 実行可能jarを単体のjarとする場合のアーカイブ構成
+   最終的なアーカイブは、以下のような構成になっているようにする。
+
+   #+begin_src sh
+   deployment.tar.gz
+   ├── app
+   │   ├── java
+   │   │   ├── assemblytest.jar
+   │   │   └── deplib
+   │   │       ├── logback-classic-1.1.3.jar
+   │   │       ├── logback-core-1.1.3.jar
+   │   │       └── slf4j-api-1.7.7.jar
+   │   └── script
+   │       ├── bin
+   │       │   └── test.sh
+   │       └── conf
+   │           └── common.sh
+   └── deploy.sh
+   #+end_src
+
+   ~assemblytest.jar~ 内の ~META-INF/MANIFEST.MF~ ファイルにて ~deplib~ 配下のjarにクラスパスを通すことで、
+   ~assemblytest.jar~ が実行可能jarとなる。
+
+   この構成とする場合の ~pom.xml~ 及び ~distribution.xml~ は以下。
+
+   - ~pom.xml~  ::
+     https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml
+
+   - ~distribution.xml~  ::
+     https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml
+
+*** ~pom.xml~
+    以下に、プラグインのアーカイブ関連設定部分を抜粋した。
+
+    #+begin_src
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <archive>
+              <manifest>
+                <addClasspath>true</addClasspath>
+                <classpathPrefix>deplib/</classpathPrefix>
+                <mainClass>com.myapp.App</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <descriptors>
+                  <descriptor>distribution.xml</descriptor>
+                </descriptors>
+                <finalName>apparchive</finalName>
+                <appendAssemblyId>false</appendAssemblyId>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
     #+end_src
 
-*** アーカイブ構成
-    最終的なアーカイブは、以下のような構成になっているようにする。
+    ~maven-assembly-plugin~ の前段で ~maven-jar-plugin~ の設定をしている
+    (いずれも ~package~ フェーズに実行されるが、前段にある方が早く実行される) 。
+    ~maven-jar-plugin~ で、 ~META-INF/MANIFEST.MF~ にクラスパスを追記・エントリポイントを追記するように
+    設定することで、実行可能jarとなる。
 
-    #+begin_src sh
-    deployment.tar.gz
-    ├── app
-    │   ├── java
-    │   │   ├── assemblytest.jar
-    │   │   └── deplib
-    │   │       ├── logback-classic-1.1.3.jar
-    │   │       ├── logback-core-1.1.3.jar
-    │   │       └── slf4j-api-1.7.7.jar
-    │   └── script
-    │       ├── bin
-    │       │   └── test.sh
-    │       └── conf
-    │           └── common.sh
-    └── deploy.sh
+*** ~distribution.xml~
+    スクリプトや依存関係をまとめて一つのアーカイブにする設定は以下。
+
+    #+begin_src
+    <files>
+      <!-- 実行可能jar -->
+      <file>
+        <source>target/${project.build.finalName}.jar</source>
+        <destName>${project.artifactId}.jar</destName>
+        <outputDirectory>app/java</outputDirectory>
+        <fileMode>644</fileMode>
+      </file>
+      <!-- デプロイ用スクリプト -->
+      <file>
+        <source>src/shellscript/deploy.sh</source>
+        <fileMode>755</fileMode>
+      </file>
+    </files>
+    <fileSets>
+      <!-- 設定ファイル -->
+      <fileSet>
+        <directory>src/shellscript/conf</directory>
+        <outputDirectory>app/script/conf</outputDirectory>
+        <includes>
+          <include>*.sh</include>
+        </includes>
+        <fileMode>644</fileMode>
+        <directoryMode>755</directoryMode>
+        <lineEnding>unix</lineEnding>
+      </fileSet>
+      <!-- jar実行用スクリプト -->
+      <fileSet>
+        <directory>src/shellscript/bin</directory>
+        <outputDirectory>app/script/bin</outputDirectory>
+        <includes>
+          <include>*.sh</include>
+        </includes>
+        <fileMode>755</fileMode>
+        <directoryMode>755</directoryMode>
+        <lineEnding>unix</lineEnding>
+      </fileSet>
+    </fileSets>
+    <dependencySets>
+      <dependencySet>
+        <useProjectArtifact>false</useProjectArtifact>
+        <outputDirectory>app/java/deplib</outputDirectory>
+      </dependencySet>
+    </dependencySets>
     #+end_src
 
-    ~assemblytest.jar~ 内の ~META-INF/MANIFEST.MF~ ファイルにて ~deplib~ 配下のjarにクラスパスを通すことで、
-    ~assemblytest.jar~ が実行可能jarとなる。
-
-    デプロイ時は、 ~deploy.sh~ を実行する。そうすると、 ~app/~ がデプロイ先に配置されるようにする。
-
-    デプロイ後、 ~test.sh~ を実行すると、 ~common.sh~ を読み込んでから ~assemblytest.jar~ を実行する。
-    (ここではシェルスクリプトやアプリケーションコードの中は見ない)
-
-*** POM
-    ~pom.xml~ は以下を参照。
-
-    https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml
-
-    ここで、 ~maven-archetype-quickstart~ から、以下を変更した。
-    - 実行時に必要な依存関係として、LogBackを追加 (依存関係が存在するjarでの確認をしたいため)
-    - プラグインとして、 ~maven-jar-plugin~ 、 ~maven-assembly-plugin~ を追加 (後述)
-
-*** アーカイブ設定ファイル
-    ~distribution.xml~ は、独自定義のアーカイブ設定。ファイル名は任意で、プラグイン設定に記載する。
-    ファイルの内容は以下を参照。
-
-    https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml
+    ~dependencySet~ を定義することで、依存関係にあるアーティファクトを一つにまとめて配置できる。
+    ~pom.xml~ で ~<classpathPrefix~ を ~deplib~ と設定したので、
+    こちらでも、依存関係のディレクトリが実行可能jarから見て ~deplib~ になるように
+    ~outputDirectory~ を設定する必要がある。
+    
