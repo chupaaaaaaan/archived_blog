@@ -337,14 +337,14 @@
 <code>finalName</code> と組み合わせ、成果物ファイル名は自由に設定できる。</p>
 <h3 id="distribution.xml-1"><code>distribution.xml</code></h3>
 <p>設定内容自体は、<em>実行可能jarを単体のjarとする場合のアーカイブ構成</em>の場合とほとんど変わらない。<br />
-変更点は、依存関係が全て一つのjarにまとまっているため、 <code>dependencySet</code> が不要となることくらいである。</p>
+変更点は、依存関係が全て一つのjarにまとまっているため、 <code>dependencySet</code> が不要となることくらいである<br />
+(もちろん、成果物ファイル名を <code>${project.artifactId}.jar</code> 以外にする場合は合わせて変更が必要) 。</p>
 <h2 id="終わりに">終わりに</h2>
 <p>やってみればなるほど、という感じ。<br />
 同じフェーズに紐づけられたゴールは、 <code>pom.xml</code> 内の記載順に実行されるようなので、これを踏まえると<br />
 結構簡単にパッケージングを制御できそう。</p>
-<p>ちなみに、今回は使用していないが、maven-shade-pluginという、uber-jarを作るに当たってより細かな制御ができる<br />
-プラグインがあるみたい。<br />
-今度はそちらも使ってみよう。</p>
+<p>ちなみに今回は使用していないが、maven-shade-pluginという、<br />
+uber-jarを作るに当たってより細かな制御ができるプラグインがあるみたい。今度はそちらも使ってみよう。</p>
             </div>
             <!-- コメント機能は別途追加する -->
             <!-- {% if page.comments %} -->
