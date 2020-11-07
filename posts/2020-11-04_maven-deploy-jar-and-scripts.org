@@ -11,14 +11,13 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
 真っ先に思いつくのがmaven-assembly-pluginを使用することだと思う。
 
 今回、 (展開するだけでデプロイできるように) 実行可能jarや実行用スクリプトをアーカイブしようとして、
-いくつかハマった箇所があったので、メモしておく。
+少しハマってしまったので、実施方法をメモしておく。
 
 今回は、実行可能jarを
-- 単体のjarとする場合
-- uber-jarとして用意する場合 (maven-assembly-pluginを使用)
-- uber-jarとして用意する場合 (maven-shade-pluginを使用)
+- 依存関係を含まない、単体のjarとして作成する場合
+- uber-jarとして作成する場合 (maven-assembly-pluginを使用)
 
-の3パターンで作成してみる。
+の2パターンで作成してみる。
 
 @@html:<!--more-->@@
 
@@ -194,3 +193,88 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
     ~pom.xml~ で ~classpathPrefix~ を ~deplib~ と設定したので、
     こちらでも依存関係のディレクトリが実行可能jarから見て ~deplib~ になるよう、 ~outputDirectory~ を設定する必要がある。
     
+** 実行可能jarをuber-jarとする場合のアーカイブ構成 (maven-assembly-plugin使用)
+   最終的なアーカイブは、以下のような構成になっているようにする。
+
+   #+begin_src sh
+   deployment/
+   ├── app
+   │   ├── java
+   │   │   └── assemblytest.jar
+   │   └── script
+   │       ├── bin
+   │       │   └── test.sh
+   │       └── conf
+   │           └── common.sh
+   └── deploy.sh
+   #+end_src
+
+   この構成とする場合の ~pom.xml~ 及び ~distribution.xml~ は以下。
+
+   - ~pom.xml~  ::
+     https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-pom-xml
+
+   - ~distribution.xml~  ::
+     https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-distribution-xml
+
+*** ~pom.xml~
+    以下に、プラグインのアーカイブ関連設定部分を抜粋した。
+
+    #+begin_src
+    </build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>make-uber-jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+                <archive>
+                  <manifest>
+                    <mainClass>com.myapp.App</mainClass>
+                  </manifest>
+                </archive>
+                <appendAssemblyId>false</appendAssemblyId>
+              </configuration>
+            </execution>
+            <execution>
+              <id>make-assembly</id>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <descriptors>
+                  <descriptor>distribution.xml</descriptor>
+                </descriptors>
+                <finalName>apparchive</finalName>
+                <appendAssemblyId>false</appendAssemblyId>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+    #+end_src
+
+    ~maven-jar-plugin~ ではuber-jarを作成できないので、 ~maven-assembly-plugin~ でuber-jarを作成する。
+    ~id~ を異なるものにすれば、同じフェーズで同じゴールを実行できるので、それを利用して最初にuber-jarを作成し、
+    そのあとでアーカイブにまとめる(これも記載の順番で実行されるみたい)。
+    また、 ~manifest~ の設定はエントリポイントだけで良い (uber-jarの中に、全てのclassファイルが存在するため) 。
+
+    ちなみに、 ~appendAssemblyId~ を ~true~ にすると、成果物ファイル名に ~-jar-with-dependencies~ が付与される。
+    ~finalName~ と組み合わせ、成果物ファイル名は自由に設定できる。
+
+
+*** ~distribution.xml~
+    設定内容自体は、[[*~distribution.xml~][実行可能jarを単体のjarとする場合のアーカイブ構成]]の場合とほとんど変わらない。
+    変更点は、依存関係が全て一つのjarにまとまっているため、 ~dependencySet~ が不要となることくらいである。
+
