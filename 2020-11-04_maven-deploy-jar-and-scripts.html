@@ -62,7 +62,7 @@
     <h1>Recent Posts</h1>
     <ul>
         
-          <li><a href="./2020-11-04_maven-deploy-jar-and-scripts.html">maven-assembly-pluginで配布用アーカイブを作成する</a></li>
+          <li><a href="./2020-11-04_maven-deploy-jar-and-scripts.html">maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</a></li>
         
           <li><a href="./2020-11-03_git-stash-collection.html">個人的git-stashまとめ</a></li>
         
@@ -89,7 +89,7 @@
         <div class="col-md-9">
           <div class="article">
             <div class="well main">
-              <h1>maven-assembly-pluginで配布用アーカイブを作成する</h1>
+              <h1>maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</h1>
             <!-- コメント機能は別途追加する -->
             <!-- {% if site.comments and page.comments %} -->
             <!--     {% if site.disqus != '' %} -->
@@ -102,8 +102,14 @@
             <p>Mavenで、アーティファクトと実行用スクリプト等を含んだアーカイブを作成しようとしたとき、<br />
 真っ先に思いつくのがmaven-assembly-pluginを使用することだと思う。</p>
 <p>今回、 (展開するだけでデプロイできるように) 実行可能jarや実行用スクリプトをアーカイブしようとして、<br />
-いくつかハマった箇所があったので、メモしておく。</p>
-<p>なお、今回は実行可能jarはuber-jarとはしない (uber-jarとする場合は、maven-shade-pluginが必要になる) 。</p>
+少しハマってしまったので、実施方法をメモしておく。</p>
+<p>今回は、実行可能jarを</p>
+<ul>
+<li>依存関係を含まない、単体のjarとして作成する場合<br />
+</li>
+<li>uber-jarとして作成する場合 (maven-assembly-pluginを使用)</li>
+</ul>
+<p>の2パターンで作成してみる。</p>
 <p><!--more--></p>
 <h2 id="maven-assembly-pluginとは">maven-assembly-pluginとは</h2>
 <p><a href="http://maven.apache.org/plugins/maven-assembly-plugin/index.html">http://maven.apache.org/plugins/maven-assembly-plugin/index.html</a></p>
@@ -111,11 +117,10 @@
 今回は、実行可能jarと実行用スクリプトをtar.gz形式でアーカイブする。</p>
 <p>アーカイブ設定は、<a href="http://maven.apache.org/plugins/maven-assembly-plugin/descriptor-refs.html">事前定義された設定</a>を使用する他に、独自定義を使用することもできる。<br />
 前者の場合は <code>pom.xml</code> に設定を記載するだけで良いが、後者の場合は、 <a href="http://maven.apache.org/plugins/maven-assembly-plugin/assembly.html">Assembly Descriptor Format</a>にしたがって<br />
-設定ファイルを作成する必要がある。<br />
-今回は、スクリプト等の配置も自由に設定したかったため、後者で実行する。</p>
-<h2 id="使用するプロジェクトについて">使用するプロジェクトについて</h2>
-<h3 id="プロジェクト構成">プロジェクト構成</h3>
-<p>今回は、 <code>maven-archetype-quickstart</code> アーキタイプを元に、以下のようなプロジェクト構成とした (テストは省略) 。</p>
+設定ファイルを作成する必要がある。</p>
+<h2 id="プロジェクト構成">プロジェクト構成</h2>
+<p>今回は、 <code>maven-archetype-quickstart</code> アーキタイプを元に、以下のようなプロジェクト構成とした (テストは省略) 。<br />
+なお、依存関係が存在するjarでの確認をしたいため、実行時に必要な依存関係として、LogBackを追加している。</p>
 <div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">assemblytest</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>├── <span class="ex">distribution.xml</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>├── <span class="ex">pom.xml</span></span>
@@ -136,7 +141,13 @@
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>            └── <span class="ex">com</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a>                └── <span class="ex">myapp</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>                    └── <span class="ex">AppTest.java</span></span></code></pre></div>
-<h3 id="アーカイブ構成">アーカイブ構成</h3>
+<p>各ファイルの説明は以下の通り。</p>
+<ul>
+<li><p><code>distribution.xml</code> は、maven-assembly-pluginが使用する独自定義のアーカイブ設定。ファイル名は任意で、プラグイン設定に記載する。</p></li>
+<li><p><code>deploy.sh</code> はデプロイ用スクリプトで、実行すると <code>app/</code> がデプロイ先に配置される。</p></li>
+<li><p>デプロイ後、 <code>test.sh</code> を実行すると、 <code>common.sh</code> を読み込んでから <code>assemblytest.jar</code> を実行する。</p></li>
+</ul>
+<h2 id="実行可能jarを単体のjarとする場合のアーカイブ構成">実行可能jarを単体のjarとする場合のアーカイブ構成</h2>
 <p>最終的なアーカイブは、以下のような構成になっているようにする。</p>
 <div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">deployment.tar.gz</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>├── <span class="ex">app</span></span>
@@ -152,24 +163,188 @@
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>│       └── <span class="ex">conf</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>│           └── <span class="ex">common.sh</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>└── <span class="ex">deploy.sh</span></span></code></pre></div>
-<p><code>assemblytest.jar</code> 内の <code>META-INF/MANIFEST.MF</code> ファイルにて <code>deplib</code> 配下のjarにクラスパスを通すことで、<br />
-<code>assemblytest.jar</code> が実行可能jarとなる。</p>
-<p>デプロイ時は、 <code>deploy.sh</code> を実行する。そうすると、 <code>app/</code> がデプロイ先に配置されるようにする。</p>
-<p>デプロイ後、 <code>test.sh</code> を実行すると、 <code>common.sh</code> を読み込んでから <code>assemblytest.jar</code> を実行する。<br />
-(ここではシェルスクリプトやアプリケーションコードの中は見ない)</p>
-<h3 id="pom">POM</h3>
-<p><code>pom.xml</code> は以下を参照。</p>
-<p><a href="https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml">https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml</a></p>
-<p>ここで、 <code>maven-archetype-quickstart</code> から、以下を変更した。</p>
-<ul>
-<li>実行時に必要な依存関係として、LogBackを追加 (依存関係が存在するjarでの確認をしたいため)<br />
-</li>
-<li>プラグインとして、 <code>maven-jar-plugin</code> 、 <code>maven-assembly-plugin</code> を追加 (後述)</li>
-</ul>
-<h3 id="アーカイブ設定ファイル">アーカイブ設定ファイル</h3>
-<p><code>distribution.xml</code> は、独自定義のアーカイブ設定。ファイル名は任意で、プラグイン設定に記載する。<br />
-ファイルの内容は以下を参照。</p>
-<p><a href="https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml">https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml</a></p>
+<p>この構成とする場合の <code>pom.xml</code> 及び <code>distribution.xml</code> は以下。</p>
+<dl>
+<dt><code>pom.xml</code></dt>
+<dd><p><a href="https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml">https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml</a></p>
+</dd>
+<dt><code>distribution.xml</code></dt>
+<dd><p><a href="https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml">https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml</a></p>
+</dd>
+</dl>
+<h3 id="pom.xml"><code>pom.xml</code></h3>
+<p>以下に、プラグインのアーカイブ関連設定部分を抜粋した。</p>
+<pre><code>&lt;build&gt;
+  &lt;plugins&gt;
+    &lt;plugin&gt;
+      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+      &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+      &lt;configuration&gt;
+        &lt;archive&gt;
+          &lt;manifest&gt;
+            &lt;addClasspath&gt;true&lt;/addClasspath&gt;
+            &lt;classpathPrefix&gt;deplib/&lt;/classpathPrefix&gt;
+            &lt;mainClass&gt;com.myapp.App&lt;/mainClass&gt;
+          &lt;/manifest&gt;
+        &lt;/archive&gt;
+      &lt;/configuration&gt;
+    &lt;/plugin&gt;
+    &lt;plugin&gt;
+      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+      &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+      &lt;executions&gt;
+        &lt;execution&gt;
+          &lt;phase&gt;package&lt;/phase&gt;
+          &lt;goals&gt;
+            &lt;goal&gt;single&lt;/goal&gt;
+          &lt;/goals&gt;
+          &lt;configuration&gt;
+            &lt;descriptors&gt;
+              &lt;descriptor&gt;distribution.xml&lt;/descriptor&gt;
+            &lt;/descriptors&gt;
+            &lt;finalName&gt;apparchive&lt;/finalName&gt;
+            &lt;appendAssemblyId&gt;false&lt;/appendAssemblyId&gt;
+          &lt;/configuration&gt;
+        &lt;/execution&gt;
+      &lt;/executions&gt;
+    &lt;/plugin&gt;
+  &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+<p><code>maven-assembly-plugin</code> の前段で <code>maven-jar-plugin</code> の設定をしている (いずれも <code>package</code> フェーズに実行されるが、前段にある方が早く実行される) 。<br />
+<code>maven-jar-plugin</code> で、 <code>META-INF/MANIFEST.MF</code> にクラスパスを追記・エントリポイントを追記するように設定することで、実行可能jarとなる。</p>
+<h3 id="distribution.xml"><code>distribution.xml</code></h3>
+<p>スクリプトや依存関係をまとめて一つのアーカイブにする設定は以下。</p>
+<pre><code>&lt;files&gt;
+  &lt;!-- 実行可能jar --&gt;
+  &lt;file&gt;
+    &lt;source&gt;target/${project.build.finalName}.jar&lt;/source&gt;
+    &lt;destName&gt;${project.artifactId}.jar&lt;/destName&gt;
+    &lt;outputDirectory&gt;app/java&lt;/outputDirectory&gt;
+    &lt;fileMode&gt;644&lt;/fileMode&gt;
+  &lt;/file&gt;
+  &lt;!-- デプロイ用スクリプト --&gt;
+  &lt;file&gt;
+    &lt;source&gt;src/shellscript/deploy.sh&lt;/source&gt;
+    &lt;fileMode&gt;755&lt;/fileMode&gt;
+  &lt;/file&gt;
+&lt;/files&gt;
+&lt;fileSets&gt;
+  &lt;!-- 設定ファイル --&gt;
+  &lt;fileSet&gt;
+    &lt;directory&gt;src/shellscript/conf&lt;/directory&gt;
+    &lt;outputDirectory&gt;app/script/conf&lt;/outputDirectory&gt;
+    &lt;includes&gt;
+      &lt;include&gt;*.sh&lt;/include&gt;
+    &lt;/includes&gt;
+    &lt;fileMode&gt;644&lt;/fileMode&gt;
+    &lt;directoryMode&gt;755&lt;/directoryMode&gt;
+    &lt;lineEnding&gt;unix&lt;/lineEnding&gt;
+  &lt;/fileSet&gt;
+  &lt;!-- jar実行用スクリプト --&gt;
+  &lt;fileSet&gt;
+    &lt;directory&gt;src/shellscript/bin&lt;/directory&gt;
+    &lt;outputDirectory&gt;app/script/bin&lt;/outputDirectory&gt;
+    &lt;includes&gt;
+      &lt;include&gt;*.sh&lt;/include&gt;
+    &lt;/includes&gt;
+    &lt;fileMode&gt;755&lt;/fileMode&gt;
+    &lt;directoryMode&gt;755&lt;/directoryMode&gt;
+    &lt;lineEnding&gt;unix&lt;/lineEnding&gt;
+  &lt;/fileSet&gt;
+&lt;/fileSets&gt;
+&lt;dependencySets&gt;
+  &lt;dependencySet&gt;
+    &lt;useProjectArtifact&gt;false&lt;/useProjectArtifact&gt;
+    &lt;outputDirectory&gt;app/java/deplib&lt;/outputDirectory&gt;
+  &lt;/dependencySet&gt;
+&lt;/dependencySets&gt;
+</code></pre>
+<p><code>dependencySet</code> を定義することで、依存関係にあるアーティファクトを一つにまとめて配置できる。<br />
+<code>pom.xml</code> で <code>classpathPrefix</code> を <code>deplib</code> と設定したので、<br />
+こちらでも依存関係のディレクトリが実行可能jarから見て <code>deplib</code> になるよう、 <code>outputDirectory</code> を設定する必要がある。</p>
+<h2 id="実行可能jarをuber-jarとする場合のアーカイブ構成-maven-assembly-plugin使用">実行可能jarをuber-jarとする場合のアーカイブ構成 (maven-assembly-plugin使用)</h2>
+<p>最終的なアーカイブは、以下のような構成になっているようにする。</p>
+<div class="sourceCode" id="cb5" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">deployment/</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>├── <span class="ex">app</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>│   ├── <span class="ex">java</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>│   │   └── <span class="ex">assemblytest.jar</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>│   └── <span class="ex">script</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>│       ├── <span class="ex">bin</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a>│       │   └── <span class="ex">test.sh</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a>│       └── <span class="ex">conf</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a>│           └── <span class="ex">common.sh</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>└── <span class="ex">deploy.sh</span></span></code></pre></div>
+<p>この構成とする場合の <code>pom.xml</code> 及び <code>distribution.xml</code> は以下。</p>
+<dl>
+<dt><code>pom.xml</code></dt>
+<dd><p><a href="https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-pom-xml">https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-pom-xml</a></p>
+</dd>
+<dt><code>distribution.xml</code></dt>
+<dd><p><a href="https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-distribution-xml">https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-distribution-xml</a></p>
+</dd>
+</dl>
+<h3 id="pom.xml-1"><code>pom.xml</code></h3>
+<p>以下に、プラグインのアーカイブ関連設定部分を抜粋した。</p>
+<pre><code>&lt;/build&gt;
+  &lt;plugins&gt;
+    &lt;plugin&gt;
+      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+      &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+      &lt;executions&gt;
+        &lt;execution&gt;
+          &lt;id&gt;make-uber-jar&lt;/id&gt;
+          &lt;phase&gt;package&lt;/phase&gt;
+          &lt;goals&gt;
+            &lt;goal&gt;single&lt;/goal&gt;
+          &lt;/goals&gt;
+          &lt;configuration&gt;
+            &lt;descriptorRefs&gt;
+              &lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
+            &lt;/descriptorRefs&gt;
+            &lt;archive&gt;
+              &lt;manifest&gt;
+                &lt;mainClass&gt;com.myapp.App&lt;/mainClass&gt;
+              &lt;/manifest&gt;
+            &lt;/archive&gt;
+            &lt;appendAssemblyId&gt;false&lt;/appendAssemblyId&gt;
+          &lt;/configuration&gt;
+        &lt;/execution&gt;
+        &lt;execution&gt;
+          &lt;id&gt;make-assembly&lt;/id&gt;
+          &lt;phase&gt;package&lt;/phase&gt;
+          &lt;goals&gt;
+            &lt;goal&gt;single&lt;/goal&gt;
+          &lt;/goals&gt;
+          &lt;configuration&gt;
+            &lt;descriptors&gt;
+              &lt;descriptor&gt;distribution.xml&lt;/descriptor&gt;
+            &lt;/descriptors&gt;
+            &lt;finalName&gt;apparchive&lt;/finalName&gt;
+            &lt;appendAssemblyId&gt;false&lt;/appendAssemblyId&gt;
+          &lt;/configuration&gt;
+        &lt;/execution&gt;
+      &lt;/executions&gt;
+    &lt;/plugin&gt;
+  &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+<p><code>maven-jar-plugin</code> ではuber-jarを作成できないので、 <code>maven-assembly-plugin</code> でuber-jarを作成する。<br />
+<code>id</code> を異なるものにすれば、同じフェーズで同じゴールを実行できるので、それを利用して最初にuber-jarを作成し、<br />
+そのあとでアーカイブにまとめる(これも記載の順番で実行されるみたい)。<br />
+また、 <code>manifest</code> の設定はエントリポイントだけで良い (uber-jarの中に、全てのclassファイルが存在するため) 。</p>
+<p>ちなみに、 <code>appendAssemblyId</code> を <code>true</code> にすると、成果物ファイル名に <code>-jar-with-dependencies</code> が付与される。<br />
+<code>finalName</code> と組み合わせ、成果物ファイル名は自由に設定できる。</p>
+<h3 id="distribution.xml-1"><code>distribution.xml</code></h3>
+<p>設定内容自体は、<em>実行可能jarを単体のjarとする場合のアーカイブ構成</em>の場合とほとんど変わらない。<br />
+変更点は、依存関係が全て一つのjarにまとまっているため、 <code>dependencySet</code> が不要となることくらいである。</p>
+<h2 id="終わりに">終わりに</h2>
+<p>やってみればなるほど、という感じ。<br />
+同じフェーズに紐づけられたゴールは、 <code>pom.xml</code> 内の記載順に実行されるようなので、これを踏まえると<br />
+結構簡単にパッケージングを制御できそう。</p>
+<p>ちなみに、今回は使用していないが、maven-shade-pluginという、uber-jarを作るに当たってより細かな制御ができる<br />
+プラグインがあるみたい。<br />
+今度はそちらも使ってみよう。</p>
             </div>
             <!-- コメント機能は別途追加する -->
             <!-- {% if page.comments %} -->

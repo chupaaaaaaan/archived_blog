@@ -62,7 +62,7 @@
     <h1>Recent Posts</h1>
     <ul>
         
-          <li><a href="./2020-11-04_maven-deploy-jar-and-scripts.html">maven-assembly-pluginで配布用アーカイブを作成する</a></li>
+          <li><a href="./2020-11-04_maven-deploy-jar-and-scripts.html">maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</a></li>
         
           <li><a href="./2020-11-03_git-stash-collection.html">個人的git-stashまとめ</a></li>
         
@@ -90,7 +90,7 @@
             
 <div class="article">
   <div class="well main">
-        <h1>maven-assembly-pluginで配布用アーカイブを作成する</h1>
+        <h1>maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</h1>
         <!-- コメント機能は別途追加する -->
         <!-- {% if site.comments and post.comments %} -->
         <!--     {% if site.disqus != '' %} -->
@@ -104,8 +104,14 @@
             <p>Mavenで、アーティファクトと実行用スクリプト等を含んだアーカイブを作成しようとしたとき、<br />
 真っ先に思いつくのがmaven-assembly-pluginを使用することだと思う。</p>
 <p>今回、 (展開するだけでデプロイできるように) 実行可能jarや実行用スクリプトをアーカイブしようとして、<br />
-いくつかハマった箇所があったので、メモしておく。</p>
-<p>なお、今回は実行可能jarはuber-jarとはしない (uber-jarとする場合は、maven-shade-pluginが必要になる) 。</p>
+少しハマってしまったので、実施方法をメモしておく。</p>
+<p>今回は、実行可能jarを</p>
+<ul>
+<li>依存関係を含まない、単体のjarとして作成する場合<br />
+</li>
+<li>uber-jarとして作成する場合 (maven-assembly-pluginを使用)</li>
+</ul>
+<p>の2パターンで作成してみる。</p>
 <p>
             <a href="./2020-11-04_maven-deploy-jar-and-scripts.html">続きを読む</a>
           
