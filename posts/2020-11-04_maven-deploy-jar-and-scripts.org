@@ -1,7 +1,7 @@
 ---
 title: maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法
 published: 2020-11-03 22:04:32
-updated: 
+updated: 2020-11-08 11:51:13
 tags: java, maven
 ---
 #+OPTIONS: ^:{}
@@ -16,8 +16,9 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
 今回は、実行可能jarを
 - 依存関係を含まない、単体のjarとして作成する場合
 - uber-jarとして作成する場合 (maven-assembly-pluginを使用)
+- uber-jarとして作成する場合 (maven-shade-pluginを使用)
 
-の2パターンで作成してみる。
+の3パターンで作成してみる。
 
 @@html:<!--more-->@@
 
@@ -278,10 +279,79 @@ Mavenで、アーティファクトと実行用スクリプト等を含んだア
     変更点は、依存関係が全て一つのjarにまとまっているため、 ~dependencySet~ が不要となることくらいである
     (もちろん、成果物ファイル名を ~${project.artifactId}.jar~ 以外にする場合は合わせて変更が必要) 。
 
+
+** 実行可能jarをuber-jarとする場合 (maven-shade-plugin使用)
+   この場合のアーカイブ構成は、maven-assembly-pluginを使用する場合と同じ。
+   ~distribution.xml~ も変更はない。
+
+   maven-shade-pluginを使用するときの ~pom.xml~ は以下。
+
+   - ~pom.xml~  ::
+     https://gist.github.com/chupaaaaaaan/4411be3e2e9f367f809845fc3140f973#file-pom-xml
+
+*** ~pom.xml~   
+    以下に、プラグインのアーカイブ関連設定部分を抜粋した。
+
+    #+begin_src
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+                <minimizeJar>true</minimizeJar>
+                <transformers>
+                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                    <mainClass>com.myapp.App</mainClass>
+                  </transformer>
+                </transformers>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>make-assembly</id>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <descriptors>
+                  <descriptor>distribution.xml</descriptor>
+                </descriptors>
+                <finalName>apparchive</finalName>
+                <appendAssemblyId>false</appendAssemblyId>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+    #+end_src
+
+    [[https://maven.apache.org/plugins/maven-shade-plugin/index.html][maven-shade-plugin]]は、
+    #+begin_quote
+    This plugin provides the capability to package the artifact in an uber-jar, including its dependencies and to shade - i.e. rename - the packages of some of the dependencies.
+    #+end_quote
+    とあるように、dependency hellを避けるためにパッケージ名のリネームをしたりクラスの除外をしたりするためのプラグインだが ([[https://qiita.com/autotaker1984/items/9265b28553e74a9a8fb0][参考]]) 、
+    いわゆる *minimized JAR* を作るのにも使用できる。
+    今回は、実行可能なminimized JARを作ってみた。
+
+    実際、JARのサイズを表示してみると、maven-assembly-pluginで作成した方は747KBだったところ、
+    minimized JARとして作成した場合は493KBとなり、小さくなっている。
+
 ** 終わりに
    やってみればなるほど、という感じ。
    同じフェーズに紐づけられたゴールは、 ~pom.xml~ 内の記載順に実行されるようなので、これを踏まえると
    結構簡単にパッケージングを制御できそう。
 
-   ちなみに今回は使用していないが、maven-shade-pluginという、
-   uber-jarを作るに当たってより細かな制御ができるプラグインがあるみたい。今度はそちらも使ってみよう。
