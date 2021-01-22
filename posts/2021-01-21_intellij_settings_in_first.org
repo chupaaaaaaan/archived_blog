@@ -1,0 +1,61 @@
+---
+title: Intellij Ideaの設定ことはじめ
+published: 2021-01-22 17:10:24
+updated: 
+tags: Java, Intellij
+---
+#+OPTIONS: ^:{}
+#+OPTIONS: \n:t
+
+仕事でちょこちょこIntellij Ideaを使っているが、なかなかに使用頻度が少ないので、毎回どんな設定を入れればよいか忘れてしまう。
+なので、メモっておこうと。
+
+設定を変更したら、随時更新する。
+
+@@html:<!--more-->@@
+
+* キーバインド
+
+** きほん
+  - 設定画面 ::  ~Ctrl + Alt + s~ 
+  - プロジェクト設定画面 ::  ~Ctrl + Alt + Shift + S~
+
+
+** 自分で追加したもの
+   - Commit (In Main Menu | Git) ::  ~Ctrl + Shift + J~
+
+
+* プラグイン
+
+  設定画面左上の検索画面で「plugin」と入力すると、プラグイン一覧が出てくるので、必要なものをインストールする。
+
+** 日本語化
+   - Japanese Language Pack
+   - そんなに使用しなくてもいいかも（英語のほうが情報多いので）
+
+** キーバインド補助
+   - Key Promoter X
+   - キーバインドで実行できる操作をマウスでやっちゃうと、対応するキーバインドを教えてくれる
+   - キーバインドが登録されていない操作をすると、キーバインド登録の提案をしてくれる
+
+** Emacsキーバインド
+   - Emacs+ Patched
+   - https://qiita.com/crossroad0201/items/eecc87dd1c0258148167 あたりを参考に。
+
+
+* JVM設定
+
+  https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26
+  より。
+
+  Intellij Ideaが使用するJVMの設定。
+
+  Help -> Edit Custom VM Options... を選択。
+
+** ヒープサイズ
+   以下設定を追加する。
+
+   #+BEGIN_SRC 
+   -Xms2048m
+   -Xmx2048m
+   #+END_SRC
