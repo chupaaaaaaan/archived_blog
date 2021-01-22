@@ -8,8 +8,24 @@
         <name>Takayuki Uchida</name>
         <email></email>
     </author>
-    <updated>2020-11-08 11:51:13</updated>
+    <updated>2021-01-22T17:10:24Z</updated>
     <entry>
+    <title>Intellij Ideaの設定ことはじめ</title>
+    <link href="https://chupaaaaaaan.github.io/2021-01-21_intellij_settings_in_first.html" />
+    <id>https://chupaaaaaaan.github.io/2021-01-21_intellij_settings_in_first.html</id>
+    <published>2021-01-22 17:10:24</published>
+    <updated>2021-01-22T17:10:24Z</updated>
+    <summary type="html"><![CDATA[feed description]]></summary>
+</entry>
+<entry>
+    <title>Haskell Language ServerでHLintによる自動修正が効かない時の応急処置</title>
+    <link href="https://chupaaaaaaan.github.io/2021-01-02_hls-first-aid.html" />
+    <id>https://chupaaaaaaan.github.io/2021-01-02_hls-first-aid.html</id>
+    <published>2021-01-10 10:39:35</published>
+    <updated>2021-01-10T10:39:35Z</updated>
+    <summary type="html"><![CDATA[feed description]]></summary>
+</entry>
+<entry>
     <title>maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</title>
     <link href="https://chupaaaaaaan.github.io/2020-11-04_maven-deploy-jar-and-scripts.html" />
     <id>https://chupaaaaaaan.github.io/2020-11-04_maven-deploy-jar-and-scripts.html</id>
@@ -31,22 +47,6 @@
     <id>https://chupaaaaaaan.github.io/2020-10-31_java-info-collection.html</id>
     <published>2020-11-01 02:10:24</published>
     <updated>2020-11-02 19:18:33</updated>
-    <summary type="html"><![CDATA[feed description]]></summary>
-</entry>
-<entry>
-    <title>Hakyllでのteaser（続きを読む）の設定</title>
-    <link href="https://chupaaaaaaan.github.io/2020-10-04_hakyll_teaser.html" />
-    <id>https://chupaaaaaaan.github.io/2020-10-04_hakyll_teaser.html</id>
-    <published>2020-10-04 23:53:23</published>
-    <updated>2020-10-04T23:53:23Z</updated>
-    <summary type="html"><![CDATA[feed description]]></summary>
-</entry>
-<entry>
-    <title>Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</title>
-    <link href="https://chupaaaaaaan.github.io/2020-09-15_webapp_security_02.html" />
-    <id>https://chupaaaaaaan.github.io/2020-09-15_webapp_security_02.html</id>
-    <published>2020-09-15 15:50:32</published>
-    <updated>2020-09-15T15:50:32Z</updated>
     <summary type="html"><![CDATA[feed description]]></summary>
 </entry>
 

@@ -89,7 +89,7 @@
         <div class="col-md-9">
           <div class="article">
             <div class="well main">
-              <h1>GitBash（MSYS2）でsshしたときの文字化けを解消する</h1>
+              <h1>Intellij Ideaの設定ことはじめ</h1>
             <!-- コメント機能は別途追加する -->
             <!-- {% if site.comments and page.comments %} -->
             <!--     {% if site.disqus != '' %} -->
@@ -99,38 +99,59 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <p>タイトルまんまです。</p>
-<p>やんごとなき理由により、Linuxサーバ（RHEL7）でとあるユーザの文字エンコーディングをUTF-8からEUC-JPに変更する必要があった。<br />
-ちゃんと <code>ja_JP.eucjp</code> もインストールされていたので、対象ユーザの <code>~/.bash_profile</code> に以下を設定すれば良い。</p>
-<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>$ <span class="fu">cat</span> ~/.bash_profile <span class="kw">|</span> <span class="fu">grep</span> LANG</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
-<p>設定されているかの確認は以下（ <code>source</code> するか、再ログインしてから確認する） 。</p>
-<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>$ <span class="fu">env</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^LANG=&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
-<p>これでちゃんと日本語が表示されるはずなのだが、GitBashでsshして接続すると、何故か文字化けしてしまう。</p>
+            <p>仕事でちょこちょこIntellij Ideaを使っているが、なかなかに使用頻度が少ないので、毎回どんな設定を入れればよいか忘れてしまう。<br />
+なので、メモっておこうと。</p>
+<p>設定を変更したら、随時更新する。</p>
 <p><!--more--></p>
-<h2 id="原因">原因</h2>
-<p>まんまこれと同じでした。</p>
+<h1 id="キーバインド">キーバインド</h1>
+<h2 id="きほん">きほん</h2>
+<dl>
+<dt>設定画面</dt>
+<dd><code>Ctrl + Alt + s</code><br />
+
+</dd>
+<dt>プロジェクト設定画面</dt>
+<dd><code>Ctrl + Alt + Shift + S</code>
+</dd>
+</dl>
+<h2 id="自分で追加したもの">自分で追加したもの</h2>
+<dl>
+<dt>Commit (In Main Menu | Git)</dt>
+<dd><code>Ctrl + Shift + J</code>
+</dd>
+</dl>
+<h1 id="プラグイン">プラグイン</h1>
+<p>設定画面左上の検索画面で「plugin」と入力すると、プラグイン一覧が出てくるので、必要なものをインストールする。</p>
+<h2 id="日本語化">日本語化</h2>
 <ul>
-<li><a href="https://ja.stackoverflow.com/questions/55304/msys2-%25E3%2581%25AE-ssh-%25E3%2581%25A7euc-jp%25E7%2592%25B0%25E5%25A2%2583%25E3%2581%25AB%25E3%2583%25AA%25E3%2583%25A2%25E3%2583%25BC%25E3%2583%2588%25E6%258E%25A5%25E7%25B6%259A%25E3%2581%2597%25E3%2581%259F%25E5%25A0%25B4%25E5%2590%2588%25E3%2581%25AB%25E6%2596%2587%25E5%25AD%2597%25E5%258C%2596%25E3%2581%2591%25E3%2582%2592%25E5%259B%259E%25E9%2581%25BF%25E3%2581%2599%25E3%2582%258B%25E6%2596%25B9%25E6%25B3%2595">msys2 の ssh でeuc-jp環境にリモート接続した場合に文字化けを回避する方法</a></li>
+<li>Japanese Language Pack<br />
+</li>
+<li>そんなに使用しなくてもいいかも（英語のほうが情報多いので）</li>
 </ul>
-<p>GitBash（Git for Windowsに同梱されているシェル環境）は<a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#git-for-windows">MSYS2ベース</a>なので、同じ現象に該当すると思われる。<br />
-状況としては、サーバからEUC-JPエンコーディングのバイナリが送られているが、クライアント側で別のエンコーディングのデータとして解釈されており、結果として文字化けが発生しているようだ。</p>
-<h2 id="解決">解決</h2>
-<p>同じページの回答にある、 <code>luit</code> というツールを導入することで解消した。このツールは、プロセスの間に立って受け取るデータのエンコーディングをいい感じに変換してくれるみたい。<br />
-<code>luit.exe</code> のバイナリをパスの通ったディレクトリに起き、以下を実行すれば文字化けなく表示される。</p>
-<div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">luit.exe</span> -encoding eucjp -- ssh <span class="va">${SERVERNAME}</span></span></code></pre></div>
-<p>毎回これをするのはめんどいが、そんなに実行する機会もないはずなので、一旦はこれでOK。<br />
-（当初はサーバ側の問題と勘違いし、設定方法を確認したり<a href="https://qiita.com/qiitamatumoto/items/efffc0ef6e6249533201">このあたり</a>やってみたりで半日くらい時間を溶かしてしまったのは秘密。）</p>
-<h3 id="ちなみに">ちなみに</h3>
-<p>同様にクライアントが受け取る文字エンコーディングをいい感じに変換してくれるツールとして、 <a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#cocot">cocot</a>というのもある。<br />
-最初自分もこちらを試してみたが、うまく動かせなかった（多分使い方が間違ってる）。</p>
-<h2 id="補記">補記</h2>
-<p>Windowsで使えるシェル環境ってあんまり知らなかったけど、調べている中で面白い記事を発見した。</p>
+<h2 id="キーバインド補助">キーバインド補助</h2>
 <ul>
-<li><a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904">Windowsで使えるターミナルとシェルのまとめ</a></li>
+<li>Key Promoter X<br />
+</li>
+<li>キーバインドで実行できる操作をマウスでやっちゃうと、対応するキーバインドを教えてくれる<br />
+</li>
+<li>キーバインドが登録されていない操作をすると、キーバインド登録の提案をしてくれる</li>
 </ul>
-<p>結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）しか使ってないけど、ちょっと他のも使ってみようかな。</p>
+<h2 id="emacsキーバインド">Emacsキーバインド</h2>
+<ul>
+<li>Emacs+ Patched<br />
+</li>
+<li><a href="https://qiita.com/crossroad0201/items/eecc87dd1c0258148167">https://qiita.com/crossroad0201/items/eecc87dd1c0258148167</a> あたりを参考に。</li>
+</ul>
+<h1 id="jvm設定">JVM設定</h1>
+<p><a href="https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26">https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26</a><br />
+より。</p>
+<p>Intellij Ideaが使用するJVMの設定。</p>
+<p>Help -&gt; Edit Custom VM Options… を選択。</p>
+<h2 id="ヒープサイズ">ヒープサイズ</h2>
+<p>以下設定を追加する。</p>
+<pre><code>-Xms2048m
+-Xmx2048m
+</code></pre>
             </div>
             <!-- コメント機能は別途追加する -->
             <!-- {% if page.comments %} -->

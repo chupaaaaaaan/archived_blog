@@ -89,7 +89,7 @@
         <div class="col-md-9">
           <div class="article">
             <div class="well main">
-              <h1>GitBash（MSYS2）でsshしたときの文字化けを解消する</h1>
+              <h1>Haskell Language ServerでHLintによる自動修正が効かない時の応急処置</h1>
             <!-- コメント機能は別途追加する -->
             <!-- {% if site.comments and page.comments %} -->
             <!--     {% if site.disqus != '' %} -->
@@ -99,38 +99,67 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <p>タイトルまんまです。</p>
-<p>やんごとなき理由により、Linuxサーバ（RHEL7）でとあるユーザの文字エンコーディングをUTF-8からEUC-JPに変更する必要があった。<br />
-ちゃんと <code>ja_JP.eucjp</code> もインストールされていたので、対象ユーザの <code>~/.bash_profile</code> に以下を設定すれば良い。</p>
-<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>$ <span class="fu">cat</span> ~/.bash_profile <span class="kw">|</span> <span class="fu">grep</span> LANG</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
-<p>設定されているかの確認は以下（ <code>source</code> するか、再ログインしてから確認する） 。</p>
-<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>$ <span class="fu">env</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^LANG=&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
-<p>これでちゃんと日本語が表示されるはずなのだが、GitBashでsshして接続すると、何故か文字化けしてしまう。</p>
+            <p>私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。<br />
+HLSは、平たく言えばエディタにHaskellのIDEを提供するバックエンドである。<br />
+そのIDEとしての機能の一つに、HLintで検出された修正候補をソースコードに適用させる、というものがある。<br />
+（lsp-modeを特にカスタマイズせず使っていれば、修正候補にカーソルを合わせた上で <code>s-l a a</code> のキーバインドでコードアクションから実行できる）</p>
+<p>ところが、本記事執筆時点では、以下のようなメッセージが出て実行に失敗する。</p>
+<pre class="example"><code>LSP :: Please open an issue in lsp-mode for implementing `53796:hlint:applyAll'.
+</code></pre>
+<p>今回は、上記に対応し、修正候補の適用ができるようにする手順をメモしておく。<br />
+ただし、後にも述べるが、上記のメッセージはHLSの不具合に起因しているっぽい。<br />
+そのため、ゆくゆくbugfixが行われたら必要なくなるかもしれない。</p>
+<p>以下、今回の環境。なお、Elispパッケージは最新化してある。</p>
+<pre class="shell"><code>$ uname -a
+Darwin tsukihigai.local 20.2.0 Darwin Kernel Version 20.2.0: Wed Dec  2 20:39:59 PST 2020; root:xnu-7195.60.75~1/RELEASE_X86_64 x86_64
+
+$ ghcup --version
+The GHCup Haskell installer, version v0.1.12
+
+$ ghc --version
+The Glorious Glasgow Haskell Compilation System, version 8.8.4
+
+$ haskell-language-server-wrapper --version
+haskell-language-server version: 0.7.1.0 (GHC: 8.10.1) (PATH: /Users/t-uchida/.ghcup/bin/haskell-language-server-wrapper-0.7.1) (GIT hash: e4f677e1780fe85a02b99a09404a0a3c3ab5ce7c)
+
+$ emacs --version
+GNU Emacs 27.1
+Copyright (C) 2020 Free Software Foundation, Inc.
+GNU Emacs comes with ABSOLUTELY NO WARRANTY.
+You may redistribute copies of GNU Emacs
+under the terms of the GNU General Public License.
+For more information about these matters, see the file named COPYING.
+</code></pre>
 <p><!--more--></p>
-<h2 id="原因">原因</h2>
-<p>まんまこれと同じでした。</p>
-<ul>
-<li><a href="https://ja.stackoverflow.com/questions/55304/msys2-%25E3%2581%25AE-ssh-%25E3%2581%25A7euc-jp%25E7%2592%25B0%25E5%25A2%2583%25E3%2581%25AB%25E3%2583%25AA%25E3%2583%25A2%25E3%2583%25BC%25E3%2583%2588%25E6%258E%25A5%25E7%25B6%259A%25E3%2581%2597%25E3%2581%259F%25E5%25A0%25B4%25E5%2590%2588%25E3%2581%25AB%25E6%2596%2587%25E5%25AD%2597%25E5%258C%2596%25E3%2581%2591%25E3%2582%2592%25E5%259B%259E%25E9%2581%25BF%25E3%2581%2599%25E3%2582%258B%25E6%2596%25B9%25E6%25B3%2595">msys2 の ssh でeuc-jp環境にリモート接続した場合に文字化けを回避する方法</a></li>
-</ul>
-<p>GitBash（Git for Windowsに同梱されているシェル環境）は<a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#git-for-windows">MSYS2ベース</a>なので、同じ現象に該当すると思われる。<br />
-状況としては、サーバからEUC-JPエンコーディングのバイナリが送られているが、クライアント側で別のエンコーディングのデータとして解釈されており、結果として文字化けが発生しているようだ。</p>
-<h2 id="解決">解決</h2>
-<p>同じページの回答にある、 <code>luit</code> というツールを導入することで解消した。このツールは、プロセスの間に立って受け取るデータのエンコーディングをいい感じに変換してくれるみたい。<br />
-<code>luit.exe</code> のバイナリをパスの通ったディレクトリに起き、以下を実行すれば文字化けなく表示される。</p>
-<div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">luit.exe</span> -encoding eucjp -- ssh <span class="va">${SERVERNAME}</span></span></code></pre></div>
-<p>毎回これをするのはめんどいが、そんなに実行する機会もないはずなので、一旦はこれでOK。<br />
-（当初はサーバ側の問題と勘違いし、設定方法を確認したり<a href="https://qiita.com/qiitamatumoto/items/efffc0ef6e6249533201">このあたり</a>やってみたりで半日くらい時間を溶かしてしまったのは秘密。）</p>
-<h3 id="ちなみに">ちなみに</h3>
-<p>同様にクライアントが受け取る文字エンコーディングをいい感じに変換してくれるツールとして、 <a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904#cocot">cocot</a>というのもある。<br />
-最初自分もこちらを試してみたが、うまく動かせなかった（多分使い方が間違ってる）。</p>
-<h2 id="補記">補記</h2>
-<p>Windowsで使えるシェル環境ってあんまり知らなかったけど、調べている中で面白い記事を発見した。</p>
-<ul>
-<li><a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904">Windowsで使えるターミナルとシェルのまとめ</a></li>
-</ul>
-<p>結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）しか使ってないけど、ちょっと他のも使ってみようかな。</p>
+<h1 id="直接の原因">直接の原因</h1>
+<p>まず、上記のエラーメッセージだけではよくわからないので、 <code>*lsp-haskell::stderr*</code> バッファを見てみる。すると、以下のようなメッセージが出力されている。</p>
+<pre><code>/Users/runner/.ghcup/ghc/8.8.4/lib/ghc-8.8.4/settings: openFile: does not exist (No such file or directory)
+</code></pre>
+<p>ちなみに、試しに Ubuntu (focal) で試してみたところ、以下のようになった。</p>
+<pre><code>/opt/ghc/8.8.4/lib/ghc-8.8.4/settings: openFile: does not exist (No such file or directory)
+</code></pre>
+<p>何やら見たことがないユーザのファイルを参照しようとして、そのせいで落ちているように見える。<br />
+そのため、上記のファイルを作ってみる。<br />
+なお、 <code>~/.ghcup/ghc/8.8.4/lib/ghc-8.8.4/settings</code> 自体は存在するので、ディレクトリを掘ってシンボリックリンクを置く。</p>
+<p>（ <code>settings</code> 以外にも、当該ディレクトリ配下のファイルが色々ない、と言われるので、まとめて <code>~/.ghcup/ghc</code> のシンボリックリンクを作っても良い）</p>
+<pre class="shell"><code>sudo mkdir /Users/runner/.ghcup
+sudo ln -s /Users/chupaaaaaaan/.ghcup/ghc /Users/runner/.ghcup/ghc
+</code></pre>
+<p>ファイルを作成したら、HLSのセッションを再起動する（しなくても良い）。<br />
+すると、今度はちゃんと修正候補の適用が効くようになっている。</p>
+<h1 id="エラーについて">エラーについて</h1>
+<p>上記のエラーについては、以下で言及されている。</p>
+<p><a href="https://github.com/haskell/haskell-language-server/issues/412">Formatting with Brittany does nothing</a><br />
+<a href="https://github.com/haskell/haskell-language-server/issues/591">hlint seeking unavailable file /opt/ghc/8.8.4/lib/ghc-8.8.4/settings</a></p>
+<p>どうやら、HLSのビルド用設定がハードコードされているから・・・っぽい。<br />
+現状まだissueはオープンであり、とりあえずの解決策として、シンボリックリンクを作るとうまくいった、という報告がある。<br />
+ゆくゆく修正されたら、本記事の対応は不要になる・・・はず。</p>
+<h1 id="終わりに">終わりに</h1>
+<p>ちょっと前に、Haskell用のLanguage ServerをHIEからHLSに乗り換えたが、<br />
+導入もととても簡単になっていたり、HIEより安定して稼働している感じがしており、とても使い心地が良い。<br />
+HLS自体は最近できたばかりだが、機能追加も活発で、Haskellの開発環境がどんどんいいものになっていっている。<br />
+自分はHaskellコミュニティにあまりコントリビュート出来ていなくて心苦しいが、<br />
+コミュニティからの恩恵を受けつつ、自分も何か還元していきたいなぁ、と思う今日このごろです。</p>
             </div>
             <!-- コメント機能は別途追加する -->
             <!-- {% if page.comments %} -->
