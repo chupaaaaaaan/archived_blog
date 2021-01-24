@@ -20,42 +20,45 @@ tags: Java, Intellij
   - 設定画面 ::  ~Ctrl + Alt + s~ 
   - プロジェクト設定画面 ::  ~Ctrl + Alt + Shift + S~
 
-
 ** 自分で追加したもの
    - Commit (In Main Menu | Git) ::  ~Ctrl + Shift + J~
 
-
 * プラグイン
 
-  設定画面左上の検索画面で「plugin」と入力すると、プラグイン一覧が出てくるので、必要なものをインストールする。
+  設定画面左上の検索欄で「 ~plugin~ 」と入力するとプラグイン一覧が出てくるので、必要なものをインストールする。
 
-** 日本語化
-   - Japanese Language Pack
+** Japanese Language Pack
+   - 日本語化用
    - そんなに使用しなくてもいいかも（英語のほうが情報多いので）
 
-** キーバインド補助
-   - Key Promoter X
+** Key Promoter X
    - キーバインドで実行できる操作をマウスでやっちゃうと、対応するキーバインドを教えてくれる
    - キーバインドが登録されていない操作をすると、キーバインド登録の提案をしてくれる
 
-** Emacsキーバインド
-   - Emacs+ Patched
+** Emacs+ Patched
+   - Emacsキーバインドの設定
    - https://qiita.com/crossroad0201/items/eecc87dd1c0258148167 あたりを参考に。
-
 
 * JVM設定
 
-  https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26
-  より。
-
+  https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26 より。
   Intellij Ideaが使用するJVMの設定。
 
-  Help -> Edit Custom VM Options... を選択。
+  ~Help~ → ~Edit Custom VM Options...~ を選択。
 
 ** ヒープサイズ
-   以下設定を追加する。
+   ヒープサイズが、デフォルトでは700MBと少し心許ないため、以下設定を追加する。
 
    #+BEGIN_SRC 
    -Xms2048m
    -Xmx2048m
    #+END_SRC
+
+* Mavenプロジェクトの設定
+
+** Importing
+   ソースコードやドキュメントは、自動的にダウンロードするようにする。
+
+   設定画面から「 ~Build, Extension, Deployment~ → ~Build Tools~ → ~Maven~ → ~Importing~ 」を選択し
+   （もしくは、設定画面左上の検索欄で「 ~Importing~ 」と入力し）、「 ~Automatically download~ 」の
+   チェックボックスをすべてチェックしておく（ ~Sources~ 、 ~Documentation~ 、 ~Annotations~ ）。
