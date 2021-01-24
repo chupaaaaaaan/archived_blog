@@ -37,21 +37,27 @@ body {
     margin: 0;
 }
 
-.main h1 {
+.main div.posttitle {
     color: #ee4444;
     font-size: 2em;
 }
 
+.main h1 {
+    color: #ee4444;
+    font-size: 1.6em;
+    border-bottom: solid 2px #dddddd;
+}
+
 .main h2 {
     color: #ee4444;
-    font-size: 1.5em;
-    border-bottom: solid 2px #dddddd;
+    font-size: 1.4em;
+    border-bottom: solid 1px #dddddd;
 }
 
 .main h3 {
     color: #ee4444;
     font-size: 1.2em;
-    border-bottom: solid 1px #dddddd;
+    font-style: italic;
 }
 
 .main p {
