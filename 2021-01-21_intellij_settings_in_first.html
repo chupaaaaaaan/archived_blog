@@ -121,37 +121,40 @@
 </dd>
 </dl>
 <h1 id="プラグイン">プラグイン</h1>
-<p>設定画面左上の検索画面で「plugin」と入力すると、プラグイン一覧が出てくるので、必要なものをインストールする。</p>
-<h2 id="日本語化">日本語化</h2>
+<p>設定画面左上の検索欄で「 <code>plugin</code> 」と入力するとプラグイン一覧が出てくるので、必要なものをインストールする。</p>
+<h2 id="japanese-language-pack">Japanese Language Pack</h2>
 <ul>
-<li>Japanese Language Pack<br />
+<li>日本語化用<br />
 </li>
 <li>そんなに使用しなくてもいいかも（英語のほうが情報多いので）</li>
 </ul>
-<h2 id="キーバインド補助">キーバインド補助</h2>
+<h2 id="key-promoter-x">Key Promoter X</h2>
 <ul>
-<li>Key Promoter X<br />
-</li>
 <li>キーバインドで実行できる操作をマウスでやっちゃうと、対応するキーバインドを教えてくれる<br />
 </li>
 <li>キーバインドが登録されていない操作をすると、キーバインド登録の提案をしてくれる</li>
 </ul>
-<h2 id="emacsキーバインド">Emacsキーバインド</h2>
+<h2 id="emacs-patched">Emacs+ Patched</h2>
 <ul>
-<li>Emacs+ Patched<br />
+<li>Emacsキーバインドの設定<br />
 </li>
 <li><a href="https://qiita.com/crossroad0201/items/eecc87dd1c0258148167">https://qiita.com/crossroad0201/items/eecc87dd1c0258148167</a> あたりを参考に。</li>
 </ul>
 <h1 id="jvm設定">JVM設定</h1>
-<p><a href="https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26">https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26</a><br />
-より。</p>
-<p>Intellij Ideaが使用するJVMの設定。</p>
-<p>Help -&gt; Edit Custom VM Options… を選択。</p>
+<p><a href="https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26">https://qiita.com/kazuki43zoo/items/49c90e5f05397c694d26</a> より。<br />
+Intellij Ideaが使用するJVMの設定。</p>
+<p><code>Help</code> → <code>Edit Custom VM Options...</code> を選択。</p>
 <h2 id="ヒープサイズ">ヒープサイズ</h2>
-<p>以下設定を追加する。</p>
+<p>ヒープサイズが、デフォルトでは700MBと少し心許ないため、以下設定を追加する。</p>
 <pre><code>-Xms2048m
 -Xmx2048m
 </code></pre>
+<h1 id="mavenプロジェクトの設定">Mavenプロジェクトの設定</h1>
+<h2 id="importing">Importing</h2>
+<p>ソースコードやドキュメントは、自動的にダウンロードするようにする。</p>
+<p>設定画面から「 <code>Build, Extension, Deployment</code> → <code>Build Tools</code> → <code>Maven</code> → <code>Importing</code> 」を選択し<br />
+（もしくは、設定画面左上の検索欄で「 <code>Importing</code> 」と入力し）、「 <code>Automatically download</code> 」の<br />
+チェックボックスをすべてチェックしておく（ <code>Sources</code> 、 <code>Documentation</code> 、 <code>Annotations</code> ）。</p>
             </div>
             <!-- コメント機能は別途追加する -->
             <!-- {% if page.comments %} -->
