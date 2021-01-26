@@ -21,11 +21,14 @@ tags: Java, Intellij
   - ~Ctrl + Alt + Shift + S~  :: プロジェクト設定画面
   - ~Ctrl + Shift + Enter~  :: Complete Current Statement
   - ~Alt + Enter~  :: Show Context Action
+  - ~Alt + Insert~  :: Generate... / New...
 
   - ~Alt + .~  :: Go To Declaration or Usages
   - ~Ctrl + U, Alt + .~  :: Go To Implementation(s)
   - ~Ctrl + Shift + B~  :: Type Declaration
   - ~Ctrl + Shift + T~  :: Test
+
+  - ~Ctrl + F5~  :: Rerun
 
 ** 自分で追加したもの
    - ~Ctrl + Shift + J~  :: Commit (In Main Menu | Git)
