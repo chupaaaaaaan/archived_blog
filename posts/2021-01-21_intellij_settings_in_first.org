@@ -31,8 +31,8 @@ tags: Java, Intellij
   - ~Ctrl + F5~  :: Rerun
 
 ** 自分で追加したもの
-   - ~Ctrl + G~  :: Escape
-     - Emacs+ Patchedでは keyboard-quit に割り当てられているが、うまく働かないので変更。
+   # - ~Ctrl + G~  :: Escape
+   #   - Emacs+ Patchedでは keyboard-quit に割り当てられているが、うまく働かないので変更。
    - ~Ctrl + W~  :: Kill Selected Region (Editor Actions)
      - Emacs+ Patchedでは kill-region に割り当てられているが、うまく働かないので変更。
    - ~Ctrl + H~  :: BackSpace
