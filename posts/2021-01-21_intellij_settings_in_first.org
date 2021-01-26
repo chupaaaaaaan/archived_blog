@@ -1,7 +1,7 @@
 ---
 title: Intellij Ideaの設定ことはじめ
 published: 2021-01-22 17:10:24
-updated: 
+updated: 2021-01-26 22:54:14
 tags: Java, Intellij
 ---
 #+OPTIONS: ^:{}
@@ -17,11 +17,23 @@ tags: Java, Intellij
 * キーバインド
 
 ** きほん
-  - 設定画面 ::  ~Ctrl + Alt + s~ 
-  - プロジェクト設定画面 ::  ~Ctrl + Alt + Shift + S~
+  - ~Ctrl + Alt + s~  :: 設定画面
+  - ~Ctrl + Alt + Shift + S~  :: プロジェクト設定画面
+  - ~Ctrl + Shift + Enter~  :: Complete Current Statement
+  - ~Alt + Enter~  :: Show Context Action
+
+  - ~Alt + .~  :: Go To Declaration or Usages
+  - ~Ctrl + U, Alt + .~  :: Go To Implementation(s)
+  - ~Ctrl + Shift + B~  :: Type Declaration
+  - ~Ctrl + Shift + T~  :: Test
 
 ** 自分で追加したもの
-   - Commit (In Main Menu | Git) ::  ~Ctrl + Shift + J~
+   - ~Ctrl + Shift + J~  :: Commit (In Main Menu | Git)
+   - ~Ctrl + W~  :: Kill Selected Region (Editor Actions)
+     - Emacs+ Patchedでは kill-region に割り当てられているが、うまく働かないので変更。
+   - ~Ctrl + H~  :: BackSpace
+   - ~Ctrl + X, B~  :: Switcher
+     - Emacs+ Patchedでは switch-to-buffer に割り当てられているが、うまく働かないので変更。
 
 * プラグイン
 
