@@ -32,8 +32,10 @@ tags: Java, Intellij
    - ~Ctrl + W~  :: Kill Selected Region (Editor Actions)
      - Emacs+ Patchedでは kill-region に割り当てられているが、うまく働かないので変更。
    - ~Ctrl + H~  :: BackSpace
+     - Hierarchy に割り当てられているのを変更。
    - ~Ctrl + X, B~  :: Switcher
      - Emacs+ Patchedでは switch-to-buffer に割り当てられているが、うまく働かないので変更。
+   - ~Alt + F11~  :: Maven
 
 * プラグイン
 
