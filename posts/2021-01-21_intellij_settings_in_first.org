@@ -40,7 +40,7 @@ tags: Java, Intellij
    - ~Ctrl + X, B~  :: Switcher
      - Emacs+ Patchedでは switch-to-buffer に割り当てられているが、うまく働かないので変更。
    - ~Alt + F11~  :: Maven
-   - ~Ctrl + Shift + J~  :: Commit (In Main Menu | Git)
+   - ~Ctrl + Shift + J~  :: Commit... (In Main Menu | Git)
 
 * プラグイン
 
