@@ -126,7 +126,9 @@
         <!-- {% endif %} -->
         <div class="content">
           
-            <p>私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。<br />
+            <p><strong><strong>2021-01-29 追記</strong></strong><br />
+<strong><strong>該当不具合のIssueはクローズしています。そのため、以下の記事の内容は実施する必要がなくなりました。</strong></strong></p>
+<p>私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。<br />
 HLSは、平たく言えばエディタにHaskellのIDEを提供するバックエンドである。<br />
 そのIDEとしての機能の一つに、HLintで検出された修正候補をソースコードに適用させる、というものがある。<br />
 （lsp-modeを特にカスタマイズせず使っていれば、修正候補にカーソルを合わせた上で <code>s-l a a</code> のキーバインドでコードアクションから実行できる）</p>
@@ -136,27 +138,6 @@ HLSは、平たく言えばエディタにHaskellのIDEを提供するバック�
 <p>今回は、上記に対応し、修正候補の適用ができるようにする手順をメモしておく。<br />
 ただし、後にも述べるが、上記のメッセージはHLSの不具合に起因しているっぽい。<br />
 そのため、ゆくゆくbugfixが行われたら必要なくなるかもしれない。</p>
-<p>以下、今回の環境。なお、Elispパッケージは最新化してある。</p>
-<pre class="shell"><code>$ uname -a
-Darwin tsukihigai.local 20.2.0 Darwin Kernel Version 20.2.0: Wed Dec  2 20:39:59 PST 2020; root:xnu-7195.60.75~1/RELEASE_X86_64 x86_64
-
-$ ghcup --version
-The GHCup Haskell installer, version v0.1.12
-
-$ ghc --version
-The Glorious Glasgow Haskell Compilation System, version 8.8.4
-
-$ haskell-language-server-wrapper --version
-haskell-language-server version: 0.7.1.0 (GHC: 8.10.1) (PATH: /Users/t-uchida/.ghcup/bin/haskell-language-server-wrapper-0.7.1) (GIT hash: e4f677e1780fe85a02b99a09404a0a3c3ab5ce7c)
-
-$ emacs --version
-GNU Emacs 27.1
-Copyright (C) 2020 Free Software Foundation, Inc.
-GNU Emacs comes with ABSOLUTELY NO WARRANTY.
-You may redistribute copies of GNU Emacs
-under the terms of the GNU General Public License.
-For more information about these matters, see the file named COPYING.
-</code></pre>
 <p>
             <a href="./2021-01-02_hls-first-aid.html">続きを読む</a>
           

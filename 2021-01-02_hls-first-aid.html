@@ -100,7 +100,9 @@
             <!--     {% endif %} -->
             <!-- {% endif %} -->
             <div class="post-content">
-            <p>私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。<br />
+            <p><strong><strong>2021-01-29 追記</strong></strong><br />
+<strong><strong>該当不具合のIssueはクローズしています。そのため、以下の記事の内容は実施する必要がなくなりました。</strong></strong></p>
+<p>私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。<br />
 HLSは、平たく言えばエディタにHaskellのIDEを提供するバックエンドである。<br />
 そのIDEとしての機能の一つに、HLintで検出された修正候補をソースコードに適用させる、というものがある。<br />
 （lsp-modeを特にカスタマイズせず使っていれば、修正候補にカーソルを合わせた上で <code>s-l a a</code> のキーバインドでコードアクションから実行できる）</p>
@@ -110,7 +112,9 @@ HLSは、平たく言えばエディタにHaskellのIDEを提供するバック�
 <p>今回は、上記に対応し、修正候補の適用ができるようにする手順をメモしておく。<br />
 ただし、後にも述べるが、上記のメッセージはHLSの不具合に起因しているっぽい。<br />
 そのため、ゆくゆくbugfixが行われたら必要なくなるかもしれない。</p>
-<p>以下、今回の環境。なお、Elispパッケージは最新化してある。</p>
+<p><!--more--></p>
+<h1 id="今回の環境">今回の環境</h1>
+<p>Elispパッケージは最新化済み。</p>
 <pre class="shell"><code>$ uname -a
 Darwin tsukihigai.local 20.2.0 Darwin Kernel Version 20.2.0: Wed Dec  2 20:39:59 PST 2020; root:xnu-7195.60.75~1/RELEASE_X86_64 x86_64
 
@@ -131,7 +135,6 @@ You may redistribute copies of GNU Emacs
 under the terms of the GNU General Public License.
 For more information about these matters, see the file named COPYING.
 </code></pre>
-<p><!--more--></p>
 <h1 id="直接の原因">直接の原因</h1>
 <p>まず、上記のエラーメッセージだけではよくわからないので、 <code>*lsp-haskell::stderr*</code> バッファを見てみる。すると、以下のようなメッセージが出力されている。</p>
 <pre><code>/Users/runner/.ghcup/ghc/8.8.4/lib/ghc-8.8.4/settings: openFile: does not exist (No such file or directory)
