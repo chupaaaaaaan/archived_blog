@@ -1,11 +1,14 @@
 ---
 title: Haskell Language ServerでHLintによる自動修正が効かない時の応急処置
 published: 2021-01-10 10:39:35
-updated: 
+updated: 2021-01-29 19:15:04
 tags: haskell
 ---
 #+OPTIONS: ^:{}
 #+OPTIONS: \n:t
+
+  **2021-01-29 追記**
+  **該当不具合のIssueはクローズしています。そのため、以下の記事の内容は実施する必要がなくなりました。**
 
 
 私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。
@@ -23,8 +26,11 @@ LSP :: Please open an issue in lsp-mode for implementing `53796:hlint:applyAll'.
 ただし、後にも述べるが、上記のメッセージはHLSの不具合に起因しているっぽい。
 そのため、ゆくゆくbugfixが行われたら必要なくなるかもしれない。
 
+@@html:<!--more-->@@
 
-以下、今回の環境。なお、Elispパッケージは最新化してある。
+* 今回の環境
+
+Elispパッケージは最新化済み。
 
 #+begin_src shell
 $ uname -a
@@ -48,7 +54,6 @@ under the terms of the GNU General Public License.
 For more information about these matters, see the file named COPYING.
 #+end_src
 
-@@html:<!--more-->@@
 
 * 直接の原因
 
