@@ -104,7 +104,22 @@
 なので、メモっておこうと。</p>
 <p>設定を変更したら、随時更新する。</p>
 <p><!--more--></p>
-<h1 id="キーバインド">キーバインド</h1>
+<h1 id="設定の共有">設定の共有</h1>
+<p><a href="https://pleiades.io/help/idea/sharing-your-ide-settings.html">https://pleiades.io/help/idea/sharing-your-ide-settings.html</a></p>
+<p>複数の端末にインストールしたIntellij Ideaの設定を共有できる。<br />
+共有の方法には以下の方法がある。</p>
+<ol>
+<li>Settings Sync による同期 (Ultimateのみ)<br />
+</li>
+<li>Settings Repository による同期<br />
+</li>
+<li>設定のエクスポート/インポート による同期</li>
+</ol>
+<p>Ultimateを購入すると1の方法が使えるが、異なるOS間ではキーマップが同期されないようなので、2の方法で実施する。<br />
+参考: <a href="https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000784770-IDE-Settings-Sync-not-synchronizing-keymap">https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000784770-IDE-Settings-Sync-not-synchronizing-keymap</a></p>
+<p>Settings Sync を無効にした上で、 <code>File</code> → <code>Manage IDE Settings</code> → <code>Settings Repository</code> より設定する。</p>
+<p>Build Settingなどは同期されないみたいなので、いくつかはマシンごとにポチポチする必要がありそう。</p>
+<h1 id="キーマップ">キーマップ</h1>
 <h2 id="きほん">きほん</h2>
 <dl>
 <dt><code>Ctrl + Alt + s</code></dt>
@@ -173,7 +188,11 @@
 
 </dd>
 <dt><code>Ctrl + Shift + J</code></dt>
-<dd><p>Commit… (In Main Menu | Git)</p>
+<dd>Commit… (In Main Menu | Git)<br />
+
+</dd>
+<dt><code>Ctrl + Alt + L</code></dt>
+<dd><p>Reformat Code (In Main Menu | Git)</p>
 </dd>
 </dl>
 <h1 id="プラグイン">プラグイン</h1>
@@ -192,7 +211,7 @@
 </ul>
 <h2 id="emacs-patched">Emacs+ Patched</h2>
 <ul>
-<li>Emacsキーバインドの設定<br />
+<li>Emacsキーマップの設定<br />
 </li>
 <li><a href="https://qiita.com/crossroad0201/items/eecc87dd1c0258148167">https://qiita.com/crossroad0201/items/eecc87dd1c0258148167</a> あたりを参考に。</li>
 </ul>
