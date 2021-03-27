@@ -1,7 +1,7 @@
 ---
 title: Intellij Ideaの設定ことはじめ
 published: 2021-01-22 17:10:24
-updated: 2021-03-27 16:17:09
+updated: 2021-03-27 23:17:35
 tags: Java, Intellij
 ---
 #+OPTIONS: ^:{}
@@ -11,6 +11,7 @@ tags: Java, Intellij
 なので、メモっておこうと。
 
 設定を変更したら、随時更新する。
+特に、僕はプライベートと仕事で異なるOSを使っており、キーマップが同期されないので、忘れないようにここにメモしておく（悲しい・・・）。
 
 @@html:<!--more-->@@
 
@@ -26,12 +27,14 @@ tags: Java, Intellij
   3. 設定のエクスポート/インポート による同期
 
 
-  Ultimateを購入すると1の方法が使えるが、異なるOS間ではキーマップが同期されないようなので、2の方法で実施する。
-  参考: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000784770-IDE-Settings-Sync-not-synchronizing-keymap
+  +Ultimateを購入すると1の方法が使えるが、異なるOS間ではキーマップが同期されないようなので、2の方法で実施する。+
+  +参考: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000784770-IDE-Settings-Sync-not-synchronizing-keymap+
 
-  Settings Sync を無効にした上で、 ~File~ → ~Manage IDE Settings~ → ~Settings Repository~ より設定する。
+  +Settings Sync を無効にした上で、 ~File~ → ~Manage IDE Settings~ → ~Settings Repository~ より設定する。+
 
-  Build Settingなどは同期されないみたいなので、いくつかはマシンごとにポチポチする必要がありそう。
+  +Build Settingなどは同期されないみたいなので、いくつかはマシンごとにポチポチする必要がありそう。+
+
+  2でも、結局のところ異なるOS間ではキーマップは同期されないので、1で同期する。
 
 * キーマップ
 
@@ -60,7 +63,7 @@ tags: Java, Intellij
      - Emacs+ Patchedでは switch-to-buffer に割り当てられているが、うまく働かないので変更。
    - ~Alt + F11~  :: Maven
    - ~Ctrl + Shift + J~  :: Commit... (In Main Menu | Git)
-   - ~Ctrl + Alt + L~  :: Reformat Code (In Main Menu | Git)
+   - ~Ctrl + Alt + L~  :: Reformat Code
 
 * プラグイン
 
