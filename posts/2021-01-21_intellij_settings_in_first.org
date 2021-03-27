@@ -28,7 +28,7 @@ tags: Java, Intellij
 
 
   +Ultimateを購入すると1の方法が使えるが、異なるOS間ではキーマップが同期されないようなので、2の方法で実施する。+
-  +参考: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000784770-IDE-Settings-Sync-not-synchronizing-keymap+
+  +参考: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000784770-IDE-Settings-Sync-not-synchronizing-keymap　+
 
   +Settings Sync を無効にした上で、 ~File~ → ~Manage IDE Settings~ → ~Settings Repository~ より設定する。+
 
