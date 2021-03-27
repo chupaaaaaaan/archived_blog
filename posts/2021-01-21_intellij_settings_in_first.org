@@ -1,7 +1,7 @@
 ---
 title: Intellij Ideaの設定ことはじめ
 published: 2021-01-22 17:10:24
-updated: 2021-01-26 22:54:14
+updated: 2021-03-27 16:17:09
 tags: Java, Intellij
 ---
 #+OPTIONS: ^:{}
@@ -33,7 +33,6 @@ tags: Java, Intellij
 
   Build Settingなどは同期されないみたいなので、いくつかはマシンごとにポチポチする必要がありそう。
 
-
 * キーマップ
 
 ** きほん
@@ -61,6 +60,7 @@ tags: Java, Intellij
      - Emacs+ Patchedでは switch-to-buffer に割り当てられているが、うまく働かないので変更。
    - ~Alt + F11~  :: Maven
    - ~Ctrl + Shift + J~  :: Commit... (In Main Menu | Git)
+   - ~Ctrl + Alt + L~  :: Reformat Code (In Main Menu | Git)
 
 * プラグイン
 
