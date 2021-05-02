@@ -2,9 +2,9 @@
 
 set -eu
 
-git checkout source
-
 git stash
+
+git checkout source
 
 UNTRACKED_LIST=$(git status -s | grep "^?? posts/" | cut -d' ' -f2)
 
