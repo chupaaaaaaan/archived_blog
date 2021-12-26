@@ -1,0 +1,54 @@
+---
+title: 
+published: 
+updated: 
+tags: 
+---
+#+OPTIONS: ^:{}
+#+OPTIONS: \n:t
+
+以下を参考に、JUnit5を実行する環境を整えてみる。
+
+- https://junit.org/junit5/docs/snapshot/user-guide/index.html
+  - 5.8.0
+
+- https://oohira.github.io/junit5-doc-jp/user-guide/
+  - こちらは少し古い（5.3.0）
+
+@@html:<!--more-->@@
+
+** サンプルプロジェクトの作成
+
+   Maven Archetypeより、サンプルプロジェクトを作成する。
+
+   #+begin_src shell
+   mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false -DgroupId=tokyo.chupaaaaaaan -DartifactId=junit.exercise -Dversion=1.0-SNAPSHOT -Dpackage=tokyo.chupaaaaaaan
+   #+end_src
+
+   ~pom.xml~ に依存関係を記載する。今回選択したarchetypeには、最初から ~junit:junit:4.11~ の依存関係が記載されているが、これをJUnit5に変更する。
+   RCでない最新版は5.7.2。
+
+   #+begin_src xml
+   <dependencyManagement>
+     <dependencies>
+       <dependency>
+         <groupId>org.junit</groupId>
+         <artifactId>junit-bom</artifactId>
+         <version>5.7.2</version>
+         <type>pom</type>
+         <scope>import</scope>
+       </dependency>
+     </dependencies>
+   </dependencyManagement>
+
+   <dependencies>
+     <dependency>
+       <groupId>junit</groupId>
+       <artifactId>junit</artifactId>
+       <version>4.11</version>
+       <scope>test</scope>
+     </dependency>
+   </dependencies>
+   #+end_src
+
+
