@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>Haskell Language ServerでHLintによる自動修正が効かない時の応急処置</h1> -->
-              <div class="posttitle">Haskell Language ServerでHLintによる自動修正が効かない時の応急処置</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>Haskell Language ServerでHLintによる自動修正が効かない時の応急処置</h1> -->
+        <div class="posttitle">Haskell Language ServerでHLintによる自動修正が効かない時の応急処置</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p><strong><strong>2021-01-29 追記</strong></strong><br />
 <strong><strong>該当不具合のIssueはクローズしています。そのため、以下の記事の内容は実施する必要がなくなりました。</strong></strong></p>
 <p>私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。<br />
@@ -113,7 +112,7 @@ HLSは、平たく言えばエディタにHaskellのIDEを提供するバック�
 ただし、後にも述べるが、上記のメッセージはHLSの不具合に起因しているっぽい。<br />
 そのため、ゆくゆくbugfixが行われたら必要なくなるかもしれない。</p>
 <p><!--more--></p>
-<h1 id="今回の環境">今回の環境</h1>
+<h2 id="今回の環境">今回の環境</h2>
 <p>Elispパッケージは最新化済み。</p>
 <pre class="shell"><code>$ uname -a
 Darwin tsukihigai.local 20.2.0 Darwin Kernel Version 20.2.0: Wed Dec  2 20:39:59 PST 2020; root:xnu-7195.60.75~1/RELEASE_X86_64 x86_64
@@ -135,7 +134,7 @@ You may redistribute copies of GNU Emacs
 under the terms of the GNU General Public License.
 For more information about these matters, see the file named COPYING.
 </code></pre>
-<h1 id="直接の原因">直接の原因</h1>
+<h2 id="直接の原因">直接の原因</h2>
 <p>まず、上記のエラーメッセージだけではよくわからないので、 <code>*lsp-haskell::stderr*</code> バッファを見てみる。すると、以下のようなメッセージが出力されている。</p>
 <pre><code>/Users/runner/.ghcup/ghc/8.8.4/lib/ghc-8.8.4/settings: openFile: does not exist (No such file or directory)
 </code></pre>
@@ -151,62 +150,46 @@ sudo ln -s /Users/chupaaaaaaan/.ghcup/ghc /Users/runner/.ghcup/ghc
 </code></pre>
 <p>ファイルを作成したら、HLSのセッションを再起動する（しなくても良い）。<br />
 すると、今度はちゃんと修正候補の適用が効くようになっている。</p>
-<h1 id="エラーについて">エラーについて</h1>
+<h2 id="エラーについて">エラーについて</h2>
 <p>上記のエラーについては、以下で言及されている。</p>
 <p><a href="https://github.com/haskell/haskell-language-server/issues/412">Formatting with Brittany does nothing</a><br />
 <a href="https://github.com/haskell/haskell-language-server/issues/591">hlint seeking unavailable file /opt/ghc/8.8.4/lib/ghc-8.8.4/settings</a></p>
 <p>どうやら、HLSのビルド用設定がハードコードされているから・・・っぽい。<br />
 現状まだissueはオープンであり、とりあえずの解決策として、シンボリックリンクを作るとうまくいった、という報告がある。<br />
 ゆくゆく修正されたら、本記事の対応は不要になる・・・はず。</p>
-<h1 id="終わりに">終わりに</h1>
+<h2 id="終わりに">終わりに</h2>
 <p>ちょっと前に、Haskell用のLanguage ServerをHIEからHLSに乗り換えたが、<br />
 導入もととても簡単になっていたり、HIEより安定して稼働している感じがしており、とても使い心地が良い。<br />
 HLS自体は最近できたばかりだが、機能追加も活発で、Haskellの開発環境がどんどんいいものになっていっている。<br />
 自分はHaskellコミュニティにあまりコントリビュート出来ていなくて心苦しいが、<br />
 コミュニティからの恩恵を受けつつ、自分も何か還元していきたいなぁ、と思う今日このごろです。</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

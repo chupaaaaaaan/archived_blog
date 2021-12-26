@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>ブログのテーマを変更した</h1> -->
-              <div class="posttitle">ブログのテーマを変更した</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>ブログのテーマを変更した</h1> -->
+        <div class="posttitle">ブログのテーマを変更した</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p>hakyllのデフォルトのブログテーマではちょっと味気なかったので、別のブログテーマに変更した。</p>
 <p>参考にしたのはこちら。</p>
 <ul>
@@ -119,17 +118,17 @@
 <p>画面を見ればわかる（デスクトップで最大化しないと見えないかも・・・）が、今回選んだテーマは、サイドバーに各記事のリンクが貼ってある（Recent Posts）。</p>
 <p>単純には、以下のように実装すれば良さそうである。<br />
 （ <code>gsubRoute</code> を使って、ルーティングを変更している。）</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>    route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>        recentPosts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll <span class="st">&quot;posts/*&quot;</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> recentPosts) <span class="ot">`mappend`</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>                postCtx <span class="ot">`mappend`</span> siteCtx</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>        pandocCompiler</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/post.html&quot;</span> postsCtx</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        recentPosts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll <span class="st">&quot;posts/*&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> recentPosts) <span class="ot">`mappend`</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                postCtx <span class="ot">`mappend`</span> siteCtx</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        pandocCompiler</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>          <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/post.html&quot;</span> postsCtx</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>          <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <p><code>compile</code> でやっていることを説明すると、</p>
 <ol>
 <li><code>posts/*</code> パターンにマッチするコンテンツを作成日時の降順で <code>recentPosts</code> として取得し、<br />
@@ -147,21 +146,21 @@
 取得のためにコンパイルし、その中でさらに取得し・・・とループしてしまう。</p>
 <p>この問題は、stackoverflowの記事（<a href="https://stackoverflow.com/questions/35645525/hakyll-says-dependency-cycle-detected">ここ</a>とか<a href="https://stackoverflow.com/questions/47067851/how-do-i-avoid-a-dependency-cycle-when-generating-a-list-of-recent-posts-on-post">ここ</a>とか）が参考になる。<br />
 ざっくり言えば、別バージョンのコンテンツを作成し、 <code>recentPosts</code> として取得するコンテンツはこちらのバージョンを使用する。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> version <span class="st">&quot;postContents&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  compile <span class="op">$</span> pandocCompiler <span class="op">&gt;&gt;=</span> relativizeUrls</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>    route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>        recentPosts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> recentPosts) <span class="ot">`mappend`</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>                postCtx <span class="ot">`mappend`</span> siteCtx</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>        pandocCompiler</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/post.html&quot;</span> postsCtx</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>          <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> version <span class="st">&quot;postContents&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  compile <span class="op">$</span> pandocCompiler <span class="op">&gt;&gt;=</span> relativizeUrls</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        recentPosts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> recentPosts) <span class="ot">`mappend`</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                postCtx <span class="ot">`mappend`</span> siteCtx</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        pandocCompiler</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>          <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/post.html&quot;</span> postsCtx</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>          <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <p>注意すべきポイントとしては、別バージョンのコンテンツを作成する際に <code>route</code> も正しく設定する必要がある。<br />
 <code>route</code> を省略してもコンパイルエラーにはならないが、 <code>recent_posts</code> として参照したコンテンツへのリンクが作成されない<br />
 （ <code>defaultContext</code> に格納される <code>$url$</code> が空になるっぽい）。</p>
@@ -188,19 +187,19 @@
 </ul></li>
 </ul>
 <p>最初、以下のように実装していた。</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>match (fromList [<span class="st">&quot;archive.html&quot;</span>, <span class="st">&quot;about.html&quot;</span>, <span class="st">&quot;index.html&quot;</span>, <span class="st">&quot;links.html&quot;</span>]) <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>    route idRoute</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll <span class="st">&quot;posts/*&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="ot">`mappend`</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>                listField <span class="st">&quot;posts&quot;</span> postCtx (<span class="fu">return</span> posts) <span class="ot">`mappend`</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>                siteCtx</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>        getResourceBody</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>match (fromList [<span class="st">&quot;archive.html&quot;</span>, <span class="st">&quot;about.html&quot;</span>, <span class="st">&quot;index.html&quot;</span>, <span class="st">&quot;links.html&quot;</span>]) <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll <span class="st">&quot;posts/*&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="ot">`mappend`</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                listField <span class="st">&quot;posts&quot;</span> postCtx (<span class="fu">return</span> posts) <span class="ot">`mappend`</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                siteCtx</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        getResourceBody</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <p>今回は循環参照にはならないので、 <code>posts &lt;- recentFirst =&lt;&lt; loadAll "posts/*"</code> のように書いてもコンパイルエラーにはならない。</p>
 <p>が、このように書いてしまうと、2つの問題が発生する。</p>
 <ol>
@@ -213,75 +212,59 @@
 つまり、バージョン指定なしでコンパイルしたコンテンツと、バージョンを明示したコンテンツのどちらにもマッチしてしまう。<br />
 これを防ぐためには、バージョン指定するか、明示的にバージョンが存在しないコンテンツにマッチするように書く必要がある。</p>
 <p>こんな感じ。</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasNoVersion)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasNoVersion)</span></code></pre></div>
 <p>ふたつめの問題は、 <code>posts/*</code> （のバージョンなし版）にマッチするコンテンツは、既にサイドバーも含めてコンパイル済みであることから来ている<br />
 （そのようなコンテンツをテンプレートに埋め込もうとするため、コンテンツがネストされてしまう）。<br />
 そのため、テンプレートを適用する前で止めたバージョンのコンテンツ（サイドバーやヘッダーがくっついていない）を取得し、<br />
 それを使用してコンパイル・テンプレート埋め込みを実施すればよい。</p>
 <p>今回で言えば、 <code>postContents</code> のバージョンがテンプレートを適用していないコンテンツであるため、そちらを取得すればよい。</p>
 <p>最終的には、こんな感じ（ <code>hasNoVersion</code> は使用しない）。</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>match (fromList [<span class="st">&quot;index.html&quot;</span>]) <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>    route idRoute</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="ot">`mappend`</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>                listField <span class="st">&quot;posts&quot;</span> postCtx (<span class="fu">return</span> posts) <span class="ot">`mappend`</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>                siteCtx</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>        getResourceBody</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>match (fromList [<span class="st">&quot;index.html&quot;</span>]) <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                listField <span class="st">&quot;recent_posts&quot;</span> postCtx (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="ot">`mappend`</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                listField <span class="st">&quot;posts&quot;</span> postCtx (<span class="fu">return</span> posts) <span class="ot">`mappend`</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                siteCtx</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        getResourceBody</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <h3 id="ちなみにその2">ちなみにその2</h3>
 <p>テンプレートを適用する前のコンテンツを取得する方法としては、別バージョンの記事を使用する代わりに<a href="https://jaspervdj.be/hakyll/tutorials/05-snapshots-feeds.html">スナップショットを利用する方法</a>もある。<br />
 こっちの方が、コンパイルを余計に実施しない分効率が良さそうだが、既に循環参照を解決するために別バージョンのコンテンツを作成しているので、<br />
 スナップショット方式は採用していない。</p>
 <h2 id="終わりに">終わりに</h2>
 <p>とりあえず見た目はなんとかなった。いじってみると、かなり自由度高くカスタマイズ出来そうなので、ちょこちょこ変えていこうかな。</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

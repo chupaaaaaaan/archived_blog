@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>ブログを始めた</h1> -->
-              <div class="posttitle">ブログを始めた</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>ブログを始めた</h1> -->
+        <div class="posttitle">ブログを始めた</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p>いろいろ思うところがあり、ブログを運用することにしました。</p>
 <p>もともと同名のブログをはてなブログで運営していたが（運営していたというほど記事をポストしていたわけではない）、<br />
 なんとなく愛着がわかないなー、と思っていた。</p>
@@ -125,9 +124,9 @@ Hakyllは内部でpandocを使っており、markdownやorgをhtmlに変換し�
 $ stack exec hakyll-init my_site
 </code></pre>
 <p>とするだけ。プロジェクトを作成したら、 <code>stack.yaml</code> を作っておく。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">resolver</span><span class="kw">:</span><span class="at"> lts-16.3</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="fu">packages</span><span class="kw">:</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">-</span><span class="at"> .</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resolver</span><span class="kw">:</span><span class="at"> lts-16.3</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">packages</span><span class="kw">:</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> .</span></span></code></pre></div>
 <p>プロジェクトを作成したばかりでも、 <code>stack build &amp;&amp; stack exec site build &amp;&amp; stack exec site watch</code> でサンプルサイトが立ち上がる<br />
 （http://localhost:8000 から見ることができる）。<br />
 出来上がった <code>site.hs</code> やhackageを見つつ、どんな処理してるのかを確認する。</p>
@@ -177,49 +176,33 @@ $ stack exec hakyll-init my_site
 メタ情報として <code>published: yyyy-mm-dd</code> とかくと、記事にタイムスタンプをつけることができる。<br />
 タイムスタンプは、 <code>recentFirst</code> で記事を並べ替えたり、テンプレート内で日付を表示したりといったことに使う。<br />
 （<a href="https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html">https://hackage.haskell.org/package/hakyll-4.13.4.0/docs/Hakyll-Web-Template-Context.html</a> の <code>dateField</code> あたりに書いてある）</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

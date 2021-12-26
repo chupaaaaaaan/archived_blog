@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</h1> -->
-              <div class="posttitle">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</h1> -->
+        <div class="posttitle">Webアプリケーションセキュリティ - クロスサイト・リクエストフォージェリ（CSRF）</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。<br />
 特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
 <p>この記事では、クロスサイト・リクエストフォージェリについて、概要と基本的な対策について記載する。</p>
@@ -243,49 +242,33 @@ POSTリクエストの <code>form-data</code> には、攻撃者が脆弱性の�
 そのため、何らかの方法で、実行が本人の意図通りであることを確認する必要がある。</p>
 <p>上でも書いたが、初学だとXSSとCSRFの違いがよくわからない・・・のだが、攻撃により実現したいことは全く異なるので、この観点で見ていくと、結構整理しやすいかもしれない。<br />
 また、XSSとは違って、ある程度インフラ・共通部品的なものでカバーできそうなので、そこはXSSより対策がしやすそうに思える。</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

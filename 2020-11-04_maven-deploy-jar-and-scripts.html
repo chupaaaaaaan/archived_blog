@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</h1> -->
-              <div class="posttitle">maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</h1> -->
+        <div class="posttitle">maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p>Mavenで、アーティファクトと実行用スクリプト等を含んだアーカイブを作成しようとしたとき、<br />
 真っ先に思いつくのがmaven-assembly-pluginを使用することだと思う。</p>
 <p>今回、 (展開するだけでデプロイできるように) 実行可能jarや実行用スクリプトをアーカイブしようとして、<br />
@@ -124,26 +123,26 @@
 <h2 id="プロジェクト構成">プロジェクト構成</h2>
 <p>今回は、 <code>maven-archetype-quickstart</code> アーキタイプを元に、以下のようなプロジェクト構成とした (テストは省略) 。<br />
 なお、依存関係が存在するjarでの確認をしたいため、実行時に必要な依存関係として、LogBackを追加している。</p>
-<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">assemblytest</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>├── <span class="ex">distribution.xml</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>├── <span class="ex">pom.xml</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>└── <span class="ex">src</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>    ├── <span class="ex">main</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>    │   └── <span class="ex">java</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>    │       └── <span class="ex">com</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>    │           └── <span class="ex">myapp</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>    │               └── <span class="ex">App.java</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>    ├── <span class="ex">shellscript</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>    │   ├── <span class="ex">bin</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a>    │   │   └── <span class="ex">test.sh</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>    │   ├── <span class="ex">conf</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>    │   │   └── <span class="ex">common.sh</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a>    │   └── <span class="ex">deploy.sh</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a>    └── <span class="bu">test</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a>        └── <span class="ex">java</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>            └── <span class="ex">com</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a>                └── <span class="ex">myapp</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>                    └── <span class="ex">AppTest.java</span></span></code></pre></div>
+<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">assemblytest</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> distribution.xml</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> pom.xml</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> src</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">├──</span> main</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span> └── java</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span>     └── com</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span>         └── myapp</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span>             └── App.java</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="ex">├──</span> shellscript</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span> ├── bin</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span> │   └── test.sh</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span> ├── conf</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span> │   └── common.sh</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ex">│  </span> └── deploy.sh</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="ex">└──</span> test</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="ex">└──</span> java</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            <span class="ex">└──</span> com</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                <span class="ex">└──</span> myapp</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                    <span class="ex">└──</span> AppTest.java</span></code></pre></div>
 <p>各ファイルの説明は以下の通り。</p>
 <ul>
 <li><p><code>distribution.xml</code> は、maven-assembly-pluginが使用する独自定義のアーカイブ設定。ファイル名は任意で、プラグイン設定に記載する。</p></li>
@@ -152,27 +151,27 @@
 </ul>
 <h2 id="実行可能jarを単体のjarとする場合のアーカイブ構成">実行可能jarを単体のjarとする場合のアーカイブ構成</h2>
 <p>最終的なアーカイブは、以下のような構成になっているようにする。</p>
-<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">deployment.tar.gz</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>├── <span class="ex">app</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>│   ├── <span class="ex">java</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>│   │   ├── <span class="ex">assemblytest.jar</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>│   │   └── <span class="ex">deplib</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>│   │       ├── <span class="ex">logback-classic-1.1.3.jar</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>│   │       ├── <span class="ex">logback-core-1.1.3.jar</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>│   │       └── <span class="ex">slf4j-api-1.7.7.jar</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>│   └── <span class="ex">script</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>│       ├── <span class="ex">bin</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>│       │   └── <span class="ex">test.sh</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>│       └── <span class="ex">conf</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>│           └── <span class="ex">common.sh</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>└── <span class="ex">deploy.sh</span></span></code></pre></div>
+<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">deployment.tar.gz</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> app</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> ├── java</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> │   ├── assemblytest.jar</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> │   └── deplib</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> │       ├── logback-classic-1.1.3.jar</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> │       ├── logback-core-1.1.3.jar</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> │       └── slf4j-api-1.7.7.jar</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> └── script</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span>     ├── bin</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span>     │   └── test.sh</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span>     └── conf</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span>         └── common.sh</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> deploy.sh</span></code></pre></div>
 <p>この構成とする場合の <code>pom.xml</code> 及び <code>distribution.xml</code> は以下。</p>
 <dl>
 <dt><code>pom.xml</code></dt>
 <dd><p><a href="https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml">https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-pom-xml</a></p>
 </dd>
 <dt><code>distribution.xml</code></dt>
-<dd><p><a href="https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml">https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml</a></p>
+<dd><a href="https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml">https://gist.github.com/chupaaaaaaan/0a3cab43fb2148af696eb8178b89509d#file-distribution-xml</a>
 </dd>
 </dl>
 <h3 id="pom.xml"><code>pom.xml</code></h3>
@@ -268,23 +267,23 @@
 こちらでも依存関係のディレクトリが実行可能jarから見て <code>deplib</code> になるよう、 <code>outputDirectory</code> を設定する必要がある。</p>
 <h2 id="実行可能jarをuber-jarとする場合のアーカイブ構成-maven-assembly-plugin使用">実行可能jarをuber-jarとする場合のアーカイブ構成 (maven-assembly-plugin使用)</h2>
 <p>最終的なアーカイブは、以下のような構成になっているようにする。</p>
-<div class="sourceCode" id="cb5" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">deployment/</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>├── <span class="ex">app</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>│   ├── <span class="ex">java</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>│   │   └── <span class="ex">assemblytest.jar</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>│   └── <span class="ex">script</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>│       ├── <span class="ex">bin</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a>│       │   └── <span class="ex">test.sh</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a>│       └── <span class="ex">conf</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a>│           └── <span class="ex">common.sh</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>└── <span class="ex">deploy.sh</span></span></code></pre></div>
+<div class="sourceCode" id="cb5" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">deployment/</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> app</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> ├── java</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> │   └── assemblytest.jar</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> └── script</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span>     ├── bin</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span>     │   └── test.sh</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span>     └── conf</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span>         └── common.sh</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> deploy.sh</span></code></pre></div>
 <p>この構成とする場合の <code>pom.xml</code> 及び <code>distribution.xml</code> は以下。</p>
 <dl>
 <dt><code>pom.xml</code></dt>
 <dd><p><a href="https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-pom-xml">https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-pom-xml</a></p>
 </dd>
 <dt><code>distribution.xml</code></dt>
-<dd><p><a href="https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-distribution-xml">https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-distribution-xml</a></p>
+<dd><a href="https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-distribution-xml">https://gist.github.com/chupaaaaaaan/e4b1cb9291c21c20b81e4a6bfa43f513#file-distribution-xml</a>
 </dd>
 </dl>
 <h3 id="pom.xml-1"><code>pom.xml</code></h3>
@@ -339,7 +338,7 @@
 <p>ちなみに、 <code>appendAssemblyId</code> を <code>true</code> にすると、成果物ファイル名に <code>-jar-with-dependencies</code> が付与される。<br />
 <code>finalName</code> と組み合わせ、成果物ファイル名は自由に設定できる。</p>
 <h3 id="distribution.xml-1"><code>distribution.xml</code></h3>
-<p>設定内容自体は、<em>実行可能jarを単体のjarとする場合のアーカイブ構成</em>の場合とほとんど変わらない。<br />
+<p>設定内容自体は、<span class="spurious-link" target="*~distribution.xml~"><em>実行可能jarを単体のjarとする場合のアーカイブ構成</em></span>の場合とほとんど変わらない。<br />
 変更点は、依存関係が全て一つのjarにまとまっているため、 <code>dependencySet</code> が不要となることくらいである<br />
 (もちろん、成果物ファイル名を <code>${project.artifactId}.jar</code> 以外にする場合は合わせて変更が必要) 。</p>
 <h2 id="実行可能jarをuber-jarとする場合-maven-shade-plugin使用">実行可能jarをuber-jarとする場合 (maven-shade-plugin使用)</h2>
@@ -411,49 +410,33 @@ minimized JARとして作成した場合は493KBとなり、小さくなって�
 <p>やってみればなるほど、という感じ。<br />
 同じフェーズに紐づけられたゴールは、 <code>pom.xml</code> 内の記載順に実行されるようなので、これを踏まえると<br />
 結構簡単にパッケージングを制御できそう。</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

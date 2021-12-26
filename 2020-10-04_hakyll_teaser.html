@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>Hakyllでのteaser（続きを読む）の設定</h1> -->
-              <div class="posttitle">Hakyllでのteaser（続きを読む）の設定</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>Hakyllでのteaser（続きを読む）の設定</h1> -->
+        <div class="posttitle">Hakyllでのteaser（続きを読む）の設定</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p>このブログも少しずつ記事が増えてきている。<br />
 現在トップページには、最新から数えて過去5件の記事まで、すべての内容が表示されるようになっているが、<br />
 これではブログの下の方まで行くのに必要なスクロールが多くなるため、やや手間である。</p>
@@ -122,7 +121,7 @@
 <h2 id="teaser用マーキングの挿入">teaser用マーキングの挿入</h2>
 <p>これが一番悩んだ・・・</p>
 <p>hakyllのデフォルトでは、htmlコメントとして以下を記載したとき、記載箇所より上がteaserとなる。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="co">&lt;!--more--&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--more--&gt;</span></span></code></pre></div>
 <p>自分は、もとの記事を<a href="https://orgmode.org/">Emacs Org mode</a>で記載しているが、記事中にそのまま <code>&lt;!--more--&gt;</code> と書いても、ビルド後の記事はすべてhtmlエスケープされて出力されてしまう。<br />
 単にエスケープされるだけならコメントとして処理されないだけなのだが（それはそれで困る）、 Org mode文書からPandocの内部データ型に変換されるときにすでに、<br />
 エスケープされた文字列として保持されているようだ。<br />
@@ -137,88 +136,72 @@
 Org mode文書をどのようにPandoc内部データ型に変換しているのかはわからないが、エスケープする・しないを制御するパラメータが見つからない・・・）</p>
 <h2 id="テンプレートでのteaserの参照">テンプレートでのteaserの参照</h2>
 <p>これはそのまま、書いてあるとおりに記載すれば良い。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="op">&lt;</span><span class="fu">div</span> <span class="kw">class</span><span class="ot">=</span><span class="st">&quot;content&quot;</span><span class="op">&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="op">$</span>if(teaser)<span class="op">$</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>    <span class="op">$</span>teaser<span class="op">$</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>    <span class="op">&lt;</span>a href<span class="ot">=</span><span class="st">&quot;$url$&quot;</span><span class="op">&gt;</span>続きを読む<span class="op">&lt;/</span>a<span class="op">&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>  <span class="op">$</span>else<span class="op">$</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>    <span class="op">$</span>body<span class="op">$</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>  <span class="op">$</span>endif<span class="op">$</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="op">&lt;/</span><span class="fu">div</span><span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span><span class="fu">div</span> <span class="kw">class</span><span class="ot">=</span><span class="st">&quot;content&quot;</span><span class="op">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">$</span>if(teaser)<span class="op">$</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">$</span>teaser<span class="op">$</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span>a href<span class="ot">=</span><span class="st">&quot;$url$&quot;</span><span class="op">&gt;</span>続きを読む<span class="op">&lt;/</span>a<span class="op">&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">$</span>else<span class="op">$</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">$</span>body<span class="op">$</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">$</span>endif<span class="op">$</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span><span class="fu">div</span><span class="op">&gt;</span></span></code></pre></div>
 <h2 id="teaserの生成">teaserの生成</h2>
 <p>自分のサイトの実装とチュートリアルのコードが少し違っているが、基本的な考え方は同じ。</p>
 <p>最初に、teaserとして表示するコンテンツ（余計なcssやjavascriptを含まない、記事のみ）を、snapshotとして保持しておく。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> version <span class="st">&quot;postContents&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  compile <span class="op">$</span> pandocCompiler</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>    <span class="op">&gt;&gt;=</span> saveSnapshot <span class="st">&quot;content&quot;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>    <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>match <span class="st">&quot;posts/*&quot;</span> <span class="op">$</span> version <span class="st">&quot;postContents&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  route <span class="op">$</span> gsubRoute <span class="st">&quot;posts/&quot;</span> (<span class="fu">const</span> <span class="st">&quot;&quot;</span>) <span class="ot">`composeRoutes`</span> setExtension <span class="st">&quot;html&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  compile <span class="op">$</span> pandocCompiler</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&gt;=</span> saveSnapshot <span class="st">&quot;content&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <p>次に、teaserを実際に生成する。</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>match <span class="st">&quot;index.html&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>    route idRoute</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>                listField <span class="st">&quot;recent_posts&quot;</span> (teaserField <span class="st">&quot;teaser&quot;</span> <span class="st">&quot;content&quot;</span> <span class="op">&lt;&gt;</span> postCtx) (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="op">&lt;&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>                siteCtx</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>        getResourceBody</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>match <span class="st">&quot;index.html&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        posts <span class="ot">&lt;-</span> recentFirst <span class="op">=&lt;&lt;</span> loadAll (<span class="st">&quot;posts/*&quot;</span> <span class="op">.&amp;&amp;.</span> hasVersion <span class="st">&quot;postContents&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> postsCtx <span class="ot">=</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                listField <span class="st">&quot;recent_posts&quot;</span> (teaserField <span class="st">&quot;teaser&quot;</span> <span class="st">&quot;content&quot;</span> <span class="op">&lt;&gt;</span> postCtx) (<span class="fu">return</span> <span class="op">$</span> <span class="fu">take</span> <span class="dv">5</span> posts) <span class="op">&lt;&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                siteCtx</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        getResourceBody</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> applyAsTemplate postsCtx</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;layouts/default.html&quot;</span> postsCtx</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">&gt;&gt;=</span> relativizeUrls</span></code></pre></div>
 <p><code>teaserField</code> を使って、teaserを各記事のコンテキストに追加すると、<br />
 テンプレートから <code>teaser</code> というキーで、 <code>content</code> スナップショットの内容のうち <code>&lt;!--more--&gt;</code> より前に記載された内容を参照できる。</p>
 <h3 id="ちなみに">ちなみに</h3>
 <p>teaser用のマーキング用文字列を任意に指定できる <code>teaserFieldWithSeparator</code> もある。<br />
 最初、htmlエスケープの問題が解決できなかったので、マーキング用文字列として <code>#TEASER#</code> みたいなのを設定して使用しようとした。<br />
-こちらを使用しても同じようにteaserを挿入することができるのだが、実際の記事を見に行くと、 <code>#TEASER#</code> の文字が表示されている・・・<br />
+こちらを使用しても同じようにteaserを挿入することができるのだが、実際の記事を見に行くと、 <code class="verbatim">#TEASER#</code> の文字が表示されている・・・<br />
 というわけで、こちらは失敗。きちんとhtmlコメントの形式で文字列を指定しておかないとだめ。</p>
 <h2 id="終わりに">終わりに</h2>
 <p>これでteaserはなんとかなったので、次はページネーションをなんとかしたい。<br />
 （常に最新5件だけ表示、みたいなのから脱却したい・・・）</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

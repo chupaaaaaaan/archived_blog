@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,27 +86,27 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>GitBash（MSYS2）でsshしたときの文字化けを解消する</h1> -->
-              <div class="posttitle">GitBash（MSYS2）でsshしたときの文字化けを解消する</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>GitBash（MSYS2）でsshしたときの文字化けを解消する</h1> -->
+        <div class="posttitle">GitBash（MSYS2）でsshしたときの文字化けを解消する</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p>タイトルまんまです。</p>
 <p>やんごとなき理由により、Linuxサーバ（RHEL7）でとあるユーザの文字エンコーディングをUTF-8からEUC-JPに変更する必要があった。<br />
 ちゃんと <code>ja_JP.eucjp</code> もインストールされていたので、対象ユーザの <code>~/.bash_profile</code> に以下を設定すれば良い。</p>
-<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>$ <span class="fu">cat</span> ~/.bash_profile <span class="kw">|</span> <span class="fu">grep</span> LANG</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
+<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat ~/.bash_profile <span class="kw">|</span> <span class="fu">grep</span> LANG</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">LANG</span><span class="op">=</span>ja_JP.eucjp</span></code></pre></div>
 <p>設定されているかの確認は以下（ <code>source</code> するか、再ログインしてから確認する） 。</p>
-<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>$ <span class="fu">env</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^LANG=&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="va">LANG=</span>ja_JP.eucjp</span></code></pre></div>
+<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> env <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^LANG=&quot;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">LANG</span><span class="op">=</span>ja_JP.eucjp</span></code></pre></div>
 <p>これでちゃんと日本語が表示されるはずなのだが、GitBashでsshして接続すると、何故か文字化けしてしまう。</p>
 <p><!--more--></p>
 <h2 id="原因">原因</h2>
@@ -120,7 +119,7 @@
 <h2 id="解決">解決</h2>
 <p>同じページの回答にある、 <code>luit</code> というツールを導入することで解消した。このツールは、プロセスの間に立って受け取るデータのエンコーディングをいい感じに変換してくれるみたい。<br />
 <code>luit.exe</code> のバイナリをパスの通ったディレクトリに起き、以下を実行すれば文字化けなく表示される。</p>
-<div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">luit.exe</span> -encoding eucjp -- ssh <span class="va">${SERVERNAME}</span></span></code></pre></div>
+<div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">luit.exe</span> <span class="at">-encoding</span> eucjp <span class="at">--</span> ssh <span class="va">${SERVERNAME}</span></span></code></pre></div>
 <p>毎回これをするのはめんどいが、そんなに実行する機会もないはずなので、一旦はこれでOK。<br />
 （当初はサーバ側の問題と勘違いし、設定方法を確認したり<a href="https://qiita.com/qiitamatumoto/items/efffc0ef6e6249533201">このあたり</a>やってみたりで半日くらい時間を溶かしてしまったのは秘密。）</p>
 <h3 id="ちなみに">ちなみに</h3>
@@ -132,49 +131,33 @@
 <li><a href="https://qiita.com/Ted-HM/items/9a60f6fcf74bbd79a904">Windowsで使えるターミナルとシェルのまとめ</a></li>
 </ul>
 <p>結構いろんなシェル環境があるんだなー。普段はGitBash（か、たまにCygwin）しか使ってないけど、ちょっと他のも使ってみようかな。</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>Haskellで精進記録 - ABC165d</h1> -->
-              <div class="posttitle">Haskellで精進記録 - ABC165d</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>Haskellで精進記録 - ABC165d</h1> -->
+        <div class="posttitle">Haskellで精進記録 - ABC165d</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p>解いた問題の学びを書いていく（復習も兼ねて）。</p>
 <p>今回の問題は<a href="https://atcoder.jp/contests/abc165/tasks/abc165_c">これ</a>。テーマはまたしても全探索だが、どっちかというと再帰をちゃんと使おう、のほうが近いかも。</p>
 <p><!--more--></p>
@@ -121,10 +120,10 @@
 <p>この問題では数列 <span class="math inline"><em>A</em></span> 自体は与えられておらず、与えられた条件の下で任意に数列を構成できる。<br />
 そのため、あり得る数列を全部列挙し、そのそれぞれについて得点を計算してやれば良い。</p>
 <p>得点については簡単で、以下のように計算できる。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ot">score ::</span> [(<span class="dt">Int</span>,<span class="dt">Int</span>,<span class="dt">Int</span>,<span class="dt">Int</span>)] <span class="ot">-&gt;</span> <span class="dt">UArray</span> <span class="dt">Int</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>score abcds seqA <span class="ot">=</span> <span class="fu">foldr</span> (\(a,b,c,d) x <span class="ot">-&gt;</span> <span class="kw">if</span> seqA<span class="op">!</span>b <span class="op">-</span> seqA<span class="op">!</span>a <span class="op">==</span> c</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                                          <span class="kw">then</span> x <span class="op">+</span> d</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>                                          <span class="kw">else</span> x) <span class="dv">0</span> abcds</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">score ::</span> [(<span class="dt">Int</span>,<span class="dt">Int</span>,<span class="dt">Int</span>,<span class="dt">Int</span>)] <span class="ot">-&gt;</span> <span class="dt">UArray</span> <span class="dt">Int</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>score abcds seqA <span class="ot">=</span> <span class="fu">foldr</span> (\(a,b,c,d) x <span class="ot">-&gt;</span> <span class="kw">if</span> seqA<span class="op">!</span>b <span class="op">-</span> seqA<span class="op">!</span>a <span class="op">==</span> c</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                                          <span class="kw">then</span> x <span class="op">+</span> d</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                                          <span class="kw">else</span> x) <span class="dv">0</span> abcds</span></code></pre></div>
 <p><code>abcds</code> は <span class="math inline"><em>Q</em></span> 個の4つ組、 <code>seqA</code> は適当な数列 <span class="math inline"><em>A</em></span> 。<br />
 問題文のとおりに、すべての4つ組について得点の合計を計算する。（今思えば <code>map</code> して <code>sum</code> でも良かったな・・・）</p>
 <p>残りは数列 <span class="math inline"><em>A</em></span> の全列挙だが、こちらがなかなかうまく行かなかった・・・</p>
@@ -132,10 +131,10 @@
 <p>結論から言えば、<a href="https://atcoder.jp/contests/abc165/submissions/12627062">この提出</a>を参考にさせていただいた。</p>
 <p>キモは、数列を再帰的に構成してあげることだ（この考え方がなかなか身につかない・・・）。</p>
 <p>実装は以下の通り。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">genSeqAs ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [[<span class="dt">Int</span>]]</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>genSeqAs n m <span class="ot">=</span> go n <span class="dv">1</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>  <span class="kw">where</span> go <span class="dv">0</span> _   <span class="ot">=</span> [[]]</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>        go len p <span class="ot">=</span> [a<span class="op">:</span>as <span class="op">|</span> a <span class="ot">&lt;-</span> [p<span class="op">..</span>m], as <span class="ot">&lt;-</span> go (len<span class="op">-</span><span class="dv">1</span>) a]</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">genSeqAs ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [[<span class="dt">Int</span>]]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>genSeqAs n m <span class="ot">=</span> go n <span class="dv">1</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span> go <span class="dv">0</span> _   <span class="ot">=</span> [[]]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        go len p <span class="ot">=</span> [a<span class="op">:</span>as <span class="op">|</span> a <span class="ot">&lt;-</span> [p<span class="op">..</span>m], as <span class="ot">&lt;-</span> go (len<span class="op">-</span><span class="dv">1</span>) a]</span></code></pre></div>
 <p>再帰自体は<a href="https://kazu-yamamoto.hatenablog.jp/entry/20171212/1513050147">goな関数</a>として定義している。<br />
 数列をCARとCDRに分けたとき、CDRのリストがすでに <code>go</code> によって構成されていると考え、そこから残りの数列を取り出している。<br />
 この「すでに構成されている」と見ることは、<a href="https://github.com/kazu-yamamoto/recursion-drill/blob/master/drill/6.md">再帰のこころ</a>そのものだ。</p>
@@ -150,49 +149,33 @@
 <h2 id="最後に">最後に</h2>
 <p>この記事を見ている人はいないと思うが、もし見ている人がいたら<a href="https://github.com/kazu-yamamoto/recursion-drill/blob/master/README.md">再帰ドリル</a>を是非やってみてください。<br />
 再帰のこころを身につけるために、とても良いコンテンツです。</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

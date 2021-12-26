@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</h1> -->
-              <div class="posttitle">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</h1> -->
+        <div class="posttitle">Webアプリケーションセキュリティ - クロスサイト・スクリプティング（XSS）</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p>会社の金で勉強できるぞ！ということで、普段なかなか触る機会のないセキュリティについて勉強する。<br />
 特に、よくある脆弱性とその対策方法を、サンプルコード等を用いた攻撃を通して理解したい。</p>
 <p>この記事では、クロスサイト・スクリプティングについて、概要と基本的な対策について記載する。</p>
@@ -213,47 +212,47 @@ htmlによって解釈される文字と、出力場所の終端文字列につ�
 <p>として扱われるため、スクリプトが実行される。</p>
 <h3 id="thymeleafの例">Thymeleafの例</h3>
 <p>例として、Thyemleafでコードを記載してみる。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="kw">&lt;html</span><span class="ot"> xmlns:th=</span><span class="st">&quot;http://www.thymeleaf.org&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="kw">&lt;head&gt;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>    <span class="kw">&lt;title&gt;</span>Input your information<span class="kw">&lt;/title&gt;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    <span class="kw">&lt;meta</span><span class="ot"> http-equiv=</span><span class="st">&quot;Content-Type&quot;</span><span class="ot"> content=</span><span class="st">&quot;text/html; charset=UTF-8&quot;</span> <span class="kw">/&gt;</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="kw">&lt;/head&gt;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a><span class="kw">&lt;body&gt;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>    <span class="kw">&lt;form</span><span class="ot"> th:action=</span><span class="st">&quot;@{/confirm}&quot;</span><span class="ot"> method=</span><span class="st">&quot;POST&quot;</span><span class="ot"> th:object=</span><span class="st">&quot;${demoForm}&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>        <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&quot;text&quot;</span><span class="ot"> th:field=</span><span class="st">&quot;*{name}&quot;</span><span class="kw">&gt;&lt;/input&gt;</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>        <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&quot;text&quot;</span><span class="ot"> th:field=</span><span class="st">&quot;*{address}&quot;</span><span class="kw">&gt;&lt;/input&gt;</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>        <span class="kw">&lt;button</span><span class="ot"> type=</span><span class="st">&quot;submit&quot;</span><span class="kw">&gt;</span>送信<span class="kw">&lt;/button&gt;</span>          </span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>    <span class="kw">&lt;/form&gt;</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a><span class="kw">&lt;/body&gt;</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a><span class="kw">&lt;/html&gt;</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="kw">&lt;html</span><span class="ot"> xmlns:th=</span><span class="st">&quot;http://www.thymeleaf.org&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="kw">&lt;head&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>    <span class="kw">&lt;title&gt;</span>Confirm your information<span class="kw">&lt;/title&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>    <span class="kw">&lt;meta</span><span class="ot"> http-equiv=</span><span class="st">&quot;Content-Type&quot;</span><span class="ot"> content=</span><span class="st">&quot;text/html; charset=UTF-8&quot;</span> <span class="kw">/&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a><span class="kw">&lt;/head&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a><span class="kw">&lt;body&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>    <span class="kw">&lt;div</span><span class="ot"> th:object=</span><span class="st">&quot;${demoForm}&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>        <span class="kw">&lt;p</span><span class="ot"> th:text=</span><span class="st">&quot;*{name}&quot;</span><span class="kw">&gt;&lt;/p&gt;</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>        <span class="kw">&lt;p</span><span class="ot"> th:text=</span><span class="st">&quot;*{address}&quot;</span><span class="kw">&gt;&lt;/p&gt;</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a>    <span class="kw">&lt;/div&gt;</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a><span class="kw">&lt;/body&gt;</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a><span class="kw">&lt;/html&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;html</span> <span class="er">xmlns:th</span><span class="ot">=</span><span class="st">&quot;http://www.thymeleaf.org&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;head&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;title&gt;</span>Input your information<span class="kw">&lt;/title&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;meta</span> <span class="er">http-equiv</span><span class="ot">=</span><span class="st">&quot;Content-Type&quot;</span> <span class="er">content</span><span class="ot">=</span><span class="st">&quot;text/html; charset=UTF-8&quot;</span> <span class="kw">/&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/head&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;body&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;form</span> <span class="er">th:action</span><span class="ot">=</span><span class="st">&quot;@{/confirm}&quot;</span> <span class="er">method</span><span class="ot">=</span><span class="st">&quot;POST&quot;</span> <span class="er">th:object</span><span class="ot">=</span><span class="st">&quot;${demoForm}&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;input</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text&quot;</span> <span class="er">th:field</span><span class="ot">=</span><span class="st">&quot;*{name}&quot;</span><span class="kw">&gt;&lt;/input&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;input</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text&quot;</span> <span class="er">th:field</span><span class="ot">=</span><span class="st">&quot;*{address}&quot;</span><span class="kw">&gt;&lt;/input&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;button</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;submit&quot;</span><span class="kw">&gt;</span>送信<span class="kw">&lt;/button&gt;</span>          </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/form&gt;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/body&gt;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/html&gt;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;html</span> <span class="er">xmlns:th</span><span class="ot">=</span><span class="st">&quot;http://www.thymeleaf.org&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;head&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;title&gt;</span>Confirm your information<span class="kw">&lt;/title&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;meta</span> <span class="er">http-equiv</span><span class="ot">=</span><span class="st">&quot;Content-Type&quot;</span> <span class="er">content</span><span class="ot">=</span><span class="st">&quot;text/html; charset=UTF-8&quot;</span> <span class="kw">/&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/head&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;body&gt;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">th:object</span><span class="ot">=</span><span class="st">&quot;${demoForm}&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;p</span> <span class="er">th:text</span><span class="ot">=</span><span class="st">&quot;*{name}&quot;</span><span class="kw">&gt;&lt;/p&gt;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;p</span> <span class="er">th:text</span><span class="ot">=</span><span class="st">&quot;*{address}&quot;</span><span class="kw">&gt;&lt;/p&gt;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/div&gt;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/body&gt;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/html&gt;</span></span></code></pre></div>
 <p>最初の画面でフォームよりウェブアプリケーションに入力が渡され、アプリケーション内の <code>DemoForm</code> オブジェクトに格納されている。<br />
 次の画面では、 <code>DemoForm</code> オブジェクトを出力している。<br />
 <code>th:text</code> 属性を使用して値を表示する場合、値はデフォルトでhtmlエスケープされる（具体的には、 <code>&lt;</code> <code>&gt;</code> <code>&amp;</code> <code>"</code> <code>'</code> が文字参照となる）。<br />
 そのため、属性値に対するエスケープとしては問題がない。</p>
 <p>一方、 <code>th:text</code> の代わりに <code>th:utext</code> を使用した場合、中身の値はエスケープされないため、問題がある。<br />
 例えば、 前画面で <code>name</code> パラメータに以下のような文字列を渡した場合を考える（書籍の記載例参照）。</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="st">&quot;+onmouseover%3d&quot;</span><span class="fu">alert</span>(<span class="bu">document</span><span class="op">.</span><span class="at">cockie</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;+onmouseover%3d&quot;</span><span class="fu">alert</span>(<span class="bu">document</span><span class="op">.</span><span class="at">cockie</span>)</span></code></pre></div>
 <p><code>th:utext</code> を使用して表示していた場合、該当要素をマウスオーバーすると、ブラウザに保存されているcockieが表示されてしまう。</p>
 <h3 id="保険的対策">保険的対策</h3>
 <p>上記の対策以外に、保険的対策として以下のことも実施できる。</p>
@@ -279,49 +278,33 @@ htmlによって解釈される文字と、出力場所の終端文字列につ�
 <p>とはいえ、基本的にはアプリケーション側での対応になるので、処理一つ一つについてエスケープしているか、<br />
 のレビューが必須になってくる（インフラ的な対策や、共通部品みたいなのでなんとかしづらそう）。<br />
 こういうアプリケーションセキュリティの有識者って、結構重要な存在なんだなぁ、と思うなどした。</p>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">

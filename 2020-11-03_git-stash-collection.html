@@ -33,11 +33,10 @@
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="./">Home</a></li>
-                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
-                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./about.html">About</a></li>
+                    <li class="active"><a href="./archive.html">Archive</a></li>
                     <li class="active"><a href="./atom.xml">RSS</a></li>
+                    <li class="active visible-xs-block"><a href="./links.html">Links</a></li>
                     
                       <li class="active"><a href="https://github.com/chupaaaaaaan">Github</a></li>
                     
@@ -87,19 +86,19 @@
 
         </div>
         <div class="col-md-9">
-          <div class="article">
-            <div class="well main">
-              <!-- <h1>個人的git-stashまとめ</h1> -->
-              <div class="posttitle">個人的git-stashまとめ</div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if site.comments and page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            <div class="post-content">
+            <div class="article">
+    <div class="well main">
+        <!-- <h1>個人的git-stashまとめ</h1> -->
+        <div class="posttitle">個人的git-stashまとめ</div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if site.comments and page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!--     <p class="author"><a href="#disqus_thread" data-disqus-identifier="{{ page.url | slugify }}">Comments</a></p> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <p class="author"><a href="{{ site.baseurl }}{{ page.url }}{{ site.isso_suffix }}#isso-thread">Comments</a></p> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+        <div class="post-content">
             <p><code>git stash</code> って、非常によく使うコマンドなんだけど、実は普段は以下のことしかしてない。</p>
 <ul>
 <li><code>git stash</code> で、現在の変更を退避して、別ブランチで作業<br />
@@ -111,9 +110,9 @@
 <p><!--more--></p>
 <h2 id="untrackedなファイルもstashしたい">Untrackedなファイルもstashしたい</h2>
 <p><a href="https://qiita.com/muran001/items/f5746c518bf663f86a79">gitで未追跡（untracked)なファイルもまとめて退避(stash)する</a></p>
-<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu">git</span> stash -u</span></code></pre></div>
+<div class="sourceCode" id="cb1" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash <span class="at">-u</span></span></code></pre></div>
 <p>もしくは</p>
-<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">git</span> stash --include-untracked</span></code></pre></div>
+<div class="sourceCode" id="cb2" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash <span class="at">--include-untracked</span></span></code></pre></div>
 <p>上記で、untrackedなファイルも合わせてstashできる。</p>
 <p>ちなみに、似たようなオプションで <code>-a/--all</code> というのがあるが、これは <code>.gitignore</code> に記載されたファイルもまとめてstashするもの。<br />
 (これはあまり出番がないかも。ブランチ毎に <code>.gitignore</code> が異なるような場合に使う？)</p>
@@ -121,17 +120,17 @@
 (実はこれが一番やりたかったこと。)</p>
 <h2 id="ファイルを指定してstashしたい">ファイルを指定してstashしたい</h2>
 <p><a href="https://qiita.com/yukitaka13-1110/items/935bfa233c6e024f82dc">ファイル単位でstashする</a></p>
-<div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="fu">git</span> stash push -m <span class="op">&lt;</span>stash message<span class="op">&gt;</span> -- path/to/target/file</span></code></pre></div>
+<div class="sourceCode" id="cb3" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-m</span> <span class="op">&lt;</span>stash message<span class="op">&gt;</span> -- path/to/target/file</span></code></pre></div>
 <p>上記で、ファイル単位でstashできる (メッセージは省略可) 。<br />
 <code>git stash</code> コマンド自体は <code>git stash push</code> の省略形で、ワーキングディレクトリのスナップショットを素早く取得するためのもの。<br />
 (変更の退避がスタックに積まれている、と考えると、 <code>git stash pop</code> もわかりやすい)</p>
 <p><code>-u/--include-untracked</code> オプションと合わせて使用すると、こんな感じ。</p>
-<div class="sourceCode" id="cb4" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="fu">git</span> stash push -u -m <span class="op">&lt;</span>stash message<span class="op">&gt;</span> -- path/to/target/file</span></code></pre></div>
+<div class="sourceCode" id="cb4" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="op">&lt;</span>stash message<span class="op">&gt;</span> -- path/to/target/file</span></code></pre></div>
 <p>ちなみに、メッセージを省略すると、HEADのコミットメッセージが付与されるだけなので、わかりやすくファイル名等をメッセージに入れておきたい。</p>
 <h2 id="複数のstashから特定のstashだけを回復したい">複数のstashから、特定のstashだけを回復したい</h2>
 <p>記事を書いていると、ドラフトが溜まってくる。<br />
 ドラフト記事は個別にstashしているので、特定の記事だけ持ってきたい、というとき。</p>
-<div class="sourceCode" id="cb5" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="fu">git</span> stash pop <span class="op">&lt;</span>stash name<span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop <span class="op">&lt;</span>stash name<span class="op">&gt;</span></span></code></pre></div>
 <p>上記のように、stash名を指定してやれば、特定のstashが現在のワーキングディレクトリに回復される。<br />
 stash名は <code>git stash list</code> で確認することができて、 <code>stash@{&lt;revision&gt;}</code> ( <code>&lt;revision&gt;</code> はスタック内の順番) である。<br />
 注意として、stashはスタックに積まれているので、特定のstashと <code>&lt;revision&gt;</code> を紐づけることはできない。</p>
@@ -140,99 +139,83 @@ stash名は <code>git stash list</code> で確認することができて、 <co
 (実際には、<a href="https://stackoverflow.com/questions/1550378/is-it-possible-to-push-a-git-stash-to-a-remote-repository/5248758#5248758">stashをリモートリポジトリにpushする</a>ことも出来そうだけど、普通の使い方ではないと思う)。</p>
 <p>そのため、実際にはドラフト1本毎にブランチを切ってあげるのが、なんだかんだで一番管理しやすそうではある。</p>
 <p>こんな感じのスクリプトを作っておくと、新しく作ったドラフトを <code>source</code> ブランチから個別にブランチを切ることができる。</p>
-<div class="sourceCode" id="cb6" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="kw">set</span> <span class="ex">-eu</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a><span class="fu">git</span> checkout source</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a><span class="fu">git</span> stash</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a><span class="va">UNTRACKED_LIST=$(</span><span class="fu">git</span> status -s <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^?? posts/&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> -d<span class="st">' '</span> -f2<span class="va">)</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a><span class="kw">for</span> <span class="fu">file</span> in <span class="va">$UNTRACKED_LIST</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a><span class="kw">do</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>    <span class="fu">git</span> checkout -b <span class="va">${file/</span>posts<span class="va">/</span>draft<span class="va">}</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true"></a>    <span class="fu">git</span> add <span class="va">${file}</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true"></a>    <span class="fu">git</span> commit -m <span class="st">&quot;add draft&quot;</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true"></a>    <span class="fu">git</span> push -u origin <span class="va">${file/</span>posts<span class="va">/</span>draft<span class="va">}</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true"></a>    <span class="fu">git</span> checkout source</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true"></a><span class="kw">done</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true"></a><span class="fu">git</span> stash pop <span class="kw">||</span> <span class="bu">:</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true"></a><span class="fu">git</span> branch -vva</span></code></pre></div>
+<div class="sourceCode" id="cb6" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-eu</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout source</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="va">UNTRACKED_LIST</span><span class="op">=</span><span class="va">$(</span><span class="fu">git</span> status <span class="at">-s</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^?? posts/&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="st">' '</span> <span class="at">-f2</span><span class="va">)</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> <span class="va">$UNTRACKED_LIST</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">git</span> checkout <span class="at">-b</span> <span class="va">${file</span><span class="op">/</span><span class="ss">posts</span><span class="op">/</span>draft<span class="va">}</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">git</span> add <span class="va">${file}</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;add draft&quot;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">git</span> push <span class="at">-u</span> origin <span class="va">${file</span><span class="op">/</span><span class="ss">posts</span><span class="op">/</span>draft<span class="va">}</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">git</span> checkout source</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop <span class="kw">||</span> <span class="bu">:</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-vva</span></span></code></pre></div>
 <p>あとは、ドラフトを <code>source</code> ブランチにマージするためのスクリプト。処理を書き並べただけだけど・・・</p>
-<div class="sourceCode" id="cb7" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="kw">set</span> <span class="ex">-eu</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a><span class="va">TARGET_BRANCH=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">git</span> branch <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;draft/&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> -c3- <span class="kw">|</span> <span class="ex">peco</span><span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a><span class="fu">git</span> checkout <span class="va">$TARGET_BRANCH</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a><span class="fu">git</span> add <span class="va">$(</span><span class="fu">git</span> status -s <span class="kw">|</span> <span class="ex">peco</span> <span class="kw">|</span> <span class="fu">cut</span> -c4-<span class="va">)</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a><span class="bu">[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">git</span> status -s <span class="kw">|</span> <span class="fu">cut</span> -d<span class="st">' '</span> -f2 <span class="kw">|</span> <span class="fu">grep</span> <span class="st">'^posts/'</span><span class="va">)</span><span class="st">&quot;</span><span class="bu"> ]</span> <span class="kw">&amp;&amp;</span> <span class="fu">git</span> commit -m <span class="st">&quot;add draft&quot;</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a><span class="fu">git</span> checkout source</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a><span class="fu">git</span> pull</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true"></a><span class="fu">git</span> checkout <span class="va">$TARGET_BRANCH</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true"></a><span class="fu">git</span> merge source</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true"></a><span class="fu">git</span> checkout source</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true"></a><span class="fu">git</span> merge <span class="va">$TARGET_BRANCH</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true"></a></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true"></a><span class="fu">git</span> push origin :<span class="va">$TARGET_BRANCH</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true"></a><span class="fu">git</span> branch -d <span class="va">$TARGET_BRANCH</span></span></code></pre></div>
-            </div>
-            <!-- コメント機能は別途追加する -->
-            <!-- {% if page.comments %} -->
-            <!--     {% if site.disqus != '' %} -->
-            <!-- <div id="disqus_thread"> -->
-            <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-            <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
-            <!-- </div> -->
-            <!--     {% elsif site.isso != '' %} -->
-            <!--     <section id="isso-thread"></section> -->
-            <!--     {% endif %} -->
-            <!-- {% endif %} -->
-            </div>
-          </div>
-          <div class="pagination">
-              <!-- ページネーションは別途追加する -->
-              <!-- {% if page.next %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
-              <!-- {% endif %} -->
-              <!-- {% if page.previous %} -->
-              <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
-              <!-- {% endif %} -->
-          </div>
+<div class="sourceCode" id="cb7" data-org-language="sh"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-eu</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="va">TARGET_BRANCH</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">git</span> branch <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;draft/&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-c3-</span> <span class="kw">|</span> <span class="ex">peco</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="va">$TARGET_BRANCH</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add <span class="va">$(</span><span class="fu">git</span> status <span class="at">-s</span> <span class="kw">|</span> <span class="ex">peco</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-c4-</span><span class="va">)</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="bu">[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">git</span> status <span class="at">-s</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="st">' '</span> <span class="at">-f2</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">'^posts/'</span><span class="va">)</span><span class="st">&quot;</span> <span class="bu">]</span> <span class="kw">&amp;&amp;</span> <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;add draft&quot;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout source</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="va">$TARGET_BRANCH</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge source</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout source</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="va">$TARGET_BRANCH</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin :<span class="va">$TARGET_BRANCH</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-d</span> <span class="va">$TARGET_BRANCH</span></span></code></pre></div>
+        </div>
+        <!-- コメント機能は別途追加する -->
+        <!-- {% if page.comments %} -->
+        <!--     {% if site.disqus != '' %} -->
+        <!-- <div id="disqus_thread"> -->
+        <!--     <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+        <!--     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+        <!-- </div> -->
+        <!--     {% elsif site.isso != '' %} -->
+        <!--     <section id="isso-thread"></section> -->
+        <!--     {% endif %} -->
+        <!-- {% endif %} -->
+    </div>
+</div>
+<div class="pagination">
+    <!-- ページネーションは別途追加する -->
+    <!-- {% if page.next %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a> -->
+    <!-- {% endif %} -->
+    <!-- {% if page.previous %} -->
+    <!--   <a class="btn btn-default" href="{{ site.baseurl}}{{ page.previous.url }}" class="previous">Older Post</a> -->
+    <!-- {% endif %} -->
+</div>
+
         </div>
     </div>
 </div>
-
-<!-- コメント機能は別途追加する -->
-<!-- {% if site.comments and page.comments and site.disqus != '' %} -->
-<!--   <script type="text/javascript"> -->
-<!--     var disqus_shortname = '{{ site.disqus }}'; -->
-
-<!--     var disqus_config = function () { -->
-<!--         this.page.identifier = '{{ page.url | slugify }}'; -->
-<!--     }; -->
-
-<!--    (function() { -->
-<!--      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
-<!--      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; -->
-<!--      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
-<!--     })(); -->
-<!--   </script> -->
-<!-- {% endif %} -->
 
 <div class="container-fluid">
     <div class="row-fluid">
