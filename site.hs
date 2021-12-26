@@ -1,73 +1,91 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 
-import Data.Semigroup
 import Hakyll
 import qualified Skylighting
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
-    match "images/*" $ do
-        route idRoute
-        compile copyFileCompiler
+    -- 画像用Rules
+    match "images/*" $ route idRoute >> compile copyFileCompiler
 
-    create ["css/highlight.css"] $ do
-        route idRoute
-        compile $ makeItem (compressCss $ Skylighting.styleToCss Skylighting.pygments)
+    -- コードハイライトcss用Rules
+    create ["css/highlight.css"] $ route idRoute >> compile (makeItem $ compressCss $ Skylighting.styleToCss Skylighting.pygments)
 
-    match "css/*" $ do
-        route idRoute
-        compile compressCssCompiler
+    -- CSS用Rules
+    match "css/*" $ route idRoute >> compile compressCssCompiler
 
-    match "js/*" $ do
-        route idRoute
-        compile copyFileCompiler
+    -- JavaScript用Rules
+    match "js/*" $ route idRoute >> compile copyFileCompiler
 
+    -- Recent Postsおよびteaser生成用Rules
     match "posts/*" $
-        version "postContents" $ do
+        version "postedContents" $ do
             route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
-            compile $
-                pandocCompiler
-                    >>= saveSnapshot "content"
-                    >>= relativizeUrls
+            compile $ pandocCompiler >>= saveSnapshot "content" >>= relativizeUrls
 
-    match "posts/*" $ do
-        route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
-        compile $ do
-            recentPosts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
-            let postsCtx =
-                    listField "recent_posts" postCtx (return $ take 5 recentPosts)
-                        <> postCtx
-                        <> siteCtx
-
-            pandocCompiler
-                >>= loadAndApplyTemplate "layouts/post.html" postsCtx
-                >>= relativizeUrls
-
-    match (fromList ["archive.html", "about.html", "index.html", "links.html"]) $ do
-        route idRoute
-        compile $ do
-            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
-            let postsCtx =
-                    listField "recent_posts" (teaserField "teaser" "content" <> postCtx) (return $ take 5 posts)
-                        <> listField "posts" postCtx (return posts)
-                        <> siteCtx
-
-            getResourceBody
-                >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" postsCtx
-                >>= relativizeUrls
-
+    -- Atom生成用のRules
     create ["atom.xml"] $ do
         route idRoute
         compile $ do
-            let feedCtx = constField "description" "feed description" <> postCtx <> siteCtx
-            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postContents")
+            let feedCtx = constField "description" "feed description" <> defaultContext
+            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
             renderAtom feedConf feedCtx (take 5 posts)
 
+    -- Template生成
     match "layouts/*" $ compile templateBodyCompiler
     match "includes/*" $ compile templateBodyCompiler
+
+    -- 各記事の生成
+    match "posts/*" $ do
+        route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+        compile $ do
+            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
+            let postsCtx = listField "recent_posts" defaultContext (return $ take 5 posts)
+
+            pandocCompiler
+                >>= loadAndApplyTemplate "layouts/post.html" defaultContext
+                >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
+                >>= relativizeUrls
+
+    -- 過去記事リストの生成
+    match "archive.html" $ do
+        route idRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
+            let postsCtx =
+                    listField "recent_posts" defaultContext (return $ take 5 posts)
+                        <> listField "posts" (postDateCtx <> defaultContext) (return posts)
+
+            getResourceBody
+                >>= applyAsTemplate postsCtx
+                >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
+                >>= relativizeUrls
+
+    -- トップページの生成
+    match "index.html" $ do
+        route idRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
+            let postsCtx = listField "recent_posts" (teaserField "teaser" "content" <> defaultContext) (return $ take 5 posts)
+
+            getResourceBody
+                >>= applyAsTemplate postsCtx
+                >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
+                >>= relativizeUrls
+
+    -- その他ページの作成
+    match (fromList ["about.html", "links.html"]) $ do
+        route idRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
+            let postsCtx = listField "recent_posts" defaultContext (return $ take 5 posts)
+
+            getResourceBody
+                >>= applyAsTemplate postsCtx
+                >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
+                >>= relativizeUrls
 
 --------------------------------------------------------------------------------
 siteCtx :: Context String
@@ -79,11 +97,8 @@ siteCtx =
         <> constField "qiita" "chupaaaaaaan"
         <> defaultContext
 
-postCtx :: Context String
-postCtx =
-    dateField "date" "%Y-%m-%d (%a)"
-        <> dateField "year" "%Y"
-        <> defaultContext
+postDateCtx :: Context String
+postDateCtx = dateField "date" "%Y-%m-%d (%a)" <> dateField "year" "%Y"
 
 feedConf :: FeedConfiguration
 feedConf =

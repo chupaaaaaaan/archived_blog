@@ -28,76 +28,76 @@ LSP :: Please open an issue in lsp-mode for implementing `53796:hlint:applyAll'.
 
 @@html:<!--more-->@@
 
-* 今回の環境
+** 今回の環境
 
-Elispパッケージは最新化済み。
+ Elispパッケージは最新化済み。
 
-#+begin_src shell
-$ uname -a
-Darwin tsukihigai.local 20.2.0 Darwin Kernel Version 20.2.0: Wed Dec  2 20:39:59 PST 2020; root:xnu-7195.60.75~1/RELEASE_X86_64 x86_64
+ #+begin_src shell
+ $ uname -a
+ Darwin tsukihigai.local 20.2.0 Darwin Kernel Version 20.2.0: Wed Dec  2 20:39:59 PST 2020; root:xnu-7195.60.75~1/RELEASE_X86_64 x86_64
 
-$ ghcup --version
-The GHCup Haskell installer, version v0.1.12
+ $ ghcup --version
+ The GHCup Haskell installer, version v0.1.12
 
-$ ghc --version
-The Glorious Glasgow Haskell Compilation System, version 8.8.4
+ $ ghc --version
+ The Glorious Glasgow Haskell Compilation System, version 8.8.4
 
-$ haskell-language-server-wrapper --version
-haskell-language-server version: 0.7.1.0 (GHC: 8.10.1) (PATH: /Users/t-uchida/.ghcup/bin/haskell-language-server-wrapper-0.7.1) (GIT hash: e4f677e1780fe85a02b99a09404a0a3c3ab5ce7c)
+ $ haskell-language-server-wrapper --version
+ haskell-language-server version: 0.7.1.0 (GHC: 8.10.1) (PATH: /Users/t-uchida/.ghcup/bin/haskell-language-server-wrapper-0.7.1) (GIT hash: e4f677e1780fe85a02b99a09404a0a3c3ab5ce7c)
 
-$ emacs --version
-GNU Emacs 27.1
-Copyright (C) 2020 Free Software Foundation, Inc.
-GNU Emacs comes with ABSOLUTELY NO WARRANTY.
-You may redistribute copies of GNU Emacs
-under the terms of the GNU General Public License.
-For more information about these matters, see the file named COPYING.
-#+end_src
-
-
-* 直接の原因
-
-  まず、上記のエラーメッセージだけではよくわからないので、 ~*lsp-haskell::stderr*~ バッファを見てみる。すると、以下のようなメッセージが出力されている。
-
-  #+begin_src 
-  /Users/runner/.ghcup/ghc/8.8.4/lib/ghc-8.8.4/settings: openFile: does not exist (No such file or directory)
-  #+end_src
-
-  ちなみに、試しに Ubuntu (focal) で試してみたところ、以下のようになった。
-  #+begin_src 
-  /opt/ghc/8.8.4/lib/ghc-8.8.4/settings: openFile: does not exist (No such file or directory)
-  #+end_src
-
-  何やら見たことがないユーザのファイルを参照しようとして、そのせいで落ちているように見える。
-  そのため、上記のファイルを作ってみる。
-  なお、 ~~/.ghcup/ghc/8.8.4/lib/ghc-8.8.4/settings~ 自体は存在するので、ディレクトリを掘ってシンボリックリンクを置く。
-
-  （ ~settings~ 以外にも、当該ディレクトリ配下のファイルが色々ない、と言われるので、まとめて ~~/.ghcup/ghc~ のシンボリックリンクを作っても良い）
-
-  #+begin_src shell
-  sudo mkdir /Users/runner/.ghcup
-  sudo ln -s /Users/chupaaaaaaan/.ghcup/ghc /Users/runner/.ghcup/ghc
-  #+end_src
-
-  ファイルを作成したら、HLSのセッションを再起動する（しなくても良い）。
-  すると、今度はちゃんと修正候補の適用が効くようになっている。
-
-* エラーについて
-
-  上記のエラーについては、以下で言及されている。
-
-  [[https://github.com/haskell/haskell-language-server/issues/412][Formatting with Brittany does nothing]]
-  [[https://github.com/haskell/haskell-language-server/issues/591][hlint seeking unavailable file /opt/ghc/8.8.4/lib/ghc-8.8.4/settings]]
-
-  どうやら、HLSのビルド用設定がハードコードされているから・・・っぽい。
-  現状まだissueはオープンであり、とりあえずの解決策として、シンボリックリンクを作るとうまくいった、という報告がある。
-  ゆくゆく修正されたら、本記事の対応は不要になる・・・はず。
+ $ emacs --version
+ GNU Emacs 27.1
+ Copyright (C) 2020 Free Software Foundation, Inc.
+ GNU Emacs comes with ABSOLUTELY NO WARRANTY.
+ You may redistribute copies of GNU Emacs
+ under the terms of the GNU General Public License.
+ For more information about these matters, see the file named COPYING.
+ #+end_src
 
 
-* 終わりに
+** 直接の原因
 
-  ちょっと前に、Haskell用のLanguage ServerをHIEからHLSに乗り換えたが、
-  導入もととても簡単になっていたり、HIEより安定して稼働している感じがしており、とても使い心地が良い。
-  HLS自体は最近できたばかりだが、機能追加も活発で、Haskellの開発環境がどんどんいいものになっていっている。
-  自分はHaskellコミュニティにあまりコントリビュート出来ていなくて心苦しいが、
-  コミュニティからの恩恵を受けつつ、自分も何か還元していきたいなぁ、と思う今日このごろです。
+   まず、上記のエラーメッセージだけではよくわからないので、 ~*lsp-haskell::stderr*~ バッファを見てみる。すると、以下のようなメッセージが出力されている。
+
+   #+begin_src
+   /Users/runner/.ghcup/ghc/8.8.4/lib/ghc-8.8.4/settings: openFile: does not exist (No such file or directory)
+   #+end_src
+
+   ちなみに、試しに Ubuntu (focal) で試してみたところ、以下のようになった。
+   #+begin_src
+   /opt/ghc/8.8.4/lib/ghc-8.8.4/settings: openFile: does not exist (No such file or directory)
+   #+end_src
+
+   何やら見たことがないユーザのファイルを参照しようとして、そのせいで落ちているように見える。
+   そのため、上記のファイルを作ってみる。
+   なお、 ~~/.ghcup/ghc/8.8.4/lib/ghc-8.8.4/settings~ 自体は存在するので、ディレクトリを掘ってシンボリックリンクを置く。
+
+   （ ~settings~ 以外にも、当該ディレクトリ配下のファイルが色々ない、と言われるので、まとめて ~~/.ghcup/ghc~ のシンボリックリンクを作っても良い）
+
+   #+begin_src shell
+   sudo mkdir /Users/runner/.ghcup
+   sudo ln -s /Users/chupaaaaaaan/.ghcup/ghc /Users/runner/.ghcup/ghc
+   #+end_src
+
+   ファイルを作成したら、HLSのセッションを再起動する（しなくても良い）。
+   すると、今度はちゃんと修正候補の適用が効くようになっている。
+
+** エラーについて
+
+   上記のエラーについては、以下で言及されている。
+
+   [[https://github.com/haskell/haskell-language-server/issues/412][Formatting with Brittany does nothing]]
+   [[https://github.com/haskell/haskell-language-server/issues/591][hlint seeking unavailable file /opt/ghc/8.8.4/lib/ghc-8.8.4/settings]]
+
+   どうやら、HLSのビルド用設定がハードコードされているから・・・っぽい。
+   現状まだissueはオープンであり、とりあえずの解決策として、シンボリックリンクを作るとうまくいった、という報告がある。
+   ゆくゆく修正されたら、本記事の対応は不要になる・・・はず。
+
+
+** 終わりに
+
+   ちょっと前に、Haskell用のLanguage ServerをHIEからHLSに乗り換えたが、
+   導入もととても簡単になっていたり、HIEより安定して稼働している感じがしており、とても使い心地が良い。
+   HLS自体は最近できたばかりだが、機能追加も活発で、Haskellの開発環境がどんどんいいものになっていっている。
+   自分はHaskellコミュニティにあまりコントリビュート出来ていなくて心苦しいが、
+   コミュニティからの恩恵を受けつつ、自分も何か還元していきたいなぁ、と思う今日このごろです。

@@ -1,5 +1,6 @@
 <div class="well main">
-$for(posts)$
+    <h1>Archives</h1>
+    $for(posts)$
     <!-- 年ごとに分類するのは別途追加 -->
     <!-- {% unless post.next %} -->
     <!--     <h1>$year$</h1> -->
@@ -14,6 +15,6 @@ $for(posts)$
     <!--     {% endif %} -->
     <!-- {% endunless %} -->
     <li><a href="$url$">$date$ - $title$</a></li>
-$endfor$
+    $endfor$
 </ul>
 </div>
