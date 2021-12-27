@@ -1,6 +1,12 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections #-}
 
+import Data.Functor.Identity (Identity)
+import qualified Data.Functor.Identity as Control.Monad
+import Data.List
+import Data.Ord
+import Data.Time.Locale.Compat
 import Hakyll
 import qualified Skylighting
 
@@ -19,19 +25,12 @@ main = hakyll $ do
     -- JavaScript用Rules
     match "js/*" $ route idRoute >> compile copyFileCompiler
 
-    -- Recent Postsおよびteaser生成用Rules
-    match "posts/*" $
-        version "postedContents" $ do
-            route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
-            compile $ pandocCompiler >>= saveSnapshot "content" >>= relativizeUrls
-
     -- Atom生成用のRules
     create ["atom.xml"] $ do
         route idRoute
         compile $ do
             let feedCtx = constField "description" "feed description" <> defaultContext
-            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
-            renderAtom feedConf feedCtx (take 5 posts)
+            renderAtom feedConf feedCtx . take 5 =<< emptyBodyPosts
 
     -- Template生成
     match "layouts/*" $ compile templateBodyCompiler
@@ -41,10 +40,9 @@ main = hakyll $ do
     match "posts/*" $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
         compile $ do
-            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
-            let postsCtx = listField "recent_posts" defaultContext (return $ take 5 posts)
-
+            postsCtx <- recentPostField 5 defaultContext
             pandocCompiler
+                >>= saveSnapshot "content"
                 >>= loadAndApplyTemplate "layouts/post.html" defaultContext
                 >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
                 >>= relativizeUrls
@@ -53,10 +51,13 @@ main = hakyll $ do
     match "archive.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
-            let postsCtx =
-                    listField "recent_posts" defaultContext (return $ take 5 posts)
-                        <> listField "posts" (postDateCtx <> defaultContext) (return posts)
+            posts <- emptyBodyPosts
+            postsCtx <-
+                mconcat
+                    <$> sequence
+                        [ recentPostField 5 defaultContext
+                        , return $ listField "posts" (postDateCtx <> defaultContext) (return posts)
+                        ]
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
@@ -67,8 +68,7 @@ main = hakyll $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
-            let postsCtx = listField "recent_posts" (teaserField "teaser" "content" <> defaultContext) (return $ take 5 posts)
+            postsCtx <- recentPostField 5 $ teaserField "teaser" "content" <> defaultContext
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
@@ -79,8 +79,7 @@ main = hakyll $ do
     match (fromList ["about.html", "links.html"]) $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll ("posts/*" .&&. hasVersion "postedContents")
-            let postsCtx = listField "recent_posts" defaultContext (return $ take 5 posts)
+            postsCtx <- recentPostField 5 defaultContext
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
@@ -109,3 +108,28 @@ feedConf =
         , feedAuthorEmail = ""
         , feedRoot = "https://chupaaaaaaan.github.io"
         }
+
+--------------------------------------------------------------------------------
+
+-- | Hakyll.Web.Template.List.chronological のIdentifier版
+chronological' :: (MonadMetadata m, MonadFail m) => [Identifier] -> m [Identifier]
+chronological' = sortByM $ getItemUTC defaultTimeLocale
+  where
+    sortByM :: (Monad m, Ord k) => (a -> m k) -> [a] -> m [a]
+    sortByM f xs = map fst . sortBy (comparing snd) <$> mapM (\x -> fmap (x,) (f x)) xs
+
+-- | Hakyll.Web.Template.List.recentFirst のIdentifier版
+recentFirst' :: (MonadMetadata m, MonadFail m) => [Identifier] -> m [Identifier]
+recentFirst' = fmap reverse . chronological'
+
+-- | 空の（Identifierだけ持っている）Itemを生成する
+emptyItem :: Monoid a => Identifier -> Item a
+emptyItem ident = Item{itemIdentifier = ident, itemBody = mempty}
+
+-- | Bodyが空である記事の一覧を生成する
+emptyBodyPosts :: (MonadMetadata m, MonadFail m, Monoid a) => m [Item a]
+emptyBodyPosts = getMatches "posts/*" >>= fmap (fmap emptyItem) . recentFirst'
+
+-- | recent_post用のContext定義
+recentPostField :: (MonadMetadata m, MonadFail m, Monoid a) => Int -> Context a -> m (Context b)
+recentPostField n ctx = listField "recent_posts" ctx . return . take n <$> emptyBodyPosts
