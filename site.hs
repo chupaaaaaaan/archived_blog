@@ -1,16 +1,8 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TupleSections #-}
 
-import Control.Monad
-import Data.List
-import Data.Ord
-import Data.Time.Clock
-import Data.Time.Format
-import Data.Time.Locale.Compat
 import Hakyll
 import qualified Skylighting
-import System.FilePath
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -32,19 +24,27 @@ main = hakyll $ do
         route idRoute
         compile $ do
             let feedCtx = constField "description" "feed description" <> defaultContext
-            renderAtom feedConf feedCtx . take 5 =<< emptyBodyPosts
+            renderAtom feedConf feedCtx . take 5 =<< postList
 
     -- Template生成
     match "layouts/*" $ compile templateBodyCompiler
     match "includes/*" $ compile templateBodyCompiler
 
+    -- 各記事の作成(参照用)
+    match "posts/*" $
+        version "postList" $ do
+            route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+            compile $
+                pandocCompiler
+                    >>= saveSnapshot "content"
+                    >>= relativizeUrls
+
     -- 各記事の生成
     match "posts/*" $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
         compile $ do
-            postsCtx <- recentPostField 5 defaultContext
+            postsCtx <- recentPostsField 5 defaultContext
             pandocCompiler
-                >>= saveSnapshot "content"
                 >>= loadAndApplyTemplate "layouts/post.html" defaultContext
                 >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
                 >>= relativizeUrls
@@ -53,12 +53,11 @@ main = hakyll $ do
     match "archive.html" $ do
         route idRoute
         compile $ do
-            posts <- emptyBodyPosts
             postsCtx <-
                 mconcat
                     <$> sequence
-                        [ recentPostField 5 defaultContext
-                        , return $ listField "posts" (postDateCtx <> defaultContext) (return posts)
+                        [ recentPostsField 5 defaultContext
+                        , allPostsField (postDateCtx <> defaultContext)
                         ]
 
             getResourceBody
@@ -70,7 +69,7 @@ main = hakyll $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            postsCtx <- recentPostField 5 $ teaserField "teaser" "content" <> defaultContext
+            postsCtx <- recentPostsField 5 $ teaserField "teaser" "content" <> defaultContext
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
@@ -81,7 +80,7 @@ main = hakyll $ do
     match (fromList ["about.html", "links.html"]) $ do
         route idRoute
         compile $ do
-            postsCtx <- recentPostField 5 defaultContext
+            postsCtx <- recentPostsField 5 defaultContext
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
@@ -113,37 +112,14 @@ feedConf =
 
 --------------------------------------------------------------------------------
 
--- | Hakyll.Web.Template.List.chronological のIdentifier版
-chronological' :: (MonadMetadata m, MonadFail m) => [Identifier] -> m [Identifier]
-chronological' = sortByM $ getItemUTC' defaultTimeLocale
-  where
-    sortByM :: (Monad m, Ord k) => (a -> m k) -> [a] -> m [a]
-    sortByM f xs = map fst . sortBy (comparing snd) <$> mapM (\x -> fmap (x,) (f x)) xs
+-- | 記事の一覧
+postList :: Compiler [Item String]
+postList = loadAll ("posts/*" .&&. hasVersion "postList") >>= recentFirst
 
--- | Hakyll.Web.Template.List.recentFirst のIdentifier版
-recentFirst' :: (MonadMetadata m, MonadFail m) => [Identifier] -> m [Identifier]
-recentFirst' = fmap reverse . chronological'
+-- | 最近の記事一覧
+recentPostsField :: Int -> Context String -> Compiler (Context b)
+recentPostsField n ctx = listField "recent_posts" ctx . return . take n <$> postList
 
-{- | Hakyll.Web.Template.Context.getItemUTCの、Metadataを読まない版
-Metadataを読むときのファイルアクセスで「resource busy (file is locked)」が発生してしまうので、明示的にMetadataの読み込みを排除する。
-このアプリではファイル名形式を「yyyy-mm-dd_postname.org」で統一しているので、Metadataを読み込まなくても問題ない。
--}
-getItemUTC' :: (MonadMetadata m, MonadFail m) => TimeLocale -> Identifier -> m UTCTime
-getItemUTC' locale id' = do
-    let paths = splitDirectories $ (dropExtension . toFilePath) id'
-    maybe empty' return $ msum $ [parseTime' "%Y-%m-%d" $ concat $ take 1 $ splitAll "_" fnCand | fnCand <- reverse paths]
-  where
-    empty' = fail $ "Hakyll.Web.Template.Context.getItemUTC: could not parse time for " <> show id'
-    parseTime' = parseTimeM True locale
-
--- | 空の（Identifierだけ持っている）Itemを生成する
-genEmptyItem :: Monoid a => Identifier -> Item a
-genEmptyItem ident = Item{itemIdentifier = ident, itemBody = mempty}
-
--- | Bodyが空である記事の一覧
-emptyBodyPosts :: (MonadMetadata m, MonadFail m, Monoid a) => m [Item a]
-emptyBodyPosts = getMatches "posts/*" >>= fmap (fmap genEmptyItem) . recentFirst'
-
--- | recent_post用のContext定義
-recentPostField :: (MonadMetadata m, MonadFail m, Monoid a) => Int -> Context a -> m (Context b)
-recentPostField n ctx = listField "recent_posts" ctx . return . take n <$> emptyBodyPosts
+-- | すべての記事一覧
+allPostsField :: Context String -> Compiler (Context b)
+allPostsField ctx = listField "posts" ctx . return <$> postList
