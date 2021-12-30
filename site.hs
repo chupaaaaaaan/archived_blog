@@ -2,13 +2,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections #-}
 
-import Data.Functor.Identity (Identity)
-import qualified Data.Functor.Identity as Control.Monad
+import Control.Monad
 import Data.List
 import Data.Ord
+import Data.Time.Clock
+import Data.Time.Format
 import Data.Time.Locale.Compat
 import Hakyll
 import qualified Skylighting
+import System.FilePath
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -113,7 +115,7 @@ feedConf =
 
 -- | Hakyll.Web.Template.List.chronological のIdentifier版
 chronological' :: (MonadMetadata m, MonadFail m) => [Identifier] -> m [Identifier]
-chronological' = sortByM $ getItemUTC defaultTimeLocale
+chronological' = sortByM $ getItemUTC' defaultTimeLocale
   where
     sortByM :: (Monad m, Ord k) => (a -> m k) -> [a] -> m [a]
     sortByM f xs = map fst . sortBy (comparing snd) <$> mapM (\x -> fmap (x,) (f x)) xs
@@ -122,13 +124,25 @@ chronological' = sortByM $ getItemUTC defaultTimeLocale
 recentFirst' :: (MonadMetadata m, MonadFail m) => [Identifier] -> m [Identifier]
 recentFirst' = fmap reverse . chronological'
 
--- | 空の（Identifierだけ持っている）Itemを生成する
-emptyItem :: Monoid a => Identifier -> Item a
-emptyItem ident = Item{itemIdentifier = ident, itemBody = mempty}
+{- | Hakyll.Web.Template.Context.getItemUTCの、Metadataを読まない版
+Metadataを読むときのファイルアクセスで「resource busy (file is locked)」が発生してしまうので、明示的にMetadataの読み込みを排除する。
+このアプリではファイル名形式を「yyyy-mm-dd_postname.org」で統一しているので、Metadataを読み込まなくても問題ない。
+-}
+getItemUTC' :: (MonadMetadata m, MonadFail m) => TimeLocale -> Identifier -> m UTCTime
+getItemUTC' locale id' = do
+    let paths = splitDirectories $ (dropExtension . toFilePath) id'
+    maybe empty' return $ msum $ [parseTime' "%Y-%m-%d" $ concat $ take 1 $ splitAll "_" fnCand | fnCand <- reverse paths]
+  where
+    empty' = fail $ "Hakyll.Web.Template.Context.getItemUTC: could not parse time for " <> show id'
+    parseTime' = parseTimeM True locale
 
--- | Bodyが空である記事の一覧を生成する
+-- | 空の（Identifierだけ持っている）Itemを生成する
+genEmptyItem :: Monoid a => Identifier -> Item a
+genEmptyItem ident = Item{itemIdentifier = ident, itemBody = mempty}
+
+-- | Bodyが空である記事の一覧
 emptyBodyPosts :: (MonadMetadata m, MonadFail m, Monoid a) => m [Item a]
-emptyBodyPosts = getMatches "posts/*" >>= fmap (fmap emptyItem) . recentFirst'
+emptyBodyPosts = getMatches "posts/*" >>= fmap (fmap genEmptyItem) . recentFirst'
 
 -- | recent_post用のContext定義
 recentPostField :: (MonadMetadata m, MonadFail m, Monoid a) => Int -> Context a -> m (Context b)
