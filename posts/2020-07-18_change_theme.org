@@ -1,6 +1,7 @@
 ---
 title: ブログのテーマを変更した
 published: 2020-07-18 23:16:04
+updated: 2021-12-30 21:10:18
 tags: haskell, hakyll
 ---
 #+OPTIONS: ^:{}
@@ -94,6 +95,20 @@ tags: haskell, hakyll
     どうやればよいのかよくわからなかったので、今回は不採用。
 
     hakyllに出てくる ~Context a~ 、 ~Item a~ 、 ~Compiler a~ などは重要な概念っぽいのだが、まだよくわかってない・・・。
+
+    *(2021/12/30 追記)*
+    実際にやってみた。
+    https://github.com/chupaaaaaaan/chupaaaaaaan.github.io/commit/d646500e2d00b929a6d2f1c8101ed4f5329fffd7
+
+    ~getMatches~ で ~Identifier~ を取り出して、空の ~itemBody~ を持つ ~Item a~ に詰め込み、それを使って ~Context~ を組み立てればよい。
+    ただ、この方法だと、記事の一覧を日付順に並べるところで ~resource busy (file is locked)~ が出力されるため、少し工夫が必要となる。
+
+    具体的には、 ~recentFirst~ で呼び出している ~getItemUTC~ を少し書き換え、タイムスタンプ取得時にファイルを開かないようにする。
+    （このブログでは、記事ファイル名の先頭にタイムスタンプを付与するようにしているので、ファイル内の ~Metadata~ を読み込んでタイムスタンプを取得する必要がない）
+
+    ただ、この方法でも微妙に不安定（まれに ~resource busy (file is locked)~ が発生する）なのと、
+    別バージョンを作る方法で特に不都合はないので、この方法はやめた。
+    
 
 ** コンテンツの表示
    上記で循環参照のエラーはなくなるが、まだ問題はある。
