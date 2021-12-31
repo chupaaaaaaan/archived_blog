@@ -1,0 +1,20 @@
+<div class="well main">
+    <h1>$title$</h1>
+    $for(posts)$
+    <!-- 年ごとに分類するのは別途追加 -->
+    <!-- {% unless post.next %} -->
+    <!--     <h1>$year$</h1> -->
+    <!--     <ul> -->
+    <!-- {% else %} -->
+    <!--     {% capture year %}{{ post.date | date: '%Y' }}{% endcapture %} -->
+    <!--     {% capture nyear %}{{ post.next.date | date: '%Y' }}{% endcapture %} -->
+    <!--     {% if year != nyear %} -->
+    <!--         </ul> -->
+    <!--         <h1>$year$</h1> -->
+    <!--         <ul> -->
+    <!--     {% endif %} -->
+    <!-- {% endunless %} -->
+    <li><a href="$url$">$date$ - $title$</a></li>
+    $endfor$
+</ul>
+</div>

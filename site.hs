@@ -30,6 +30,27 @@ main = hakyll $ do
     match "layouts/*" $ compile templateBodyCompiler
     match "includes/*" $ compile templateBodyCompiler
 
+    tagList <- buildTags "posts/*" (fromCapture "tags/*.html")
+            
+    -- tag
+    tagsRules tagList $ \tag pat -> do
+        let title = "Posts tagged \"" ++ tag ++ "\""
+        route idRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll pat
+            postsCtx <- recentPostsField 5 defaultContext
+            let ctx = constField "title" title
+                      <> listField "posts" (tagCtx tagList <> postDateCtx) (return posts)
+                      <> postsCtx
+                      <> siteCtx
+
+            makeItem ""
+                >>= loadAndApplyTemplate "layouts/tags.html" ctx
+                >>= loadAndApplyTemplate "layouts/default.html" ctx
+                >>= relativizeUrls
+
+
+
     -- 各記事の作成(参照用)
     match "posts/*" $
         version "postList" $ do
@@ -44,9 +65,11 @@ main = hakyll $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
         compile $ do
             postsCtx <- recentPostsField 5 defaultContext
+            let tagCtx = tagsField "tags" tagList
+
             pandocCompiler
-                >>= loadAndApplyTemplate "layouts/post.html" defaultContext
-                >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
+                >>= loadAndApplyTemplate "layouts/post.html" (tagCtx <> defaultContext)
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
 
     -- 過去記事リストの生成
@@ -59,10 +82,11 @@ main = hakyll $ do
                         [ recentPostsField 5 defaultContext
                         , allPostsField (postDateCtx <> defaultContext)
                         ]
+            let tagCtx = tagsField "tags" tagList
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
 
     -- トップページの生成
@@ -70,10 +94,11 @@ main = hakyll $ do
         route idRoute
         compile $ do
             postsCtx <- recentPostsField 5 $ teaserField "teaser" "content" <> defaultContext
+            let tagCtx = tagsField "tags" tagList
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
 
     -- その他ページの作成
@@ -81,10 +106,11 @@ main = hakyll $ do
         route idRoute
         compile $ do
             postsCtx <- recentPostsField 5 defaultContext
+            let tagCtx = tagsField "tags" tagList
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" (postsCtx <> siteCtx)
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
 
 --------------------------------------------------------------------------------
@@ -99,6 +125,10 @@ siteCtx =
 
 postDateCtx :: Context String
 postDateCtx = dateField "date" "%Y-%m-%d (%a)" <> dateField "year" "%Y"
+
+tagCtx :: Tags -> Context String
+tagCtx tags = tagsField "tags" tags <> defaultContext
+
 
 feedConf :: FeedConfiguration
 feedConf =
@@ -116,10 +146,10 @@ feedConf =
 postList :: Compiler [Item String]
 postList = loadAll ("posts/*" .&&. hasVersion "postList") >>= recentFirst
 
--- | 最近の記事一覧
+-- | 最近の記事一覧フィールド
 recentPostsField :: Int -> Context String -> Compiler (Context b)
 recentPostsField n ctx = listField "recent_posts" ctx . return . take n <$> postList
 
--- | すべての記事一覧
+-- | すべての記事一覧フィールド
 allPostsField :: Context String -> Compiler (Context b)
 allPostsField ctx = listField "posts" ctx . return <$> postList
