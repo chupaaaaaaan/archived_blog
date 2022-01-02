@@ -1,8 +1,13 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 
+import Data.List (intercalate)
 import Hakyll
 import qualified Skylighting
+import Text.Blaze.Html (toHtml, toValue, (!))
+import Text.Blaze.Html.Renderer.String (renderHtml)
+import qualified Text.Blaze.Html5 as H
+import qualified Text.Blaze.Html5.Attributes as A
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -31,7 +36,7 @@ main = hakyll $ do
     match "includes/*" $ compile templateBodyCompiler
 
     tagList <- buildTags "posts/*" (fromCapture "tags/*.html")
-            
+
     -- tag
     tagsRules tagList $ \tag pat -> do
         let title = "Posts tagged \"" ++ tag ++ "\""
@@ -39,17 +44,15 @@ main = hakyll $ do
         compile $ do
             posts <- recentFirst =<< loadAll pat
             postsCtx <- recentPostsField 5 defaultContext
-            let ctx = constField "title" title
-                      <> listField "posts" (tagCtx tagList <> postDateCtx) (return posts)
-                      <> postsCtx
-                      <> siteCtx
+            let ctx =
+                    constField "title" title
+                        <> listField "posts" (tagCtx tagList <> postDateCtx) (return posts)
+                tagCloudCtx = tagListField "tagcloud" tagList
 
             makeItem ""
                 >>= loadAndApplyTemplate "layouts/tags.html" ctx
-                >>= loadAndApplyTemplate "layouts/default.html" ctx
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCloudCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
-
-
 
     -- 各記事の作成(参照用)
     match "posts/*" $
@@ -66,10 +69,11 @@ main = hakyll $ do
         compile $ do
             postsCtx <- recentPostsField 5 defaultContext
             let tagCtx = tagsField "tags" tagList
+                tagCloudCtx = tagListField "tagcloud" tagList
 
             pandocCompiler
                 >>= loadAndApplyTemplate "layouts/post.html" (tagCtx <> defaultContext)
-                >>= loadAndApplyTemplate "layouts/default.html" (tagCtx <> postsCtx <> siteCtx)
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCloudCtx <> tagCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
 
     -- 過去記事リストの生成
@@ -83,10 +87,11 @@ main = hakyll $ do
                         , allPostsField (postDateCtx <> defaultContext)
                         ]
             let tagCtx = tagsField "tags" tagList
+                tagCloudCtx = tagListField "tagcloud" tagList
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" (tagCtx <> postsCtx <> siteCtx)
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCloudCtx <> tagCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
 
     -- トップページの生成
@@ -95,10 +100,11 @@ main = hakyll $ do
         compile $ do
             postsCtx <- recentPostsField 5 $ teaserField "teaser" "content" <> defaultContext
             let tagCtx = tagsField "tags" tagList
+                tagCloudCtx = tagListField "tagcloud" tagList
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" (tagCtx <> postsCtx <> siteCtx)
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCloudCtx <> tagCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
 
     -- その他ページの作成
@@ -107,10 +113,11 @@ main = hakyll $ do
         compile $ do
             postsCtx <- recentPostsField 5 defaultContext
             let tagCtx = tagsField "tags" tagList
+                tagCloudCtx = tagListField "tagcloud" tagList
 
             getResourceBody
                 >>= applyAsTemplate postsCtx
-                >>= loadAndApplyTemplate "layouts/default.html" (tagCtx <> postsCtx <> siteCtx)
+                >>= loadAndApplyTemplate "layouts/default.html" (tagCloudCtx <> tagCtx <> postsCtx <> siteCtx)
                 >>= relativizeUrls
 
 --------------------------------------------------------------------------------
@@ -128,7 +135,6 @@ postDateCtx = dateField "date" "%Y-%m-%d (%a)" <> dateField "year" "%Y"
 
 tagCtx :: Tags -> Context String
 tagCtx tags = tagsField "tags" tags <> defaultContext
-
 
 feedConf :: FeedConfiguration
 feedConf =
@@ -153,3 +159,12 @@ recentPostsField n ctx = listField "recent_posts" ctx . return . take n <$> post
 -- | すべての記事一覧フィールド
 allPostsField :: Context String -> Compiler (Context b)
 allPostsField ctx = listField "posts" ctx . return <$> postList
+
+--------------------------------------------------------------------------------
+
+tagListField :: String -> Tags -> Context a
+tagListField key tags = field key $ \_ -> renderTagList' tags
+  where
+    renderTagList' = renderTags makeLink unlines
+    makeLink tag url count _ _ =
+        renderHtml $ H.li $ H.a ! A.href (toValue url) $ toHtml $ tag ++ " (" ++ show count ++ ")"
