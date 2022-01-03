@@ -138,3 +138,11 @@ body {
     caption-side: top;
     text-align: start;
 }
+
+.info {
+    font-size: 1em;
+    /* font-style: italic; */
+    font-weight: bold;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}

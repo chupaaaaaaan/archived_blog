@@ -10,6 +10,7 @@ tags: haskell
   **2021-01-29 追記**
   **該当不具合のIssueはクローズしています。そのため、以下の記事の内容は実施する必要がなくなりました。**
 
+@@html:<!--more-->@@
 
 私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。
 HLSは、平たく言えばエディタにHaskellのIDEを提供するバックエンドである。
@@ -26,7 +27,6 @@ LSP :: Please open an issue in lsp-mode for implementing `53796:hlint:applyAll'.
 ただし、後にも述べるが、上記のメッセージはHLSの不具合に起因しているっぽい。
 そのため、ゆくゆくbugfixが行われたら必要なくなるかもしれない。
 
-@@html:<!--more-->@@
 
 ** 今回の環境
 

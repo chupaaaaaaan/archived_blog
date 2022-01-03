@@ -11,11 +11,11 @@
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="post-content">
+            $if(tags)$
             <div class="info">
-                $if(tags)$
                 Tags: $tags$
-                $endif$
             </div>
+            $endif$
             $body$
         </div>
         <!-- コメント機能は別途追加する -->
