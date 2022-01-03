@@ -54,32 +54,52 @@
     <div class="row">
         <div class="col-md-3 hidden-xs">
             <div class="sidebar well">
-自分で調べて試してみるのが、一番自分の力になるんだ
+    自分で調べて試してみるのが、一番自分の力になるんだ
 </div>
 
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
         
-          <li><a href="./2021-01-21_intellij_settings_in_first.html">Intellij Ideaの設定ことはじめ</a></li>
+        <li><a href="./2021-01-21_intellij_settings_in_first.html">Intellij Ideaの設定ことはじめ</a></li>
         
-          <li><a href="./2021-01-02_hls-first-aid.html">Haskell Language ServerでHLintによる自動修正が効かない時の応急処置</a></li>
+        <li><a href="./2021-01-02_hls-first-aid.html">Haskell Language ServerでHLintによる自動修正が効かない時の応急処置</a></li>
         
-          <li><a href="./2020-11-04_maven-deploy-jar-and-scripts.html">maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</a></li>
+        <li><a href="./2020-11-04_maven-deploy-jar-and-scripts.html">maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法</a></li>
         
-          <li><a href="./2020-11-03_git-stash-collection.html">個人的git-stashまとめ</a></li>
+        <li><a href="./2020-11-03_git-stash-collection.html">個人的git-stashまとめ</a></li>
         
-          <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
+        <li><a href="./2020-10-31_java-info-collection.html">個人的Java情報まとめ</a></li>
         
     </ul>
 </div>
 
 <div class="sidebar well">
-<h1>Links</h1>
+    <h1>Links</h1>
 <ul>
   <li><a target="_blank" href="https://hoogle.haskell.org/">Hoogle</a></li>
   <li><a target="_blank" href="https://www.stackage.org/">Stackage Server</a></li>
   <li><a target="_blank" href="https://scrapbox.io/haskell-shoen/">Haskell荘園</a></li>
+</ul>
+
+</div>
+
+<div class="sidebar well">
+    <h1>Tags</h1>
+<ul>
+    <li><a href="./tags/Intellij.html">Intellij (1)</a></li>
+<li><a href="./tags/Java.html">Java (3)</a></li>
+<li><a href="./tags/encoding.html">encoding (1)</a></li>
+<li><a href="./tags/git.html">git (1)</a></li>
+<li><a href="./tags/hakyll.html">hakyll (3)</a></li>
+<li><a href="./tags/haskell.html">haskell (7)</a></li>
+<li><a href="./tags/kubernetes.html">kubernetes (1)</a></li>
+<li><a href="./tags/maven.html">maven (1)</a></li>
+<li><a href="./tags/minikube.html">minikube (1)</a></li>
+<li><a href="./tags/org-mode.html">org-mode (2)</a></li>
+<li><a href="./tags/security.html">security (2)</a></li>
+<li><a href="./tags/%E7%AB%B6%E3%83%97%E3%83%AD.html">競プロ (2)</a></li>
+
 </ul>
 
 </div>
@@ -99,8 +119,14 @@
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="post-content">
+            
+            <div class="info">
+                Tags: <a title="All pages tagged 'haskell'." href="./tags/haskell.html">haskell</a>
+            </div>
+            
             <p><strong><strong>2021-01-29 追記</strong></strong><br />
 <strong><strong>該当不具合のIssueはクローズしています。そのため、以下の記事の内容は実施する必要がなくなりました。</strong></strong></p>
+<p><!--more--></p>
 <p>私は、普段Haskellを触るとき、 GHCUP + Haskell Language Server (HLS) + Emacs (lsp-mode) という組み合わせを使っている。<br />
 HLSは、平たく言えばエディタにHaskellのIDEを提供するバックエンドである。<br />
 そのIDEとしての機能の一つに、HLintで検出された修正候補をソースコードに適用させる、というものがある。<br />
@@ -111,7 +137,6 @@ HLSは、平たく言えばエディタにHaskellのIDEを提供するバック�
 <p>今回は、上記に対応し、修正候補の適用ができるようにする手順をメモしておく。<br />
 ただし、後にも述べるが、上記のメッセージはHLSの不具合に起因しているっぽい。<br />
 そのため、ゆくゆくbugfixが行われたら必要なくなるかもしれない。</p>
-<p><!--more--></p>
 <h2 id="今回の環境">今回の環境</h2>
 <p>Elispパッケージは最新化済み。</p>
 <pre class="shell"><code>$ uname -a
