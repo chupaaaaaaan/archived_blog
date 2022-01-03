@@ -2,7 +2,7 @@
 title: maven-assembly-pluginで配布用アーカイブを作成するいくつかの方法
 published: 2020-11-03 22:04:32
 updated: 2020-11-08 11:51:13
-tags: java, maven
+tags: Java, maven
 ---
 #+OPTIONS: ^:{}
 #+OPTIONS: \n:t

@@ -1,8 +1,8 @@
 $for(recent_posts)$
 <div class="article">
-  <div class="well main">
-       <!-- <h1>$title$</h1> -->
-       <div class="posttitle">$title$</div>
+    <div class="well main">
+        <!-- <h1>$title$</h1> -->
+        <div class="posttitle">$title$</div>
         <!-- コメント機能は別途追加する -->
         <!-- {% if site.comments and post.comments %} -->
         <!--     {% if site.disqus != '' %} -->
@@ -12,12 +12,17 @@ $for(recent_posts)$
         <!--     {% endif %} -->
         <!-- {% endif %} -->
         <div class="content">
-          $if(teaser)$
+            $if(tags)$
+            <div class="info">
+                Tags: $tags$
+            </div>
+            $endif$
+            $if(teaser)$
             $teaser$
             <a href="$url$">続きを読む</a>
-          $else$
+            $else$
             $body$
-          $endif$
+            $endif$
         </div>
     </div>
 </div>
